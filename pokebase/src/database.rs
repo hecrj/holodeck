@@ -3,17 +3,20 @@ use crate::locale;
 use crate::pokemon;
 use crate::series;
 use crate::set;
-use crate::{Card, Locale, Pokemon, Series, Set};
+use crate::{Card, Locale, Map, Pokemon, Series, Set};
 
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
+use std::fmt;
 use std::path::Path;
+use std::sync::Arc;
 
+#[derive(Clone)]
 pub struct Database {
-    pub pokemon: Vec<Pokemon>,
-    pub series: Vec<Series>,
-    pub sets: Vec<Set>,
-    pub cards: Vec<Card>,
+    pub pokemon: Map<pokemon::Id, Pokemon>,
+    pub series: Map<series::Id, Series>,
+    pub sets: Map<set::Id, Set>,
+    pub cards: Map<card::Id, Card>,
 }
 
 impl Database {
@@ -25,10 +28,10 @@ impl Database {
         let cards: Vec<Card> = ron::de::from_str(include_str!("../data/cards.ron"))?;
 
         Ok(Self {
-            pokemon,
-            series,
-            sets,
-            cards,
+            pokemon: Map::new(pokemon, |pokemon| pokemon.id.clone()),
+            series: Map::new(series, |series| series.id.clone()),
+            sets: Map::new(sets, |set| set.id.clone()),
+            cards: Map::new(cards, |card| card.id.clone()),
         })
     }
 
@@ -38,7 +41,7 @@ impl Database {
         use tokio::fs;
         use tokio::task;
 
-        let data = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("pokebase/data");
+        let data = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("data");
 
         let pokemon = task::spawn_blocking(load_pokemon).await??;
 
@@ -58,10 +61,10 @@ impl Database {
         };
 
         Ok(Self {
-            pokemon,
-            series,
-            sets,
-            cards,
+            pokemon: Map::new(pokemon, |pokemon| pokemon.id.clone()),
+            series: Map::new(series, |series| series.id.clone()),
+            sets: Map::new(sets, |set| set.id.clone()),
+            cards: Map::new(cards, |card| card.id.clone()),
         })
     }
 
@@ -255,10 +258,10 @@ impl Database {
         sets.sort_by(|a, b| a.release_date.cmp(&b.release_date));
 
         Ok(Self {
-            pokemon,
-            series,
-            sets,
-            cards,
+            pokemon: Map::new(pokemon, |pokemon| pokemon.id.clone()),
+            series: Map::new(series, |series| series.id.clone()),
+            sets: Map::new(sets, |set| set.id.clone()),
+            cards: Map::new(cards, |card| card.id.clone()),
         })
     }
 }
@@ -333,4 +336,15 @@ fn load_pokemon() -> Result<Vec<Pokemon>, anywho::Error> {
             name: locale::Map::from_iter([(Locale("en".to_owned()), name)]),
         })
         .collect())
+}
+
+impl fmt::Debug for Database {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Database")
+            .field("pokemon", &self.pokemon.len())
+            .field("series", &self.series.len())
+            .field("sets", &self.sets.len())
+            .field("cards", &self.cards.len())
+            .finish()
+    }
 }

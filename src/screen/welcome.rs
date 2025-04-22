@@ -1,0 +1,202 @@
+use crate::collection::{self, Collection};
+use crate::pokebase::Database;
+
+use iced::widget::{button, center, column, container, horizontal_space, row, text, text_input};
+use iced::{Center, Element, Fill, Font, Right, Task};
+
+pub struct Welcome {
+    state: State,
+}
+
+#[derive(Debug, Clone)]
+pub enum Message {
+    CollectionsListed(Result<Vec<Collection>, anywho::Error>),
+    Select(Collection),
+    NameChanged(String),
+    Create(collection::Name),
+    CollectionCreated(Result<Collection, anywho::Error>),
+}
+
+pub enum State {
+    Loading,
+    Selection {
+        collections: Vec<Collection>,
+    },
+    Creation {
+        name: String,
+        collections: Vec<Collection>,
+    },
+}
+
+impl Welcome {
+    pub fn new(_database: &Database) -> (Self, Task<Message>) {
+        (
+            Self {
+                state: State::Loading,
+            },
+            Task::perform(Collection::list(), Message::CollectionsListed),
+        )
+    }
+
+    pub fn update(&mut self, message: Message, _database: &Database) -> Task<Message> {
+        match message {
+            Message::CollectionsListed(Ok(collections)) => {
+                if collections.is_empty() {
+                    self.state = State::Creation {
+                        name: "Red".to_owned(),
+                        collections,
+                    };
+                } else {
+                    self.state = State::Selection { collections };
+                }
+
+                Task::none()
+            }
+            Message::Select(collection) => {
+                dbg!(collection);
+
+                Task::none()
+            }
+            Message::Create(name) => {
+                Task::perform(Collection::create(name), Message::CollectionCreated)
+            }
+            Message::NameChanged(new_name) => {
+                if let State::Creation { name, .. } = &mut self.state {
+                    *name = new_name;
+                }
+
+                Task::none()
+            }
+            Message::CollectionCreated(Ok(_collection)) => {
+                self.state = State::Loading;
+
+                Task::perform(Collection::list(), Message::CollectionsListed)
+            }
+            Message::CollectionsListed(Err(error)) | Message::CollectionCreated(Err(error)) => {
+                log::error!("{error}");
+
+                Task::none()
+            }
+        }
+    }
+
+    pub fn view(&self, database: &Database) -> Element<Message> {
+        let title = text("Pokédeck").font(Font::MONOSPACE).size(40);
+
+        let content: Element<_> = match &self.state {
+            State::Loading => text("Loading...").into(),
+            State::Selection { collections } => column(
+                collections
+                    .iter()
+                    .map(|collection| card(collection, database)),
+            )
+            .into(),
+            State::Creation { name, collections } => {
+                let welcome = container(
+                    text(
+                        "Hello there! Welcome to the world of Pokémon!\n\
+                        First, what is your name?",
+                    )
+                    .font(Font::MONOSPACE),
+                )
+                .width(Fill)
+                .padding(10)
+                .style(container::bordered_box);
+
+                let name_input = text_input("Name", name)
+                    .on_input(Message::NameChanged)
+                    .padding(10);
+
+                let name = collection::Name::parse(name);
+
+                let submit = button(if collections.is_empty() {
+                    "Start"
+                } else {
+                    "Create"
+                })
+                .padding([10, 20])
+                .on_press_maybe(name.map(Message::Create));
+
+                column![
+                    welcome,
+                    column![
+                        text("Your name").font(Font::MONOSPACE),
+                        row![name_input, submit].spacing(10)
+                    ]
+                    .spacing(10)
+                ]
+                .spacing(30)
+                .into()
+            }
+        };
+
+        center(
+            column![title, content]
+                .spacing(20)
+                .align_x(Center)
+                .max_width(480),
+        )
+        .padding(20)
+        .into()
+    }
+}
+
+fn card<'a>(collection: &'a Collection, database: &Database) -> Element<'a, Message> {
+    let name = text(collection.name.as_str())
+        .font(Font::MONOSPACE)
+        .size(20);
+
+    let total_cards = collection.total_cards();
+    let unique_cards = collection.unique_cards();
+    let total_pokemon = collection.total_pokemon(database);
+
+    let stat = |stat| text(stat).font(Font::MONOSPACE).size(14);
+
+    let progress = (total_pokemon as f32 / database.pokemon.len() as f32) * 100.0;
+
+    let badge = stat(
+        match progress as u32 {
+            0..10 => "Beginner",
+            10..20 => "Intermediate",
+            20..40 => "Advanced",
+            40..60 => "Pokéxpert",
+            70..80 => "Master",
+            80..100 => "Elite Four",
+            100 => "Champion",
+            _ => "Unknown",
+        }
+        .to_owned(),
+    );
+
+    let stats = row![
+        stat(format!("{total_pokemon} Pokémon")),
+        stat(format!("{unique_cards} unique")),
+        stat(format!("{total_cards} cards")),
+    ]
+    .spacing(20);
+
+    button(
+        container(
+            column![
+                row![name, horizontal_space(), stats]
+                    .spacing(20)
+                    .align_y(Center),
+                row![
+                    badge,
+                    horizontal_space(),
+                    stat(format!("{progress:.1}% completed"))
+                ]
+                .spacing(20)
+                .align_y(Center),
+            ]
+            .spacing(10),
+        )
+        .padding(20)
+        .style(container::bordered_box)
+        .width(Fill),
+    )
+    .on_press_with(|| Message::Select(collection.clone()))
+    .padding(0)
+    .style(button::text)
+    .into()
+}

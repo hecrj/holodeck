@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 iced.workspace = true
-iced.features = ["tokio", "image", "debug"]
+iced.features = ["tokio", "canvas", "image", "debug"]
 
 serde.workspace = true
 serde.features = ["derive"]
@@ -20,6 +20,9 @@ pokebase.workspace = true
 ron.workspace = true
 tracing-subscriber.workspace = true
 
+[build-dependencies]
+iced_fontello.workspace = true
+
 [workspace]
 members = ["pokebase"]
 
@@ -29,6 +32,7 @@ pokebase.path = "./pokebase"
 anywho = "0.1.0"
 dirs = "6"
 iced = "0.14.0-dev"
+iced_fontello = "0.13"
 log = "0.4"
 ron = "0.10"
 serde = "1"
@@ -38,4 +42,4 @@ tracing-subscriber = "0.3"
 
 [patch.crates-io]
 iced.git = "https://github.com/iced-rs/iced.git"
-iced.rev = "388a419ed5c229aadbca57bb09b474b1475b1ef9"
+iced.rev = "50cc94d944ada88bf3d7fcd1d2741b7104b9b1d1"

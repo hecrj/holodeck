@@ -1,8 +1,9 @@
 use crate::collection::{self, Collection};
 use crate::pokebase::Database;
+use crate::widget::logo;
 
 use iced::widget::{button, center, column, container, horizontal_space, row, text, text_input};
-use iced::{Center, Element, Fill, Font, Right, Task};
+use iced::{Center, Element, Fill, Font, Task};
 
 pub struct Welcome {
     state: State,
@@ -28,6 +29,12 @@ pub enum State {
     },
 }
 
+pub enum Action {
+    None,
+    Run(Task<Message>),
+    Select(Collection),
+}
+
 impl Welcome {
     pub fn new(_database: &Database) -> (Self, Task<Message>) {
         (
@@ -38,7 +45,7 @@ impl Welcome {
         )
     }
 
-    pub fn update(&mut self, message: Message, _database: &Database) -> Task<Message> {
+    pub fn update(&mut self, message: Message, _database: &Database) -> Action {
         match message {
             Message::CollectionsListed(Ok(collections)) => {
                 if collections.is_empty() {
@@ -50,39 +57,37 @@ impl Welcome {
                     self.state = State::Selection { collections };
                 }
 
-                Task::none()
+                Action::None
             }
-            Message::Select(collection) => {
-                dbg!(collection);
-
-                Task::none()
-            }
-            Message::Create(name) => {
-                Task::perform(Collection::create(name), Message::CollectionCreated)
-            }
+            Message::Select(collection) => Action::Select(collection),
+            Message::Create(name) => Action::Run(Task::perform(
+                Collection::create(name),
+                Message::CollectionCreated,
+            )),
             Message::NameChanged(new_name) => {
                 if let State::Creation { name, .. } = &mut self.state {
                     *name = new_name;
                 }
 
-                Task::none()
+                Action::None
             }
             Message::CollectionCreated(Ok(_collection)) => {
                 self.state = State::Loading;
 
-                Task::perform(Collection::list(), Message::CollectionsListed)
+                Action::Run(Task::perform(
+                    Collection::list(),
+                    Message::CollectionsListed,
+                ))
             }
             Message::CollectionsListed(Err(error)) | Message::CollectionCreated(Err(error)) => {
                 log::error!("{error}");
 
-                Task::none()
+                Action::None
             }
         }
     }
 
     pub fn view(&self, database: &Database) -> Element<Message> {
-        let title = text("Pokédeck").font(Font::MONOSPACE).size(40);
-
         let content: Element<_> = match &self.state {
             State::Loading => text("Loading...").into(),
             State::Selection { collections } => column(
@@ -131,7 +136,7 @@ impl Welcome {
         };
 
         center(
-            column![title, content]
+            column![logo(40), content]
                 .spacing(20)
                 .align_x(Center)
                 .max_width(480),

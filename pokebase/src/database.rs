@@ -9,7 +9,6 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 use std::path::Path;
-use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct Database {

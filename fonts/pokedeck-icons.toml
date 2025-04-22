@@ -1,0 +1,6 @@
+module = "icon"
+
+[glyphs]
+binder = "entypo-book-open"
+book = "entypo-book"
+browse = "entypo-search"

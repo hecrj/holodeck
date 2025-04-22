@@ -1,0 +1,3 @@
+[submodule "pokebase/data/raw/tcgdex"]
+	path = pokebase/data/raw/tcgdex
+	url = https://github.com/hecrj/cards-database.git

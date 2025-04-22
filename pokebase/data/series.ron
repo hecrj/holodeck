@@ -1,0 +1,311 @@
+[
+    (
+        id: ("ADV"),
+        name: {
+            "ja": "ADV",
+        },
+        release_date: "1996-10-20",
+    ),
+    (
+        id: ("L"),
+        name: {
+            "ja": "LEGEND",
+        },
+        release_date: "1996-10-20",
+    ),
+    (
+        id: ("PCG"),
+        name: {
+            "ja": "PCG",
+        },
+        release_date: "1996-10-20",
+    ),
+    (
+        id: ("PMCG"),
+        name: {
+            "ja": "ポケットモンスターカードゲーム",
+        },
+        release_date: "1996-10-20",
+    ),
+    (
+        id: ("SM"),
+        name: {
+            "ja": "サン＆ムーン",
+            "ko": "썬&문",
+        },
+        release_date: "1996-10-20",
+    ),
+    (
+        id: ("VS"),
+        name: {
+            "ja": "VS",
+        },
+        release_date: "1996-10-20",
+    ),
+    (
+        id: ("XY"),
+        name: {
+            "ja": "XY",
+        },
+        release_date: "1996-10-20",
+    ),
+    (
+        id: ("XYb"),
+        name: {
+            "ja": "XY BREAK",
+        },
+        release_date: "1996-10-20",
+    ),
+    (
+        id: ("e"),
+        name: {
+            "ja": "ポケモンカードe",
+        },
+        release_date: "1996-10-20",
+    ),
+    (
+        id: ("web"),
+        name: {
+            "ja": "web",
+        },
+        release_date: "1996-10-20",
+    ),
+    (
+        id: ("base"),
+        name: {
+            "de": "Grund",
+            "en": "Base",
+            "es": "Clásica",
+            "fr": "Base",
+            "it": "Originale",
+            "nl": "Basis",
+            "pt": "Coleção Básica",
+        },
+        release_date: "1999-01-09",
+    ),
+    (
+        id: ("misc"),
+        name: {
+            "en": "Miscellaneous",
+            "fr": "Autre",
+        },
+        release_date: "2000-02-01",
+    ),
+    (
+        id: ("gym"),
+        name: {
+            "en": "Gym",
+        },
+        release_date: "2000-08-14",
+    ),
+    (
+        id: ("neo"),
+        name: {
+            "de": "Neo",
+            "en": "Neo",
+            "es": "Neo",
+            "fr": "Neo",
+            "it": "Neo",
+            "ja": "ポケモンカード★neo",
+        },
+        release_date: "2000-12-16",
+    ),
+    (
+        id: ("lc"),
+        name: {
+            "en": "Legendary Collection",
+        },
+        release_date: "2002-05-24",
+    ),
+    (
+        id: ("ecard"),
+        name: {
+            "de": "e-Card",
+            "en": "E-Card",
+            "fr": "e-cards",
+            "it": "e-Series",
+        },
+        release_date: "2002-09-15",
+    ),
+    (
+        id: ("ex"),
+        name: {
+            "de": "EX",
+            "en": "EX",
+            "es": "ex",
+            "fr": "EX",
+            "it": "EX",
+            "pt": "EX",
+        },
+        release_date: "2003-07-01",
+    ),
+    (
+        id: ("pop"),
+        name: {
+            "en": "POP",
+            "es": "POP",
+            "fr": "POP",
+            "it": "POP",
+        },
+        release_date: "2003-10-01",
+    ),
+    (
+        id: ("tk"),
+        name: {
+            "en": "Trainer kits",
+            "es": "Kits de Entrenador",
+            "fr": "Kits du dresseur",
+            "it": "Trainer Kit",
+        },
+        release_date: "2004-07-01",
+    ),
+    (
+        id: ("dp"),
+        name: {
+            "de": "Diamant & Perl",
+            "en": "Diamond & Pearl",
+            "es": "Diamante & Perla",
+            "fr": "Diamant & Perle",
+            "it": "Diamante & Perla",
+            "pl": "Diament i Perla",
+            "pt": "Diamante & Pérola",
+        },
+        release_date: "2007-05-01",
+    ),
+    (
+        id: ("pl"),
+        name: {
+            "de": "Platin",
+            "en": "Platinum",
+            "es": "Platino",
+            "fr": "Platine",
+            "it": "Platino",
+        },
+        release_date: "2009-02-11",
+    ),
+    (
+        id: ("hgss"),
+        name: {
+            "de": "HeartGold SoulSilver",
+            "en": "HeartGold & SoulSilver",
+            "es": "HeartGold SoulSilver",
+            "fr": "HeartGold SoulSilver",
+            "it": "HeartGold SoulSilver",
+            "pt": "HeartGold SoulSilver",
+        },
+        release_date: "2010-02-10",
+    ),
+    (
+        id: ("col"),
+        name: {
+            "de": "Ruf der Legenden",
+            "en": "Call of Legends",
+            "fr": "L\'appel des Légendes",
+            "it": "Richiamo delle Leggende",
+            "pt": "Chamado das Lendas",
+        },
+        release_date: "2011-02-09",
+    ),
+    (
+        id: ("bw"),
+        name: {
+            "de": "Schwarz & Weiß",
+            "en": "Black & White",
+            "es": "Negro y Blanco",
+            "fr": "Noir & Blanc",
+            "it": "Nero e Bianco",
+            "pt": "Black & White",
+        },
+        release_date: "2011-04-25",
+    ),
+    (
+        id: ("mc"),
+        name: {
+            "en": "McDonald\'s Collection",
+            "es": "Colección de McDonald\'s",
+            "fr": "Promo McDonald\'s",
+            "it": "McDonald\'s Collection",
+        },
+        release_date: "2011-06-17",
+    ),
+    (
+        id: ("xy"),
+        name: {
+            "de": "XY",
+            "en": "XY",
+            "es": "XY",
+            "fr": "XY",
+            "it": "XY",
+            "pt": "XY",
+            "ru": "XY",
+        },
+        release_date: "2013-10-12",
+    ),
+    (
+        id: ("sm"),
+        name: {
+            "de": "Sonne & Mond",
+            "en": "Sun & Moon",
+            "es": "Sol y Luna",
+            "fr": "Soleil et Lune",
+            "it": "Sole e Luna",
+            "pt": "Sol e Lua",
+        },
+        release_date: "2017-02-03",
+    ),
+    (
+        id: ("swsh"),
+        name: {
+            "de": "Schwert & Schild",
+            "en": "Sword & Shield",
+            "es": "Espada y Escudo",
+            "fr": "Épée et Bouclier",
+            "it": "Spada e Scudo",
+            "pt": "Espada e Escudo",
+        },
+        release_date: "2019-11-15",
+    ),
+    (
+        id: ("S"),
+        name: {
+            "id": "Pedang & Perisai",
+            "ja": "剣と盾",
+            "ko": "검과 방패",
+            "th": "ซอร\u{e4c}ด แอนด\u{e4c} ช\u{e35}ลด\u{e4c}",
+            "zh-tw": "劍＆盾",
+        },
+        release_date: "2020-08-21",
+    ),
+    (
+        id: ("SV"),
+        name: {
+            "id": "Scarlet & Violet",
+            "ja": "ポケモンカードゲーム スカーレット&バイオレット",
+            "ko": "스칼렛・바이올렛",
+            "th": "สการ\u{e4c}เล\u{e47}ต&ไวโอเล\u{e47}ต",
+            "zh-cn": "朱&紫系列",
+            "zh-tw": "朱&紫系列",
+        },
+        release_date: "2020-08-21",
+    ),
+    (
+        id: ("sv"),
+        name: {
+            "de": "Karmesin & Purpur",
+            "en": "Scarlet & Violet",
+            "es": "Escarlata y Púrpura",
+            "es-mx": "Escarlata y Púrpura",
+            "fr": "Écarlate et Violet",
+            "it": "Scarlatto e Violetto",
+            "pt": "Escarlate e Violeta",
+        },
+        release_date: "2023-03-31",
+    ),
+    (
+        id: ("tcgp"),
+        name: {
+            "en": "Pokémon TCG Pocket",
+        },
+        release_date: "2024-10-30",
+    ),
+]

@@ -1,15 +1,17 @@
 use pokebase;
 
+mod binder;
 mod card;
 mod collection;
 mod icon;
 mod screen;
 mod widget;
 
+use crate::binder::Binder;
 use crate::collection::Collection;
 use crate::pokebase::Database;
 use crate::screen::Screen;
-use crate::screen::binder;
+use crate::screen::binders;
 use crate::screen::welcome;
 use crate::widget::logo;
 
@@ -24,6 +26,7 @@ pub fn main() -> iced::Result {
         .theme(Pokedeck::theme)
         .font(icon::FONT)
         .default_font(Font::MONOSPACE)
+        .window_size((1700.0, 950.0))
         .run()
 }
 
@@ -40,8 +43,8 @@ enum State {
 enum Message {
     Loaded(Result<Database, anywho::Error>),
     Welcome(welcome::Message),
-    Binder(binder::Message),
-    OpenBinder,
+    Binders(binders::Message),
+    OpenBinders,
     Browse,
 }
 
@@ -80,35 +83,35 @@ impl Pokedeck {
                     welcome::Action::None => Task::none(),
                     welcome::Action::Run(task) => task.map(Message::Welcome),
                     welcome::Action::Select(collection) => {
-                        let binder = screen::Binder::new();
+                        let binders = screen::Binders::new();
 
                         *screen = Screen::Collecting {
                             collection,
-                            screen: screen::Collecting::Binder(binder),
+                            screen: screen::Collecting::Binders(binders),
                         };
 
                         Task::none()
                     }
                 }
             }
-            Message::Binder(message) => {
+            Message::Binders(message) => {
                 let State::Ready {
                     database,
                     screen:
                         Screen::Collecting {
                             collection,
-                            screen: screen::Collecting::Binder(binder),
+                            screen: screen::Collecting::Binders(binders),
                         },
                 } = &mut self.state
                 else {
                     return Task::none();
                 };
 
-                binder
+                binders
                     .update(message, collection, database)
-                    .map(Message::Binder)
+                    .map(Message::Binders)
             }
-            Message::OpenBinder => {
+            Message::OpenBinders => {
                 let State::Ready {
                     screen: Screen::Collecting { screen, .. },
                     ..
@@ -117,8 +120,8 @@ impl Pokedeck {
                     return Task::none();
                 };
 
-                let binder = screen::Binder::new();
-                *screen = screen::Collecting::Binder(binder);
+                let binders = screen::Binders::new();
+                *screen = screen::Collecting::Binders(binders);
 
                 Task::none()
             }
@@ -142,10 +145,10 @@ impl Pokedeck {
                 Screen::Collecting { collection, screen } => {
                     let tabs = [
                         (
-                            "Binder",
+                            "Binders",
                             icon::binder(),
-                            Message::OpenBinder,
-                            matches!(screen, screen::Collecting::Binder(_),),
+                            Message::OpenBinders,
+                            matches!(screen, screen::Collecting::Binders(_),),
                         ),
                         ("Browse", icon::browse(), Message::Browse, false), // TODO
                     ]
@@ -184,8 +187,8 @@ impl Pokedeck {
                     .style(container::dark);
 
                     let screen = match screen {
-                        screen::Collecting::Binder(binder) => {
-                            binder.view(collection, database).map(Message::Binder)
+                        screen::Collecting::Binders(binders) => {
+                            binders.view(collection, database).map(Message::Binders)
                         }
                     };
 
@@ -203,7 +206,9 @@ impl Pokedeck {
         match screen {
             Screen::Welcome(_) => Subscription::none(),
             Screen::Collecting { screen, .. } => match screen {
-                screen::Collecting::Binder(binder) => binder.subscription().map(Message::Binder),
+                screen::Collecting::Binders(binders) => {
+                    binders.subscription().map(Message::Binders)
+                }
             },
         }
     }

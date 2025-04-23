@@ -1,7 +1,7 @@
-pub mod binder;
+pub mod binders;
 pub mod welcome;
 
-pub use binder::Binder;
+pub use binders::Binders;
 pub use welcome::Welcome;
 
 use crate::Collection;
@@ -15,5 +15,5 @@ pub enum Screen {
 }
 
 pub enum Collecting {
-    Binder(Binder),
+    Binders(Binders),
 }

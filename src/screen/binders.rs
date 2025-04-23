@@ -1,16 +1,16 @@
-use crate::Collection;
+use crate::binder;
 use crate::card;
 use crate::icon;
 use crate::pokebase::database;
-use crate::pokebase::pokemon;
 use crate::pokebase::{Card, Database};
 use crate::widget::pokeball;
+use crate::{Binder, Collection};
 
 use iced::animation;
 use iced::border;
 use iced::keyboard;
 use iced::task;
-use iced::time::Instant;
+use iced::time::{Instant, milliseconds};
 use iced::widget::{
     bottom_right, button, center, center_x, center_y, column, container, grid, horizontal_space,
     hover, image, mouse_area, opaque, pick_list, pop, row, scrollable, stack, text, text_input,
@@ -20,13 +20,13 @@ use iced::{Animation, Center, Color, ContentFit, Element, Fill, Shrink, Subscrip
 
 use function::Binary;
 use std::collections::HashMap;
-use std::fmt;
 use std::sync::Arc;
+use tokio::time;
 
-pub struct Binder {
-    binders: Set,
-    page: usize,
-    mode: Mode,
+pub struct Binders {
+    binders: binder::Set,
+    spread: binder::Spread,
+    mode: binder::Mode,
     state: State,
     images: HashMap<card::Id, Image>,
     animations: HashMap<card::Id, AnimationSet>,
@@ -51,7 +51,7 @@ enum State {
 
 #[derive(Debug, Clone)]
 pub enum Message {
-    ModeSelected(Mode),
+    ModeSelected(binder::Mode),
     PreviousPage,
     NextPage,
     Add,
@@ -72,12 +72,12 @@ pub enum Source {
     Search,
 }
 
-impl Binder {
+impl Binders {
     pub fn new() -> Self {
         Self {
-            binders: Set::default(),
-            page: 0,
-            mode: Mode::GottaCatchEmAll,
+            binders: binder::Set::default(),
+            spread: binder::Spread::default(),
+            mode: binder::Mode::GottaCatchEmAll,
             state: State::Idle,
             images: HashMap::new(),
             animations: HashMap::new(),
@@ -102,10 +102,8 @@ impl Binder {
                     return Task::none();
                 };
 
-                let new_page = self.page.saturating_sub(2);
-
-                if new_page != self.page {
-                    self.page = new_page;
+                if let Some(spread) = self.spread.decrement() {
+                    self.spread = spread;
                     self.animations.clear();
                 }
 
@@ -116,11 +114,15 @@ impl Binder {
                     return Task::none();
                 };
 
-                let new_page = (self.page + 2)
-                    .min(self.binders.pages_needed(self.mode.total_cards(database)) - 1);
+                let total_pages = self.binders.total_pages(self.mode.total_cards(database));
 
-                if new_page != self.page {
-                    self.page = new_page;
+                let new_spread = self
+                    .spread
+                    .increment()
+                    .min(self.binders.spread(total_pages));
+
+                if new_spread != self.spread {
+                    self.spread = new_spread;
                     self.animations.clear();
                 }
 
@@ -144,9 +146,18 @@ impl Binder {
                     return Task::none();
                 };
 
-                let (search_cards, handle) =
-                    Task::perform(database.search_cards(&new_search), Message::SearchFinished)
-                        .abortable();
+                let (search_cards, handle) = {
+                    let search = database.search_cards(&new_search);
+
+                    Task::perform(
+                        async move {
+                            time::sleep(milliseconds(250)).await;
+                            search.await
+                        },
+                        Message::SearchFinished,
+                    )
+                    .abortable()
+                };
 
                 *search = new_search;
                 *task = Some(handle.abort_on_drop());
@@ -229,11 +240,7 @@ impl Binder {
                     self.state = State::Idle;
 
                     if let Some(position) = self.mode.position(&card, database) {
-                        self.page = self.binders.page(position);
-
-                        if self.page % 2 != 0 {
-                            self.page = self.page.saturating_sub(1);
-                        }
+                        self.spread = self.binders.spread(self.binders.place(position));
                     }
 
                     collection.add(card);
@@ -285,14 +292,19 @@ impl Binder {
         collection: &'a Collection,
         database: &'a Database,
     ) -> Element<'a, Message> {
-        let Some((unit, number, relative_page, offset)) = self.binders.open(self.page) else {
+        let Some(pair) = self.binders.open(self.spread) else {
             // TODO
             return center(text("This page does not exist!")).into();
         };
 
-        let header = {
-            let total_cards = self.mode.total_cards(database);
+        let page = match (&pair.left, &pair.right) {
+            (_, binder::Surface::Content(content)) | (binder::Surface::Content(content), _) => {
+                content.page
+            }
+            _ => binder::Page::default(),
+        };
 
+        let header = {
             fn stat<'a>(
                 icon: impl Into<Element<'a, Message>>,
                 content: String,
@@ -303,35 +315,36 @@ impl Binder {
                     .into()
             }
 
-            let pokemon = stat(
-                pokeball(12),
-                format!(
-                    "{owned_pokemon} / {total_pokemon} ({completion:.1}%)",
-                    owned_pokemon = collection.total_pokemon(database),
-                    total_pokemon = database.pokemon.len(),
-                    completion = self.mode.progress(collection, database),
-                ),
-            );
+            let progress = {
+                let total_cards = self.mode.total_cards(database);
+
+                stat(
+                    pokeball(12),
+                    format!(
+                        "{owned_pokemon} / {total_cards} ({completion:.1}%)",
+                        owned_pokemon = collection.total_pokemon(database),
+                        completion = self.mode.progress(collection, database),
+                    ),
+                )
+            };
 
             let binders = stat(
                 icon::book().size(12),
                 format!(
-                    "{number} / {total_binders}",
-                    number = number + 1,
+                    "{binder} / {total_binders}",
+                    binder = pair.binder_number + 1,
                     total_binders = self.binders.len()
                 ),
             );
 
-            let pages = stat(
-                icon::binder().size(12),
-                format!(
-                    "{page} / {pages_needed}",
-                    page = self.page + 1,
-                    pages_needed = self.binders.pages_needed(total_cards)
-                ),
-            );
+            let pages = {
+                stat(
+                    icon::binder().size(12),
+                    format!("{page} / {pages}", pages = pair.binder.pages),
+                )
+            };
 
-            let mode = pick_list(Mode::ALL, Some(self.mode), Message::ModeSelected)
+            let mode = pick_list(binder::Mode::ALL, Some(self.mode), Message::ModeSelected)
                 .padding([5, 10])
                 .text_size(12);
 
@@ -351,56 +364,35 @@ impl Binder {
             row![
                 controls,
                 horizontal_space(),
-                row![pokemon, binders, pages].spacing(30).align_y(Center)
+                row![progress, binders, pages].spacing(30).align_y(Center)
             ]
             .height(30)
             .align_y(Center)
             .spacing(20)
         };
 
-        let binder_page = |range: std::ops::Range<usize>| {
-            center_y(
-                grid(range.map(|i| {
-                    self.mode
-                        .card(i, collection, database)
-                        .map(|card| {
-                            item(
-                                card,
-                                self.images.get(&card.id),
-                                self.animations.get(&card.id),
-                                self.now,
-                                Source::Binder,
-                            )
-                        })
-                        .unwrap_or_else(|| placeholder(i))
-                }))
-                .columns(unit.columns)
-                .height(grid::aspect_ratio(734, 1024))
-                .spacing(10),
-            )
-            .into()
-        };
-
-        let left_page: Element<_> = if relative_page > 1 {
-            binder_page(offset - unit.cards_per_page()..offset)
-        } else {
-            center(
+        let left_page = match pair.left {
+            binder::Surface::Cover => center(
                 column![
                     text!("{name}'s\nCollection", name = collection.name.as_str())
                         .size(40)
                         .center(),
-                    text!("#{}", number + 1).size(20)
+                    text!("#{}", pair.binder_number + 1).size(20)
                 ]
                 .spacing(10)
                 .align_x(Center),
             )
-            .into()
+            .into(),
+            binder::Surface::Content(content) => {
+                self.page(pair.binder, content, collection, database)
+            }
         };
 
-        let right_page: Element<_> = if relative_page < unit.pages {
-            binder_page(offset..(offset + unit.cards_per_page()))
-        } else {
-            horizontal_space().into()
+        let right_page = match pair.right {
+            binder::Surface::Cover => horizontal_space().into(),
+            binder::Surface::Content(content) => {
+                self.page(pair.binder, content, collection, database)
+            }
         };
 
         let content = column![header, row![left_page, right_page].spacing(20)]
@@ -480,6 +472,35 @@ impl Binder {
             .into()
     }
 
+    fn page<'a>(
+        &'a self,
+        binder: Binder,
+        content: binder::Content,
+        collection: &Collection,
+        database: &'a Database,
+    ) -> Element<'a, Message> {
+        center_y(
+            grid(content.range.map(|i| {
+                self.mode
+                    .card(i, collection, database)
+                    .map(|card| {
+                        item(
+                            card,
+                            self.images.get(&card.id),
+                            self.animations.get(&card.id),
+                            self.now,
+                            Source::Binder,
+                        )
+                    })
+                    .unwrap_or_else(|| placeholder(i))
+            }))
+            .columns(binder.columns)
+            .height(grid::aspect_ratio(734, 1024))
+            .spacing(5),
+        )
+        .into()
+    }
+
     pub fn subscription(&self) -> Subscription<Message> {
         let hotkeys = keyboard::on_key_press(|key, modifiers| {
             use keyboard::key::{Key, Named};
@@ -487,6 +508,7 @@ impl Binder {
             Some(match key.as_ref() {
                 Key::Named(Named::ArrowLeft) if modifiers.is_empty() => Message::PreviousPage,
                 Key::Named(Named::ArrowRight) if modifiers.is_empty() => Message::NextPage,
+                Key::Named(Named::Escape) => Message::Close,
                 _ => None?,
             })
         });
@@ -576,174 +598,6 @@ fn placeholder<'a>(index: usize) -> Element<'a, Message> {
         bottom_right(text!("#{}", index + 1).size(10)).padding(5),
     )
     .into()
-}
-
-struct Set {
-    units: Vec<Unit>,
-}
-
-impl Set {
-    pub fn new() -> Self {
-        Self {
-            units: vec![
-                Unit {
-                    columns: 4,
-                    rows: 3,
-                    pages: 52,
-                },
-                Unit {
-                    columns: 4,
-                    rows: 3,
-                    pages: 52,
-                },
-            ],
-        }
-    }
-
-    pub fn pages_needed(&self, mut total_cards: usize) -> usize {
-        let mut pages = 0;
-
-        for unit in &self.units {
-            let needed_pages = total_cards / unit.cards_per_page();
-
-            if needed_pages < unit.pages {
-                pages += needed_pages.max(1);
-                break;
-            } else {
-                pages += unit.pages;
-                total_cards -= unit.capacity();
-            }
-        }
-
-        pages
-    }
-
-    pub fn open(&self, mut page: usize) -> Option<(&Unit, usize, usize, usize)> {
-        let mut offset = 0;
-
-        for (number, unit) in self.units.iter().enumerate() {
-            if page < unit.pages {
-                return Some((unit, number, page, offset + (page * unit.cards_per_page())));
-            } else {
-                offset += unit.capacity();
-                page -= unit.pages;
-            }
-        }
-
-        None
-    }
-
-    pub fn page(&self, mut position: usize) -> usize {
-        let mut page = 0;
-
-        for unit in &self.units {
-            if position < unit.capacity() {
-                return page + position / unit.cards_per_page();
-            } else {
-                position -= unit.capacity();
-                page += unit.pages;
-            }
-        }
-
-        page
-    }
-
-    fn len(&self) -> usize {
-        self.units.len()
-    }
-}
-
-impl Default for Set {
-    fn default() -> Self {
-        Set::new()
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-struct Unit {
-    columns: usize,
-    rows: usize,
-    pages: usize,
-}
-
-impl Unit {
-    pub fn cards_per_page(self) -> usize {
-        self.columns * self.rows
-    }
-
-    pub fn capacity(self) -> usize {
-        self.cards_per_page() * self.pages
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mode {
-    GottaCatchEmAll,
-}
-
-impl Mode {
-    const ALL: &[Self] = &[Self::GottaCatchEmAll];
-
-    fn total_cards(self, database: &Database) -> usize {
-        match self {
-            Self::GottaCatchEmAll => database.pokemon.len(),
-        }
-    }
-
-    fn progress(self, collection: &Collection, database: &Database) -> f32 {
-        match self {
-            Self::GottaCatchEmAll => {
-                collection.total_pokemon(database) as f32 / database.pokemon.len() as f32 * 100.0
-            }
-        }
-    }
-
-    fn card<'a>(
-        self,
-        index: usize,
-        collection: &Collection,
-        database: &'a Database,
-    ) -> Option<&'a Card> {
-        match self {
-            Mode::GottaCatchEmAll => {
-                let pokemon = database.pokemon.values().get(index)?;
-
-                let card = collection
-                    .cards
-                    .keys()
-                    .filter_map(|card| {
-                        let card = database.cards.get(card)?;
-
-                        if card.pokedex.contains(&pokemon.id) {
-                            Some(card)
-                        } else {
-                            None
-                        }
-                    })
-                    .next()?;
-
-                Some(card)
-            }
-        }
-    }
-
-    fn position(self, card: &card::Id, database: &Database) -> Option<usize> {
-        match self {
-            Mode::GottaCatchEmAll => {
-                let card = database.cards.get(&card)?;
-
-                card.pokedex.first().copied().map(pokemon::Id::number)
-            }
-        }
-    }
-}
-
-impl fmt::Display for Mode {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(match self {
-            Mode::GottaCatchEmAll => "Gotta Catch 'Em All",
-        })
-    }
 }
 
 struct AnimationSet {

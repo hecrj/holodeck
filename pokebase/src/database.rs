@@ -275,6 +275,10 @@ impl Database {
             let mut matches = Vec::new();
 
             for card in database.cards.values().iter().rev() {
+                if card.name.keys().eq([&Locale("id".to_owned())]) {
+                    continue;
+                }
+
                 if card
                     .name
                     .values()

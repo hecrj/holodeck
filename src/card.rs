@@ -61,19 +61,22 @@ impl Image {
                         .as_str()
                         .chars()
                         .take_while(|c| !c.is_digit(10))
-                        .filter(|&c| c != '.')
                         .collect();
 
                     let number = &card.set.as_str()[prefix.len()..];
 
-                    format!("{prefix}{}", number.trim_start_matches('0'))
+                    format!(
+                        "{}{}",
+                        prefix.replace(".", "pt"),
+                        number.trim_start_matches('0').replace(".", "pt")
+                    )
                 };
 
                 let number = card
                     .id
                     .as_str()
-                    .split("-")
-                    .last()
+                    .rsplit("-")
+                    .next()
                     .unwrap_or(card.id.as_str())
                     .trim_start_matches('0');
 
@@ -108,17 +111,12 @@ impl Image {
                 let url = format!(
                     "https://assets.tcgdex.net/{locale}/{series}/{set}/{number}/high.png",
                     series = set.series.as_str(),
-                    set = card
-                        .set
-                        .as_str()
-                        .chars()
-                        .filter(|&c| c != '.')
-                        .collect::<String>(),
+                    set = card.set.as_str(),
                     number = card
                         .id
                         .as_str()
-                        .split("-")
-                        .last()
+                        .rsplit("-")
+                        .next()
                         .unwrap_or(card.id.as_str())
                 );
 

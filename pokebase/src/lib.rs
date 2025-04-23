@@ -1,10 +1,10 @@
 pub mod card;
+pub mod database;
 pub mod locale;
 pub mod pokemon;
 pub mod series;
 pub mod set;
 
-mod database;
 mod map;
 
 pub use card::Card;

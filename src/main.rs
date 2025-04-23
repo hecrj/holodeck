@@ -1,5 +1,6 @@
 use pokebase;
 
+mod card;
 mod collection;
 mod icon;
 mod screen;
@@ -22,6 +23,7 @@ pub fn main() -> iced::Result {
         .subscription(Pokedeck::subscription)
         .theme(Pokedeck::theme)
         .font(icon::FONT)
+        .default_font(Font::MONOSPACE)
         .run()
 }
 
@@ -91,18 +93,20 @@ impl Pokedeck {
             }
             Message::Binder(message) => {
                 let State::Ready {
+                    database,
                     screen:
                         Screen::Collecting {
                             collection,
                             screen: screen::Collecting::Binder(binder),
                         },
-                    ..
                 } = &mut self.state
                 else {
                     return Task::none();
                 };
 
-                binder.update(message, collection).map(Message::Binder)
+                binder
+                    .update(message, collection, database)
+                    .map(Message::Binder)
             }
             Message::OpenBinder => {
                 let State::Ready {
@@ -132,7 +136,7 @@ impl Pokedeck {
 
     fn view(&self) -> Element<Message> {
         match &self.state {
-            State::Loading => center(text("Loading...").font(Font::MONOSPACE)).into(),
+            State::Loading => center(text("Loading...")).into(),
             State::Ready { database, screen } => match screen {
                 Screen::Welcome(welcome) => welcome.view(database).map(Message::Welcome),
                 Screen::Collecting { collection, screen } => {
@@ -148,7 +152,7 @@ impl Pokedeck {
                     .into_iter()
                     .map(|(label, icon, on_click, is_active)| {
                         button(
-                            row![icon.size(14), text(label).size(14).font(Font::MONOSPACE)]
+                            row![icon.size(14), text(label).size(14)]
                                 .spacing(10)
                                 .align_y(Center),
                         )
@@ -185,7 +189,7 @@ impl Pokedeck {
                         }
                     };
 
-                    column![container(screen).height(Fill).padding(10), navbar].into()
+                    column![container(screen).height(Fill), navbar].into()
                 }
             },
         }

@@ -1354,6 +1354,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "function"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8360052f2ee38e71313180a9e9007a0db5a6ca9e526196b155c8ad1bd5d5060c"
+
+[[package]]
 name = "futures"
 version = "0.3.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3318,6 +3324,7 @@ name = "pokebase"
 version = "0.1.0"
 dependencies = [
  "anywho",
+ "dirs",
  "ron",
  "serde",
  "serde_json",
@@ -3329,13 +3336,18 @@ name = "pokedeck"
 version = "0.1.0"
 dependencies = [
  "anywho",
+ "bytes",
  "dirs",
+ "function",
  "iced",
  "iced_fontello",
+ "image",
  "log",
  "pokebase",
+ "reqwest",
  "ron",
  "serde",
+ "thiserror 1.0.69",
  "tokio",
  "tracing-subscriber",
 ]

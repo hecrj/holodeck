@@ -1,8 +1,8 @@
 use iced::widget::{canvas, text};
-use iced::{Element, Font, Pixels};
+use iced::{Element, Pixels};
 
 pub fn logo<'a, Message>(size: impl Into<Pixels>) -> Element<'a, Message> {
-    text("Pokédeck").font(Font::MONOSPACE).size(size).into()
+    text("Pokédeck").size(size).into()
 }
 
 pub fn pokeball<'a, Message: 'a>(size: impl Into<Pixels>) -> Element<'a, Message> {

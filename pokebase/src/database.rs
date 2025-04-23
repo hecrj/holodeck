@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 use std::path::Path;
+use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct Database {
@@ -145,7 +146,7 @@ impl Database {
                 let set = sets.entry(localized_set.id.clone()).or_insert_with(|| Set {
                     id: set::Id(localized_set.id),
                     name: BTreeMap::new(),
-                    series: set::Id(localized_set.serie.id),
+                    series: series::Id(localized_set.serie.id),
                     release_date: localized_set.release_date,
                     total_cards: localized_set.card_count.total,
                 });
@@ -263,6 +264,34 @@ impl Database {
             cards: Map::new(cards, |card| card.id.clone()),
         })
     }
+
+    pub fn search_cards<'a>(&self, query: &str) -> impl Future<Output = Search<Card>> + 'a {
+        use tokio::task;
+
+        let database = self.clone();
+        let query = query.to_lowercase();
+
+        async move {
+            let mut matches = Vec::new();
+
+            for card in database.cards.values() {
+                if card
+                    .name
+                    .values()
+                    .any(|name| name.as_str().to_lowercase().contains(&query))
+                {
+                    matches.push(card.clone());
+                }
+
+                // Avoid blocking
+                task::yield_now().await;
+            }
+
+            Search {
+                matches: Arc::from(matches),
+            }
+        }
+    }
 }
 
 fn parse_type(type_: String) -> Result<card::Type, String> {
@@ -344,6 +373,26 @@ impl fmt::Debug for Database {
             .field("series", &self.series.len())
             .field("sets", &self.sets.len())
             .field("cards", &self.cards.len())
+            .finish()
+    }
+}
+
+pub struct Search<T> {
+    pub matches: Arc<[T]>,
+}
+
+impl<T> Clone for Search<T> {
+    fn clone(&self) -> Self {
+        Self {
+            matches: self.matches.clone(),
+        }
+    }
+}
+
+impl<T> fmt::Debug for Search<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Search")
+            .field("matches", &self.matches.len())
             .finish()
     }
 }

@@ -3,7 +3,7 @@ use crate::pokebase::Database;
 use crate::widget::logo;
 
 use iced::widget::{button, center, column, container, horizontal_space, row, text, text_input};
-use iced::{Center, Element, Fill, Font, Task};
+use iced::{Center, Element, Fill, Task};
 
 pub struct Welcome {
     state: State,
@@ -97,13 +97,10 @@ impl Welcome {
             )
             .into(),
             State::Creation { name, collections } => {
-                let welcome = container(
-                    text(
-                        "Hello there! Welcome to the world of Pokémon!\n\
+                let welcome = container(text(
+                    "Hello there! Welcome to the world of Pokémon!\n\
                         First, what is your name?",
-                    )
-                    .font(Font::MONOSPACE),
-                )
+                ))
                 .width(Fill)
                 .padding(10)
                 .style(container::bordered_box);
@@ -124,11 +121,7 @@ impl Welcome {
 
                 column![
                     welcome,
-                    column![
-                        text("Your name").font(Font::MONOSPACE),
-                        row![name_input, submit].spacing(10)
-                    ]
-                    .spacing(10)
+                    column![text("Your name"), row![name_input, submit].spacing(10)].spacing(10)
                 ]
                 .spacing(30)
                 .into()
@@ -147,15 +140,13 @@ impl Welcome {
 }
 
 fn card<'a>(collection: &'a Collection, database: &Database) -> Element<'a, Message> {
-    let name = text(collection.name.as_str())
-        .font(Font::MONOSPACE)
-        .size(20);
+    let name = text(collection.name.as_str()).size(20);
 
     let total_cards = collection.total_cards();
     let unique_cards = collection.unique_cards();
     let total_pokemon = collection.total_pokemon(database);
 
-    let stat = |stat| text(stat).font(Font::MONOSPACE).size(14);
+    let stat = |stat| text(stat).size(14);
 
     let progress = (total_pokemon as f32 / database.pokemon.len() as f32) * 100.0;
 

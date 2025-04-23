@@ -14,10 +14,15 @@ tokio.workspace = true
 tokio.features = ["fs"]
 
 anywho.workspace = true
+bytes.workspace = true
 dirs.workspace = true
+function.workspace = true
+image.workspace = true
 log.workspace = true
 pokebase.workspace = true
+reqwest.workspace = true
 ron.workspace = true
+thiserror.workspace = true
 tracing-subscriber.workspace = true
 
 [build-dependencies]
@@ -30,13 +35,18 @@ members = ["pokebase"]
 pokebase.path = "./pokebase"
 
 anywho = "0.1.0"
+bytes = "1"
 dirs = "6"
+function = "0.2"
 iced = "0.14.0-dev"
 iced_fontello = "0.13"
+image = "0.25"
 log = "0.4"
+reqwest = "0.12"
 ron = "0.10"
 serde = "1"
 serde_json = "1"
+thiserror = "1"
 tokio = "1"
 tracing-subscriber = "0.3"
 

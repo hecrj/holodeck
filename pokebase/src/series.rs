@@ -11,3 +11,9 @@ pub struct Series {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct Id(pub(crate) String);
+
+impl Id {
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}

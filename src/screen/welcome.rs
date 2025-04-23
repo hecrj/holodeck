@@ -1,8 +1,12 @@
+use crate::binder;
 use crate::collection::{self, Collection};
 use crate::pokebase::Database;
 use crate::widget::logo;
 
-use iced::widget::{button, center, column, container, horizontal_space, row, text, text_input};
+use iced::widget::{
+    bottom_center, button, center, column, container, horizontal_space, row, stack, text,
+    text_input,
+};
 use iced::{Center, Element, Fill, Task};
 
 pub struct Welcome {
@@ -128,13 +132,16 @@ impl Welcome {
             }
         };
 
-        center(
-            column![logo(40), content]
-                .spacing(20)
-                .align_x(Center)
-                .max_width(480),
-        )
-        .padding(20)
+        stack![
+            center(
+                column![logo(40), content]
+                    .spacing(20)
+                    .align_x(Center)
+                    .max_width(480),
+            )
+            .padding(20),
+            legal_disclaimer()
+        ]
         .into()
     }
 }
@@ -148,7 +155,7 @@ fn card<'a>(collection: &'a Collection, database: &Database) -> Element<'a, Mess
 
     let stat = |stat| text(stat).size(14);
 
-    let progress = (total_pokemon as f32 / database.pokemon.len() as f32) * 100.0;
+    let progress = binder::Mode::GottaCatchEmAll.progress(collection, database);
 
     let badge = stat(
         match progress as u32 {
@@ -197,5 +204,22 @@ fn card<'a>(collection: &'a Collection, database: &Database) -> Element<'a, Mess
     .on_press_with(|| Message::Select(collection.clone()))
     .padding(0)
     .style(button::text)
+    .into()
+}
+
+fn legal_disclaimer<'a>() -> Element<'a, Message> {
+    bottom_center(
+        text(
+            "This application is not affiliated with, endorsed, sponsored, or \
+            approved by Nintendo, Game Freak, The Pokémon Company, or any other \
+            official TCG publisher.\n\
+            All trademarks and copyrighted materials are the property of their \
+            respective owners.",
+        )
+        .center()
+        .width(Fill)
+        .size(8),
+    )
+    .padding(10)
     .into()
 }

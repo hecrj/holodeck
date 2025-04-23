@@ -467,7 +467,7 @@ impl Binders {
                         .style(button::text),
                 )
                 .align_right(Fill)
-                .padding(10)
+                .padding(5)
             }))
             .into()
     }

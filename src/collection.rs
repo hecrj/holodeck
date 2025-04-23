@@ -110,5 +110,5 @@ fn collections_path() -> PathBuf {
 }
 
 fn data_dir() -> PathBuf {
-    dirs::data_dir().unwrap_or_default().join("pokedeck")
+    dirs::data_dir().unwrap_or_default().join("holobyte")
 }

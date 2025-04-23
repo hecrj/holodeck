@@ -167,7 +167,7 @@ impl Image {
 fn cache_dir() -> PathBuf {
     dirs::cache_dir()
         .unwrap_or_default()
-        .join("pokedeck")
+        .join("holobyte")
         .join("cards")
 }
 

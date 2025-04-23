@@ -21,16 +21,16 @@ use iced::{Center, Element, Fill, Font, Subscription, Task, Theme};
 pub fn main() -> iced::Result {
     tracing_subscriber::fmt::init();
 
-    iced::application(Pokedeck::new, Pokedeck::update, Pokedeck::view)
-        .subscription(Pokedeck::subscription)
-        .theme(Pokedeck::theme)
+    iced::application(Holobyte::new, Holobyte::update, Holobyte::view)
+        .subscription(Holobyte::subscription)
+        .theme(Holobyte::theme)
         .font(icon::FONT)
         .default_font(Font::MONOSPACE)
         .window_size((1700.0, 950.0))
         .run()
 }
 
-struct Pokedeck {
+struct Holobyte {
     state: State,
 }
 
@@ -48,7 +48,7 @@ enum Message {
     Browse,
 }
 
-impl Pokedeck {
+impl Holobyte {
     fn new() -> (Self, Task<Message>) {
         (
             Self {

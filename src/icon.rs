@@ -1,10 +1,10 @@
 // Generated automatically by iced_fontello at build time.
-// Do not edit manually. Source: ../fonts/pokedeck-icons.toml
-// ab5c74f9a440949c310f422142625f565eb1379992ad189733a4c3e8bcf5e446
+// Do not edit manually. Source: ../fonts/holobyte-icons.toml
+// cbe48c2c52e3c4cc25a177eaa832e892250532b0ed3c63337a7133c508b21fbd
 use iced::widget::{text, Text};
 use iced::Font;
 
-pub const FONT: &[u8] = include_bytes!("../fonts/pokedeck-icons.ttf");
+pub const FONT: &[u8] = include_bytes!("../fonts/holobyte-icons.ttf");
 
 pub fn add<'a>() -> Text<'a> {
     icon("\u{2B}")
@@ -27,5 +27,5 @@ pub fn cancel<'a>() -> Text<'a> {
 }
 
 fn icon(codepoint: &str) -> Text<'_> {
-    text(codepoint).font(Font::with_name("pokedeck-icons"))
+    text(codepoint).font(Font::with_name("holobyte-icons"))
 }

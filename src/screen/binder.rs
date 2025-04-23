@@ -2,16 +2,21 @@ use crate::Collection;
 use crate::card;
 use crate::icon;
 use crate::pokebase::database;
+use crate::pokebase::pokemon;
 use crate::pokebase::{Card, Database};
 use crate::widget::pokeball;
 
+use iced::animation;
+use iced::border;
 use iced::keyboard;
 use iced::task;
+use iced::time::Instant;
 use iced::widget::{
-    button, center, center_x, center_y, column, container, grid, horizontal_space, image, opaque,
-    pick_list, pop, row, scrollable, stack, text, text_input,
+    bottom_right, button, center, center_x, center_y, column, container, grid, horizontal_space,
+    hover, image, mouse_area, opaque, pick_list, pop, row, scrollable, stack, text, text_input,
 };
-use iced::{Center, Color, ContentFit, Element, Fill, Shrink, Subscription, Task};
+use iced::window;
+use iced::{Animation, Center, Color, ContentFit, Element, Fill, Shrink, Subscription, Task};
 
 use function::Binary;
 use std::collections::HashMap;
@@ -24,6 +29,8 @@ pub struct Binder {
     mode: Mode,
     state: State,
     images: HashMap<card::Id, Image>,
+    animations: HashMap<card::Id, AnimationSet>,
+    now: Instant,
 }
 
 enum Image {
@@ -38,6 +45,7 @@ enum State {
         search: String,
         matches: Arc<[Card]>,
         task: Option<task::Handle>,
+        animations: HashMap<card::Id, AnimationSet>,
     },
 }
 
@@ -50,8 +58,18 @@ pub enum Message {
     SearchChanged(String),
     SearchFinished(database::Search<Card>),
     Close,
-    CardShown(card::Id),
+    CardShown(card::Id, Source),
+    CardHovered(card::Id, Source, bool),
+    CardChosen(card::Id, Source),
     ImageFetched(card::Id, Result<card::Image, anywho::Error>),
+    CollectionSaved(Result<(), anywho::Error>),
+    Tick(Instant),
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Source {
+    Binder,
+    Search,
 }
 
 impl Binder {
@@ -62,13 +80,15 @@ impl Binder {
             mode: Mode::GottaCatchEmAll,
             state: State::Idle,
             images: HashMap::new(),
+            animations: HashMap::new(),
+            now: Instant::now(),
         }
     }
 
     pub fn update(
         &mut self,
         message: Message,
-        _collection: &mut Collection,
+        collection: &mut Collection,
         database: &Database,
     ) -> Task<Message> {
         match message {
@@ -78,12 +98,31 @@ impl Binder {
                 Task::none()
             }
             Message::PreviousPage => {
-                self.page = self.page.saturating_sub(2);
+                let State::Idle = self.state else {
+                    return Task::none();
+                };
+
+                let new_page = self.page.saturating_sub(2);
+
+                if new_page != self.page {
+                    self.page = new_page;
+                    self.animations.clear();
+                }
 
                 Task::none()
             }
             Message::NextPage => {
-                self.page = (self.page + 2).min(self.binders.total_pages() - 1);
+                let State::Idle = self.state else {
+                    return Task::none();
+                };
+
+                let new_page = (self.page + 2)
+                    .min(self.binders.pages_needed(self.mode.total_cards(database)) - 1);
+
+                if new_page != self.page {
+                    self.page = new_page;
+                    self.animations.clear();
+                }
 
                 Task::none()
             }
@@ -94,6 +133,7 @@ impl Binder {
                 self.state = State::Adding {
                     search: String::new(),
                     matches: Arc::new([]),
+                    animations: HashMap::new(),
                     task: Some(handle.abort_on_drop()),
                 };
 
@@ -135,12 +175,23 @@ impl Binder {
 
                 Task::none()
             }
-            Message::CardShown(card) => {
+            Message::CardShown(card, source) => {
                 let Some(card) = database.cards.get(&card) else {
                     return Task::none();
                 };
 
                 if self.images.contains_key(&card.id) {
+                    match source {
+                        Source::Binder => {
+                            self.animations.insert(card.id.clone(), AnimationSet::new());
+                        }
+                        Source::Search => {
+                            if let State::Adding { animations, .. } = &mut self.state {
+                                animations.insert(card.id.clone(), AnimationSet::new());
+                            }
+                        }
+                    }
+
                     return Task::none();
                 }
 
@@ -151,9 +202,48 @@ impl Binder {
                     Message::ImageFetched.with(card.id.clone()),
                 )
             }
+            Message::CardHovered(card, source, hovered) => {
+                match source {
+                    Source::Binder => {
+                        if let Some(animations) = self.animations.get_mut(&card) {
+                            animations.zoom.go_mut(hovered);
+                        }
+                    }
+                    Source::Search => {
+                        if let State::Adding { animations, .. } = &mut self.state {
+                            if let Some(animations) = animations.get_mut(&card) {
+                                animations.zoom.go_mut(hovered);
+                            }
+                        }
+                    }
+                }
+
+                Task::none()
+            }
+            Message::CardChosen(card, source) => match source {
+                Source::Binder => {
+                    // TODO: Open card details
+                    Task::none()
+                }
+                Source::Search => {
+                    self.state = State::Idle;
+
+                    if let Some(position) = self.mode.position(&card, database) {
+                        self.page = self.binders.page(position);
+
+                        if self.page % 2 != 0 {
+                            self.page = self.page.saturating_sub(1);
+                        }
+                    }
+
+                    collection.add(card);
+
+                    Task::perform(collection.save(), Message::CollectionSaved).discard()
+                }
+            },
             Message::ImageFetched(card, Ok(image)) => {
                 let _ = self.images.insert(
-                    card,
+                    card.clone(),
                     Image::Loaded(image::Handle::from_rgba(
                         image.width,
                         image.height,
@@ -161,12 +251,29 @@ impl Binder {
                     )),
                 );
 
+                if let State::Adding { animations, .. } = &mut self.state {
+                    animations.insert(card.clone(), AnimationSet::new());
+                }
+
+                self.animations.insert(card, AnimationSet::new());
+
+                Task::none()
+            }
+            Message::CollectionSaved(Ok(_)) => Task::none(),
+            Message::Tick(now) => {
+                self.now = now;
+
                 Task::none()
             }
             Message::ImageFetched(card, Err(error)) => {
                 log::error!("{error}");
 
                 let _ = self.images.insert(card, Image::Errored);
+
+                Task::none()
+            }
+            Message::CollectionSaved(Err(error)) => {
+                log::error!("{error}");
 
                 Task::none()
             }
@@ -256,8 +363,16 @@ impl Binder {
                 grid(range.map(|i| {
                     self.mode
                         .card(i, collection, database)
-                        .map(|card| item(card, self.images.get(&card.id)))
-                        .unwrap_or_else(placeholder)
+                        .map(|card| {
+                            item(
+                                card,
+                                self.images.get(&card.id),
+                                self.animations.get(&card.id),
+                                self.now,
+                                Source::Binder,
+                            )
+                        })
+                        .unwrap_or_else(|| placeholder(i))
                 }))
                 .columns(unit.columns)
                 .height(grid::aspect_ratio(734, 1024))
@@ -267,7 +382,7 @@ impl Binder {
         };
 
         let left_page: Element<_> = if relative_page > 1 {
-            binder_page(offset..offset + unit.cards_per_page())
+            binder_page(offset - unit.cards_per_page()..offset)
         } else {
             center(
                 column![
@@ -283,7 +398,7 @@ impl Binder {
         };
 
         let right_page: Element<_> = if relative_page < unit.pages {
-            binder_page((offset + unit.cards_per_page())..(offset + 2 * unit.cards_per_page()))
+            binder_page(offset..(offset + unit.cards_per_page()))
         } else {
             horizontal_space().into()
         };
@@ -295,7 +410,10 @@ impl Binder {
         let overlay: Option<Element<'_, Message>> = match &self.state {
             State::Idle => None,
             State::Adding {
-                search, matches, ..
+                search,
+                matches,
+                animations,
+                ..
             } => {
                 let input = container(
                     text_input("Search for your card...", search)
@@ -316,12 +434,15 @@ impl Binder {
                         .into()
                     } else {
                         scrollable(
-                            grid(
-                                matches
-                                    .iter()
-                                    .take(100)
-                                    .map(|card| item(card, self.images.get(&card.id))),
-                            )
+                            grid(matches.iter().take(100).map(|card| {
+                                item(
+                                    card,
+                                    self.images.get(&card.id),
+                                    animations.get(&card.id),
+                                    self.now,
+                                    Source::Search,
+                                )
+                            }))
                             .fluid(300)
                             .height(grid::aspect_ratio(734, 1024))
                             .spacing(10),
@@ -360,7 +481,7 @@ impl Binder {
     }
 
     pub fn subscription(&self) -> Subscription<Message> {
-        keyboard::on_key_press(|key, modifiers| {
+        let hotkeys = keyboard::on_key_press(|key, modifiers| {
             use keyboard::key::{Key, Named};
 
             Some(match key.as_ref() {
@@ -368,31 +489,93 @@ impl Binder {
                 Key::Named(Named::ArrowRight) if modifiers.is_empty() => Message::NextPage,
                 _ => None?,
             })
-        })
+        });
+
+        let animation = {
+            let is_animating = |animations: &HashMap<card::Id, AnimationSet>| {
+                animations
+                    .values()
+                    .any(|animation| animation.is_animating(self.now))
+            };
+
+            let is_animating = if let State::Adding { animations, .. } = &self.state {
+                is_animating(&self.animations) || is_animating(animations)
+            } else {
+                is_animating(&self.animations)
+            };
+
+            if is_animating {
+                window::frames().map(Message::Tick)
+            } else {
+                Subscription::none()
+            }
+        };
+
+        Subscription::batch([hotkeys, animation])
     }
 }
 
-fn item<'a>(card: &'a Card, thumbnail: Option<&'a Image>) -> Element<'a, Message> {
-    if let Some(Image::Loaded(handle)) = thumbnail {
-        image(handle)
-            .width(Fill)
-            .height(Fill)
-            .content_fit(ContentFit::Cover)
+fn item<'a>(
+    card: &'a Card,
+    thumbnail: Option<&'a Image>,
+    animations: Option<&'a AnimationSet>,
+    now: Instant,
+    source: Source,
+) -> Element<'a, Message> {
+    let item: Element<_> = match thumbnail {
+        Some(Image::Loaded(handle)) => {
+            let (opacity, scale) = if let Some(animations) = animations {
+                (
+                    animations.fade_in.interpolate(0.0, 1.0, now),
+                    animations.zoom.interpolate(1.0, 1.1, now),
+                )
+            } else {
+                (0.0, 1.0)
+            };
+
+            mouse_area(
+                button(
+                    image(handle)
+                        .width(Fill)
+                        .height(Fill)
+                        .content_fit(ContentFit::Cover)
+                        .opacity(opacity)
+                        .scale(scale),
+                )
+                .on_press_with(move || Message::CardChosen(card.id.clone(), source))
+                .padding(0)
+                .style(button::text),
+            )
+            .on_enter(Message::CardHovered(card.id.clone(), source, true))
+            .on_exit(Message::CardHovered(card.id.clone(), source, false))
             .into()
-    } else {
-        pop(container(center(
+        }
+        Some(Image::Errored) => container(center(
             text(card.name.get("en").map(String::as_str).unwrap_or("Unknown"))
                 .center()
                 .size(14),
         ))
-        .style(container::dark))
-        .on_show(|_size| Message::CardShown(card.id.clone()))
+        .style(container::dark)
+        .into(),
+        _ => horizontal_space().into(),
+    };
+
+    pop(item)
+        .key(card.id.as_str())
+        .on_show(move |_size| Message::CardShown(card.id.clone(), source))
         .into()
-    }
 }
 
-fn placeholder<'a>() -> Element<'a, Message> {
-    container(horizontal_space()).style(container::dark).into()
+fn placeholder<'a>(index: usize) -> Element<'a, Message> {
+    hover(
+        container(horizontal_space()).style(|theme| {
+            let style = container::dark(theme);
+
+            style.border(border::rounded(6))
+        }),
+        bottom_right(text!("#{}", index + 1).size(10)).padding(5),
+    )
+    .into()
 }
 
 struct Set {
@@ -415,10 +598,6 @@ impl Set {
                 },
             ],
         }
-    }
-
-    pub fn total_pages(&self) -> usize {
-        self.units.iter().map(|unit| unit.pages).sum()
     }
 
     pub fn pages_needed(&self, mut total_cards: usize) -> usize {
@@ -452,6 +631,21 @@ impl Set {
         }
 
         None
+    }
+
+    pub fn page(&self, mut position: usize) -> usize {
+        let mut page = 0;
+
+        for unit in &self.units {
+            if position < unit.capacity() {
+                return page + position / unit.cards_per_page();
+            } else {
+                position -= unit.capacity();
+                page += unit.pages;
+            }
+        }
+
+        page
     }
 
     fn len(&self) -> usize {
@@ -499,7 +693,7 @@ impl Mode {
     fn progress(self, collection: &Collection, database: &Database) -> f32 {
         match self {
             Self::GottaCatchEmAll => {
-                collection.total_pokemon(database) as f32 / database.pokemon.len() as f32
+                collection.total_pokemon(database) as f32 / database.pokemon.len() as f32 * 100.0
             }
         }
     }
@@ -532,6 +726,16 @@ impl Mode {
             }
         }
     }
+
+    fn position(self, card: &card::Id, database: &Database) -> Option<usize> {
+        match self {
+            Mode::GottaCatchEmAll => {
+                let card = database.cards.get(&card)?;
+
+                card.pokedex.first().copied().map(pokemon::Id::number)
+            }
+        }
+    }
 }
 
 impl fmt::Display for Mode {
@@ -539,5 +743,26 @@ impl fmt::Display for Mode {
         f.write_str(match self {
             Mode::GottaCatchEmAll => "Gotta Catch 'Em All",
         })
+    }
+}
+
+struct AnimationSet {
+    fade_in: Animation<bool>,
+    zoom: Animation<bool>,
+}
+
+impl AnimationSet {
+    fn new() -> Self {
+        Self {
+            fade_in: Animation::new(false)
+                .easing(animation::Easing::EaseInOut)
+                .slow()
+                .go(true),
+            zoom: Animation::new(false).quick(),
+        }
+    }
+
+    fn is_animating(&self, at: Instant) -> bool {
+        self.fade_in.is_animating(at) || self.zoom.is_animating(at)
     }
 }

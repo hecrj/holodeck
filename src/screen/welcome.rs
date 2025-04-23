@@ -167,7 +167,10 @@ fn card<'a>(collection: &'a Collection, database: &Database) -> Element<'a, Mess
     let stats = row![
         stat(format!("{total_pokemon} Pokémon")),
         stat(format!("{unique_cards} unique")),
-        stat(format!("{total_cards} cards")),
+        stat(format!(
+            "{total_cards} card{}",
+            if total_cards == 1 { "" } else { "s" }
+        )),
     ]
     .spacing(20);
 

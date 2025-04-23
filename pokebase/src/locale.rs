@@ -7,6 +7,12 @@ use std::collections::BTreeMap;
 #[serde(transparent)]
 pub struct Locale(pub(crate) String);
 
+impl Locale {
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
 pub type Map<T = String> = BTreeMap<Locale, T>;
 
 impl Borrow<str> for Locale {

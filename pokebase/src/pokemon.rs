@@ -18,4 +18,10 @@ impl Pokemon {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(transparent)]
-pub struct Id(pub(crate) u32);
+pub struct Id(pub(crate) usize);
+
+impl Id {
+    pub fn number(self) -> usize {
+        self.0
+    }
+}

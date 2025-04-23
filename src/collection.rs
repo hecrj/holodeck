@@ -58,12 +58,20 @@ impl Collection {
         *amount += 1;
     }
 
-    pub fn save(&self) -> impl Future<Output = Result<(), anywho::Error>> + '_ {
+    pub fn save<'a>(&self) -> impl Future<Output = Result<(), anywho::Error>> + 'a {
         let collection = self.clone();
 
         async move {
             let mut collections = Self::list().await?;
-            collections.push(collection);
+
+            if let Some(old) = collections
+                .iter_mut()
+                .find(|candidate| candidate.name == collection.name)
+            {
+                *old = collection;
+            } else {
+                collections.push(collection);
+            }
 
             fs::create_dir_all(data_dir()).await?;
 

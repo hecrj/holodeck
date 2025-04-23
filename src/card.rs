@@ -1,7 +1,7 @@
 pub use crate::pokebase::card::{Card, Id};
 
-use crate::pokebase::Database;
 use crate::pokebase::set;
+use crate::pokebase::{Database, Locale};
 
 use iced::futures::TryFutureExt;
 
@@ -61,6 +61,7 @@ impl Image {
                         .as_str()
                         .chars()
                         .take_while(|c| !c.is_digit(10))
+                        .filter(|&c| c != '.')
                         .collect();
 
                     let number = &card.set.as_str()[prefix.len()..];
@@ -96,11 +97,23 @@ impl Image {
                     return Err(Error::SetNotFound(card.set.clone()).into());
                 };
 
+                let locale = if card.name.contains_key("en") {
+                    "en" // TODO
+                } else if card.name.contains_key("ja") {
+                    "ja"
+                } else {
+                    card.name.keys().next().map(Locale::as_str).unwrap_or("en")
+                };
+
                 let url = format!(
                     "https://assets.tcgdex.net/{locale}/{series}/{set}/{number}/high.png",
-                    locale = "en", // TODO
                     series = set.series.as_str(),
-                    set = card.set.as_str(),
+                    set = card
+                        .set
+                        .as_str()
+                        .chars()
+                        .filter(|&c| c != '.')
+                        .collect::<String>(),
                     number = card
                         .id
                         .as_str()
@@ -116,10 +129,14 @@ impl Image {
                 Ok::<_, anywho::Error>(request.send().await?.error_for_status()?.bytes().await?)
             };
 
+            // Rationale on the order of image fetching:
+            // 1. Cache - fast and avoids rate limits in the long term.
+            // 2. PokemonTCG - Highest quality, but English only. 20,000 requests/day with an API key.
+            // 3. TCGDex - Lower quality, but supports multiple locales. Rate limiting unknown (?).
             let fetch = fetch_from_cache
                 .or_else(|_: anywho::Error| fetch_from_pokemontcg)
                 .or_else(|error| {
-                    log::error!("{error}");
+                    log::warn!("{error}");
 
                     fetch_from_tcgdex
                 });
@@ -132,21 +149,19 @@ impl Image {
             }
 
             // Decode image as RGBA in a background blocking thread
-            let image = task::spawn_blocking(move || {
+            task::spawn_blocking(move || {
                 let image = image::ImageReader::new(io::Cursor::new(bytes))
                     .with_guessed_format()?
                     .decode()?
                     .to_rgba8();
 
-                Ok::<_, anywho::Error>(image)
+                Ok(Image {
+                    width: image.width(),
+                    height: image.height(),
+                    rgba: Bytes::from(image.into_raw()),
+                })
             })
-            .await??;
-
-            Ok(Image {
-                width: image.width(),
-                height: image.height(),
-                rgba: Bytes::from(image.into_raw()),
-            })
+            .await?
         }
     }
 }

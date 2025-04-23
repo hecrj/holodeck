@@ -274,7 +274,7 @@ impl Database {
         async move {
             let mut matches = Vec::new();
 
-            for card in database.cards.values() {
+            for card in database.cards.values().iter().rev() {
                 if card
                     .name
                     .values()
@@ -360,7 +360,7 @@ fn load_pokemon() -> Result<Vec<Pokemon>, anywho::Error> {
         .into_iter()
         .enumerate()
         .map(|(i, name)| Pokemon {
-            id: pokemon::Id(i as u32 + 1),
+            id: pokemon::Id(i + 1),
             name: locale::Map::from_iter([(Locale("en".to_owned()), name)]),
         })
         .collect())

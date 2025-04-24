@@ -131,6 +131,10 @@ impl Binders {
                 Task::none()
             }
             Message::Add => {
+                if let State::Adding { .. } = &self.state {
+                    return Task::none();
+                }
+
                 let (search_cards, handle) =
                     Task::perform(database.search_cards(""), Message::SearchFinished).abortable();
 
@@ -511,6 +515,7 @@ impl Binders {
                 Key::Named(Named::ArrowLeft) if modifiers.is_empty() => Message::PreviousPage,
                 Key::Named(Named::ArrowRight) if modifiers.is_empty() => Message::NextPage,
                 Key::Named(Named::Escape) => Message::Close,
+                Key::Character("a") if modifiers.is_empty() => Message::Add,
                 _ => None?,
             })
         });

@@ -1,8 +1,0 @@
-module = "icon"
-
-[glyphs]
-add = "entypo-plus"
-binder = "entypo-book-open"
-book = "entypo-book"
-browse = "entypo-search"
-cancel = "entypo-cancel"

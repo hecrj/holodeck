@@ -13,7 +13,7 @@ use iced::task;
 use iced::time::{Instant, milliseconds};
 use iced::widget::{
     bottom_right, button, center, center_x, center_y, column, container, grid, horizontal_space,
-    image, mouse_area, opaque, pick_list, pop, row, scrollable, stack, text, text_input,
+    image, mouse_area, opaque, pick_list, pop, right, row, scrollable, stack, text, text_input,
 };
 use iced::window;
 use iced::{
@@ -48,6 +48,7 @@ enum State {
         matches: Arc<[Card]>,
         task: Option<task::Handle>,
         animations: HashMap<card::Id, AnimationSet>,
+        focus: Option<usize>,
     },
 }
 
@@ -65,6 +66,8 @@ pub enum Message {
     CardChosen(card::Id, Source),
     ImageFetched(card::Id, Result<card::Image, anywho::Error>),
     CollectionSaved(Result<(), anywho::Error>),
+    TabPressed { shift: bool },
+    EnterPressed,
     Tick(Instant),
 }
 
@@ -143,6 +146,7 @@ impl Binders {
                     matches: Arc::new([]),
                     animations: HashMap::new(),
                     task: Some(handle.abort_on_drop()),
+                    focus: None,
                 };
 
                 Task::batch([text_input::focus("search"), search_cards])
@@ -227,10 +231,15 @@ impl Binders {
                         }
                     }
                     Source::Search => {
-                        if let State::Adding { animations, .. } = &mut self.state {
+                        if let State::Adding {
+                            animations, focus, ..
+                        } = &mut self.state
+                        {
                             if let Some(animations) = animations.get_mut(&card) {
                                 animations.zoom.go_mut(hovered);
                             }
+
+                            *focus = None;
                         }
                     }
                 }
@@ -242,17 +251,7 @@ impl Binders {
                     // TODO: Open card details
                     Task::none()
                 }
-                Source::Search => {
-                    self.state = State::Idle;
-
-                    if let Some(position) = self.mode.position(&card, database) {
-                        self.spread = self.binders.spread(self.binders.place(position));
-                    }
-
-                    collection.add(card);
-
-                    Task::perform(collection.save(), Message::CollectionSaved).discard()
-                }
+                Source::Search => self.add(card, collection, database),
             },
             Message::ImageFetched(card, Ok(image)) => {
                 let _ = self.images.insert(
@@ -273,6 +272,49 @@ impl Binders {
                 Task::none()
             }
             Message::CollectionSaved(Ok(_)) => Task::none(),
+            Message::TabPressed { shift } => {
+                let State::Adding { focus, .. } = &mut self.state else {
+                    return Task::none();
+                };
+
+                match focus {
+                    Some(0) if shift => {
+                        *focus = None;
+                        text_input::focus("search")
+                    }
+                    Some(focus) => {
+                        if shift {
+                            *focus -= 1;
+                        } else {
+                            *focus += 1
+                        }
+
+                        // TODO
+                        text_input::focus("")
+                    }
+                    None if !shift => {
+                        *focus = Some(0);
+                        text_input::focus("")
+                    }
+                    _ => Task::none(),
+                }
+            }
+            Message::EnterPressed => {
+                let State::Adding {
+                    focus: Some(focus),
+                    matches,
+                    ..
+                } = &self.state
+                else {
+                    return Task::none();
+                };
+
+                let Some(card) = matches.get(*focus) else {
+                    return Task::none();
+                };
+
+                self.add(card.id.clone(), collection, database)
+            }
             Message::Tick(now) => {
                 self.now = now;
 
@@ -291,6 +333,24 @@ impl Binders {
                 Task::none()
             }
         }
+    }
+
+    pub fn add(
+        &mut self,
+        card: card::Id,
+        collection: &mut Collection,
+        database: &Database,
+    ) -> Task<Message> {
+        self.state = State::Idle;
+
+        if let Some(position) = self.mode.position(&card, database) {
+            self.spread = self.binders.spread(self.binders.place(position));
+            let _ = self.animations.remove(&card);
+        }
+
+        collection.add(card);
+
+        Task::perform(collection.save(), Message::CollectionSaved).discard()
     }
 
     pub fn view<'a>(
@@ -411,51 +471,9 @@ impl Binders {
                 search,
                 matches,
                 animations,
+                focus,
                 ..
-            } => {
-                let input = container(
-                    text_input("Search for your card...", search)
-                        .on_input(Message::SearchChanged)
-                        .padding(10)
-                        .id("search"),
-                )
-                .max_width(600);
-
-                let content: Element<_> = {
-                    // TODO: Infinite scrolling (?)
-                    let matches: Element<_> = if !search.is_empty() && matches.is_empty() {
-                        center(
-                            container(text!("No cards were found matching: \"{search}\" :/"))
-                                .padding(10)
-                                .style(container::bordered_box),
-                        )
-                        .into()
-                    } else {
-                        scrollable(
-                            grid(matches.iter().take(100).map(|card| {
-                                item(
-                                    card,
-                                    self.images.get(&card.id),
-                                    animations.get(&card.id),
-                                    self.now,
-                                    Source::Search,
-                                )
-                            }))
-                            .fluid(300)
-                            .height(grid::aspect_ratio(734, 1024))
-                            .spacing(10),
-                        )
-                        .width(Fill)
-                        .height(Fill)
-                        .spacing(10)
-                        .into()
-                    };
-
-                    column![center_x(input), matches].spacing(10).into()
-                };
-
-                Some(center(content).padding(10).into())
-            }
+            } => Some(self.adding(search, matches, animations, *focus, collection)),
         };
 
         let has_overlay = overlay.is_some();
@@ -515,6 +533,93 @@ impl Binders {
         .into()
     }
 
+    fn adding<'a>(
+        &'a self,
+        search: &'a str,
+        matches: &'a [Card],
+        animations: &'a HashMap<card::Id, AnimationSet>,
+        focus: Option<usize>,
+        collection: &'a Collection,
+    ) -> Element<'a, Message> {
+        let input = container(
+            text_input("Search for your card...", search)
+                .on_input(Message::SearchChanged)
+                .padding(10)
+                .id("search"),
+        )
+        .max_width(600);
+
+        let content: Element<_> = {
+            // TODO: Infinite scrolling (?)
+            let matches: Element<_> = if !search.is_empty() && matches.is_empty() {
+                center(
+                    container(text!("No cards were found matching: \"{search}\" :/"))
+                        .padding(10)
+                        .style(container::bordered_box),
+                )
+                .into()
+            } else {
+                scrollable(
+                    grid(matches.iter().take(100).enumerate().map(|(i, card)| {
+                        let owned_tag = |amount| {
+                            right(
+                                container(text!("Owned x{amount}").size(10))
+                                    .padding(5)
+                                    .style(|_theme| {
+                                        container::Style::default()
+                                            .background(Color::BLACK.scale_alpha(0.8))
+                                            .border(border::rounded(8))
+                                    }),
+                            )
+                            .padding(5)
+                        };
+
+                        let highlight = || {
+                            center(container(icon::pointer().size(30)).padding(20).style(
+                                |_theme| {
+                                    container::Style::default()
+                                        .background(Color::BLACK.scale_alpha(0.8))
+                                        .border(border::rounded(8))
+                                },
+                            ))
+                            .style(|theme| {
+                                let palette = theme.extended_palette();
+
+                                container::Style::default()
+                                    .border(border::width(5).color(palette.primary.strong.color))
+                            })
+                        };
+
+                        stack![
+                            container(item(
+                                card,
+                                self.images.get(&card.id),
+                                animations.get(&card.id),
+                                self.now,
+                                Source::Search,
+                            ))
+                            .padding(1)
+                        ]
+                        .push_maybe(collection.cards.get(&card.id).map(owned_tag))
+                        .push_maybe((Some(i) == focus).then(highlight))
+                        .into()
+                    }))
+                    .fluid(300)
+                    .height(grid::aspect_ratio(734, 1024))
+                    .spacing(8),
+                )
+                .width(Fill)
+                .height(Fill)
+                .spacing(10)
+                .into()
+            };
+
+            column![center_x(input), matches].spacing(10).into()
+        };
+
+        center(content).padding(10).into()
+    }
+
     pub fn subscription(&self) -> Subscription<Message> {
         let hotkeys = keyboard::on_key_press(|key, modifiers| {
             use keyboard::key::{Key, Named};
@@ -523,6 +628,10 @@ impl Binders {
                 Key::Named(Named::ArrowLeft) if modifiers.is_empty() => Message::PreviousPage,
                 Key::Named(Named::ArrowRight) if modifiers.is_empty() => Message::NextPage,
                 Key::Named(Named::Escape) => Message::Close,
+                Key::Named(Named::Tab) => Message::TabPressed {
+                    shift: modifiers.shift(),
+                },
+                Key::Named(Named::Enter) => Message::EnterPressed,
                 Key::Character("a") if modifiers.is_empty() => Message::Add,
                 _ => None?,
             })
@@ -593,7 +702,15 @@ fn item<'a>(
             }
         }
         Some(Image::Errored) => slot(center(
-            text(card.name.get("en").map(String::as_str).unwrap_or("Unknown"))
+            card.name
+                .get("en")
+                .map(text)
+                .or_else(|| {
+                    card.name
+                        .get("ja")
+                        .map(|name| text(name).shaping(text::Shaping::Advanced))
+                })
+                .unwrap_or_else(|| text("Unknown"))
                 .center()
                 .size(14),
         )),

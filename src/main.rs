@@ -21,16 +21,16 @@ use iced::{Center, Element, Fill, Font, Subscription, Task, Theme};
 pub fn main() -> iced::Result {
     tracing_subscriber::fmt::init();
 
-    iced::application(Holobyte::new, Holobyte::update, Holobyte::view)
-        .subscription(Holobyte::subscription)
-        .theme(Holobyte::theme)
+    iced::application(Holofoil::new, Holofoil::update, Holofoil::view)
+        .subscription(Holofoil::subscription)
+        .theme(Holofoil::theme)
         .font(icon::FONT)
         .default_font(Font::MONOSPACE)
         .window_size((1700.0, 950.0))
         .run()
 }
 
-struct Holobyte {
+struct Holofoil {
     state: State,
 }
 
@@ -48,7 +48,7 @@ enum Message {
     Browse,
 }
 
-impl Holobyte {
+impl Holofoil {
     fn new() -> (Self, Task<Message>) {
         (
             Self {

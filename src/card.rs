@@ -199,7 +199,7 @@ impl Image {
 fn cache_dir() -> PathBuf {
     dirs::cache_dir()
         .unwrap_or_default()
-        .join("holobyte")
+        .join(env!("CARGO_PKG_NAME"))
         .join("cards")
 }
 

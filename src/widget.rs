@@ -2,7 +2,19 @@ use iced::widget::{canvas, text};
 use iced::{Element, Pixels};
 
 pub fn logo<'a, Message>(size: impl Into<Pixels>) -> Element<'a, Message> {
-    text("Holobyte").size(size).into()
+    const PKG_NAME: &str = env!("CARGO_PKG_NAME");
+
+    let mut name = String::with_capacity(PKG_NAME.len());
+    name.push(
+        PKG_NAME
+            .chars()
+            .next()
+            .expect("Non-empty name")
+            .to_ascii_uppercase(),
+    );
+    name.push_str(&PKG_NAME[1..]);
+
+    text(name).size(size).into()
 }
 
 pub fn pokeball<'a, Message: 'a>(size: impl Into<Pixels>) -> Element<'a, Message> {

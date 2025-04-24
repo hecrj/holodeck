@@ -1,6 +1,5 @@
 use crate::Collection;
 use crate::pokebase::card;
-use crate::pokebase::pokemon;
 use crate::pokebase::{Card, Database};
 
 use std::fmt;
@@ -230,7 +229,10 @@ impl Mode {
             Mode::GottaCatchEmAll => {
                 let card = database.cards.get(&card)?;
 
-                card.pokedex.first().copied().map(pokemon::Id::number)
+                card.pokedex
+                    .first()
+                    .copied()
+                    .map(|pokemon| pokemon.number() - 1)
             }
         }
     }

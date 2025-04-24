@@ -1,4 +1,6 @@
 pub fn main() {
-    println!("cargo::rerun-if-changed=fonts/holobyte-icons.toml");
-    iced_fontello::build("fonts/holobyte-icons.toml").expect("Build pokedeck-icons font");
+    let name = env!("CARGO_PKG_NAME");
+
+    println!("cargo::rerun-if-changed=fonts/{name}-icons.toml");
+    iced_fontello::build(format!("fonts/{name}-icons.toml")).expect("Build icons font");
 }

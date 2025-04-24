@@ -110,5 +110,7 @@ fn collections_path() -> PathBuf {
 }
 
 fn data_dir() -> PathBuf {
-    dirs::data_dir().unwrap_or_default().join("holobyte")
+    dirs::data_dir()
+        .unwrap_or_default()
+        .join(env!("CARGO_PKG_NAME"))
 }

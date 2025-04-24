@@ -1,5 +1,6 @@
 use crate::binder;
 use crate::collection::{self, Collection};
+use crate::icon;
 use crate::pokebase::Database;
 use crate::widget::logo;
 
@@ -17,6 +18,7 @@ pub struct Welcome {
 pub enum Message {
     CollectionsListed(Result<Vec<Collection>, anywho::Error>),
     Select(Collection),
+    New,
     NameChanged(String),
     Create(collection::Name),
     CollectionCreated(Result<Collection, anywho::Error>),
@@ -68,6 +70,18 @@ impl Welcome {
                 Collection::create(name),
                 Message::CollectionCreated,
             )),
+            Message::New => {
+                let State::Selection { collections } = &self.state else {
+                    return Action::None;
+                };
+
+                self.state = State::Creation {
+                    name: String::new(),
+                    collections: collections.clone(),
+                };
+
+                Action::None
+            }
             Message::NameChanged(new_name) => {
                 if let State::Creation { name, .. } = &mut self.state {
                     *name = new_name;
@@ -94,11 +108,22 @@ impl Welcome {
     pub fn view(&self, database: &Database) -> Element<Message> {
         let content: Element<_> = match &self.state {
             State::Loading => text("Loading...").into(),
-            State::Selection { collections } => column(
-                collections
-                    .iter()
-                    .map(|collection| card(collection, database)),
-            )
+            State::Selection { collections } => column![
+                column(
+                    collections
+                        .iter()
+                        .map(|collection| card(collection, database)),
+                )
+                .spacing(10),
+                button(
+                    row![icon::add().size(14), text("New Profile").size(14)]
+                        .spacing(10)
+                        .align_y(Center)
+                )
+                .on_press(Message::New),
+            ]
+            .spacing(20)
+            .align_x(Center)
             .into(),
             State::Creation { name, collections } => {
                 let welcome = container(text(

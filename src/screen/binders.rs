@@ -485,6 +485,8 @@ impl Binders {
         collection: &Collection,
         database: &'a Database,
     ) -> Element<'a, Message> {
+        let total = self.mode.total_cards(database);
+
         center_y(
             grid(content.range.map(|i| {
                 self.mode
@@ -498,7 +500,13 @@ impl Binders {
                             Source::Binder,
                         )
                     })
-                    .unwrap_or_else(|| placeholder(i))
+                    .unwrap_or_else(|| {
+                        if i < total {
+                            placeholder(i)
+                        } else {
+                            unused_slot()
+                        }
+                    })
             }))
             .columns(binder.columns)
             .height(grid::aspect_ratio(734, 1024))
@@ -614,6 +622,16 @@ fn placeholder<'a>(index: usize) -> Element<'a, Message> {
 fn slot<'a>(content: impl Into<Element<'a, Message>>) -> Element<'a, Message> {
     container(content)
         .style(|theme| container::dark(theme).border(border::rounded(8)))
+        .into()
+}
+
+fn unused_slot<'a>() -> Element<'a, Message> {
+    container(horizontal_space())
+        .style(|_theme| {
+            container::Style::default()
+                .background(Color::BLACK.scale_alpha(0.3))
+                .border(border::rounded(8))
+        })
         .into()
 }
 

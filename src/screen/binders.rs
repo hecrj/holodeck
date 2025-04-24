@@ -13,10 +13,12 @@ use iced::task;
 use iced::time::{Instant, milliseconds};
 use iced::widget::{
     bottom_right, button, center, center_x, center_y, column, container, grid, horizontal_space,
-    hover, image, mouse_area, opaque, pick_list, pop, row, scrollable, stack, text, text_input,
+    image, mouse_area, opaque, pick_list, pop, row, scrollable, stack, text, text_input,
 };
 use iced::window;
-use iced::{Animation, Center, Color, ContentFit, Element, Fill, Shrink, Subscription, Task};
+use iced::{
+    Animation, Center, Color, ContentFit, Element, Fill, Shrink, Subscription, Task, Theme,
+};
 
 use function::Binary;
 use std::collections::HashMap;
@@ -377,7 +379,7 @@ impl Binders {
                     text!("{name}'s\nCollection", name = collection.name.as_str())
                         .size(40)
                         .center(),
-                    text!("#{}", pair.binder_number + 1).size(20)
+                    text(to_roman(pair.binder_number + 1)).size(30)
                 ]
                 .spacing(10)
                 .align_x(Center),
@@ -555,7 +557,7 @@ fn item<'a>(
                 (0.0, 1.0)
             };
 
-            mouse_area(
+            let card = mouse_area(
                 button(
                     image(handle)
                         .width(Fill)
@@ -569,17 +571,20 @@ fn item<'a>(
                 .style(button::text),
             )
             .on_enter(Message::CardHovered(card.id.clone(), source, true))
-            .on_exit(Message::CardHovered(card.id.clone(), source, false))
-            .into()
+            .on_exit(Message::CardHovered(card.id.clone(), source, false));
+
+            if opacity < 1.0 {
+                slot(card)
+            } else {
+                card.into()
+            }
         }
-        Some(Image::Errored) => container(center(
+        Some(Image::Errored) => slot(center(
             text(card.name.get("en").map(String::as_str).unwrap_or("Unknown"))
                 .center()
                 .size(14),
-        ))
-        .style(container::dark)
-        .into(),
-        _ => horizontal_space().into(),
+        )),
+        _ => slot(horizontal_space()).into(),
     };
 
     pop(item)
@@ -589,15 +594,22 @@ fn item<'a>(
 }
 
 fn placeholder<'a>(index: usize) -> Element<'a, Message> {
-    hover(
-        container(horizontal_space()).style(|theme| {
-            let style = container::dark(theme);
+    slot(
+        bottom_right(text!("#{}", index + 1).style(|theme: &Theme| {
+            let palette = theme.extended_palette();
 
-            style.border(border::rounded(6))
-        }),
-        bottom_right(text!("#{}", index + 1).size(10)).padding(5),
+            text::Style {
+                color: Some(palette.background.weak.color),
+            }
+        }))
+        .padding([5, 8]),
     )
-    .into()
+}
+
+fn slot<'a>(content: impl Into<Element<'a, Message>>) -> Element<'a, Message> {
+    container(content)
+        .style(|theme| container::dark(theme).border(border::rounded(8)))
+        .into()
 }
 
 struct AnimationSet {
@@ -618,5 +630,21 @@ impl AnimationSet {
 
     fn is_animating(&self, at: Instant) -> bool {
         self.fade_in.is_animating(at) || self.zoom.is_animating(at)
+    }
+}
+
+fn to_roman(number: usize) -> String {
+    match number {
+        1 => "I".to_owned(),
+        2 => "II".to_owned(),
+        3 => "III".to_owned(),
+        4 => "IV".to_owned(),
+        5 => "V".to_owned(),
+        6 => "VI".to_owned(),
+        7 => "VII".to_owned(),
+        8 => "VIII".to_owned(),
+        9 => "IX".to_owned(),
+        10 => "X".to_owned(),
+        _ => format!("#{number}"),
     }
 }

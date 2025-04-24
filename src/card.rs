@@ -10,6 +10,7 @@ use std::env;
 use std::fmt;
 use std::io;
 use std::path::PathBuf;
+use std::time::Duration;
 use tokio::fs;
 use tokio::task;
 
@@ -41,7 +42,10 @@ impl Image {
         async move {
             let cache = cache_dir().join(format!("{id}.png", id = card.id.as_str()));
 
-            let client = reqwest::Client::new();
+            let client = reqwest::ClientBuilder::new()
+                .timeout(Duration::from_secs(3))
+                .build()
+                .expect("Build reqwest client");
 
             let fetch_from_cache = async {
                 let bytes = fs::read(&cache).await?;
@@ -65,10 +69,18 @@ impl Image {
 
                     let number = &card.set.as_str()[prefix.len()..];
 
+                    let replacement = if prefix.starts_with("swsh") && number.starts_with("12")
+                        || prefix.starts_with("sv")
+                    {
+                        "pt"
+                    } else {
+                        ""
+                    };
+
                     format!(
                         "{}{}",
-                        prefix.replace(".", "pt"),
-                        number.trim_start_matches('0').replace(".", "pt")
+                        prefix.replace(".", replacement),
+                        number.trim_start_matches('0').replace(".", replacement)
                     )
                 };
 
@@ -84,15 +96,35 @@ impl Image {
 
                 log::info!("Downloading image: {url}");
 
-                let request = client.get(url);
+                let mut retries = 2;
 
-                let request = if let Ok(api_key) = env::var("POKEMONTCG_API_KEY") {
-                    request.header("X-Api-Key", api_key)
-                } else {
-                    request
+                let response = loop {
+                    let request = client.get(&url);
+
+                    let request = if let Ok(api_key) = env::var("POKEMONTCG_API_KEY") {
+                        request.header("X-Api-Key", api_key)
+                    } else {
+                        request
+                    };
+
+                    let response = request.send().await;
+
+                    match response {
+                        Ok(response) => {
+                            break Ok(response);
+                        }
+                        Err(error) => {
+                            if retries > 0 {
+                                log::warn!("Retrying request: {error}");
+                                retries -= 1;
+                            } else {
+                                break Err(error);
+                            }
+                        }
+                    }
                 };
 
-                Ok::<_, anywho::Error>(request.send().await?.error_for_status()?.bytes().await?)
+                Ok::<_, anywho::Error>(response?.error_for_status()?.bytes().await?)
             };
 
             let fetch_from_tcgdex = async {

@@ -219,7 +219,7 @@ impl Mode {
                     })
                     .collect();
 
-                cards.sort_by(|a, b| a.rarity.cmp(&b.rarity).reverse());
+                cards.sort_unstable_by(|a, b| a.rarity.cmp(&b.rarity).reverse());
                 cards.first().copied()
             }
         }

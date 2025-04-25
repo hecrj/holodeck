@@ -205,7 +205,7 @@ impl Mode {
             Mode::GottaCatchEmAll => {
                 let pokemon = database.pokemon.values().get(index)?;
 
-                let card = collection
+                let mut cards: Vec<_> = collection
                     .cards
                     .keys()
                     .filter_map(|card| {
@@ -217,9 +217,10 @@ impl Mode {
                             None
                         }
                     })
-                    .next()?;
+                    .collect();
 
-                Some(card)
+                cards.sort_by(|a, b| a.rarity.cmp(&b.rarity).reverse());
+                cards.first().copied()
             }
         }
     }

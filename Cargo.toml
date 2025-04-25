@@ -53,4 +53,4 @@ tracing-subscriber = "0.3"
 
 [patch.crates-io]
 iced.git = "https://github.com/iced-rs/iced.git"
-iced.rev = "f67785edb52f5398eae3a703e116871375198c2f"
+iced.rev = "a2a7c18c9d0a0b7cc469bd4000a7239618167477"

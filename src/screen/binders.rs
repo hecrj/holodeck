@@ -17,7 +17,7 @@ use iced::widget::{
 };
 use iced::window;
 use iced::{
-    Animation, Center, Color, ContentFit, Element, Fill, Shrink, Subscription, Task, Theme,
+    Animation, Center, Color, ContentFit, Element, Fill, Shadow, Shrink, Subscription, Task, Theme,
 };
 
 use function::Binary;
@@ -75,6 +75,15 @@ pub enum Message {
 pub enum Source {
     Binder,
     Search,
+}
+
+impl Source {
+    fn zoom(self) -> f32 {
+        match self {
+            Source::Binder => 1.5,
+            Source::Search => 1.2,
+        }
+    }
 }
 
 impl Binders {
@@ -670,13 +679,14 @@ fn item<'a>(
 ) -> Element<'a, Message> {
     let item: Element<_> = match thumbnail {
         Some(Image::Loaded(handle)) => {
-            let (opacity, scale) = if let Some(animations) = animations {
+            let (opacity, scale, shadow) = if let Some(animations) = animations {
                 (
                     animations.fade_in.interpolate(0.0, 1.0, now),
-                    animations.zoom.interpolate(1.0, 1.1, now),
+                    animations.zoom.interpolate(1.0, source.zoom(), now),
+                    animations.zoom.interpolate(0.0, 1.0, now),
                 )
             } else {
-                (0.0, 1.0)
+                (0.0, 1.0, 0.0)
             };
 
             let card = mouse_area(
@@ -686,7 +696,22 @@ fn item<'a>(
                         .height(Fill)
                         .content_fit(ContentFit::Cover)
                         .opacity(opacity)
-                        .scale(scale),
+                        .scale(scale)
+                        .float(true)
+                        .translate(move |bounds, viewport| {
+                            let scale = source.zoom();
+                            let final_bounds = bounds.zoom(scale);
+
+                            final_bounds.offset(&viewport.shrink(10)) * shadow
+                        })
+                        .style(move |_theme| image::Style {
+                            shadow: Shadow {
+                                color: Color::BLACK.scale_alpha(shadow),
+                                blur_radius: 10.0 * shadow,
+                                ..Shadow::default()
+                            },
+                            shadow_border_radius: border::radius(10.0 * scale),
+                        }),
                 )
                 .on_press_with(move || Message::CardChosen(card.id.clone(), source))
                 .padding(0)

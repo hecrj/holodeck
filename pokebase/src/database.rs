@@ -5,6 +5,7 @@ use crate::series;
 use crate::set;
 use crate::{Card, Locale, Map, Pokemon, Series, Set};
 
+use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
@@ -20,59 +21,30 @@ pub struct Database {
 }
 
 impl Database {
-    #[cfg(feature = "static")]
     pub async fn load() -> Result<Self, anywho::Error> {
-        let pokemon = load_pokemon()?;
-        let series: Vec<Series> = ron::de::from_str(include_str!("../data/series.ron"))?;
-        let sets: Vec<Set> = ron::de::from_str(include_str!("../data/sets.ron"))?;
-        let cards: Vec<Card> = ron::de::from_str(include_str!("../data/cards.ron"))?;
-
-        Ok(Self {
-            pokemon: Map::new(pokemon, |pokemon| pokemon.id.clone()),
-            series: Map::new(series, |series| series.id.clone()),
-            sets: Map::new(sets, |set| set.id.clone()),
-            cards: Map::new(cards, |card| card.id.clone()),
-        })
-    }
-
-    #[cfg(not(feature = "static"))]
-    pub async fn load() -> Result<Self, anywho::Error> {
-        use std::path::PathBuf;
-        use tokio::fs;
         use tokio::task;
 
-        let data = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("data");
+        Ok(task::spawn_blocking(|| {
+            let pokemon = load_pokemon();
+            let series: Vec<Series> = decompress(include_bytes!("../data/series.ron.gz"));
+            let sets: Vec<Set> = decompress(include_bytes!("../data/sets.ron.gz"));
+            let cards: Vec<Card> = decompress(include_bytes!("../data/cards.ron.gz"));
 
-        let pokemon = task::spawn_blocking(load_pokemon).await??;
-
-        let series: Vec<Series> = {
-            let contents = fs::read_to_string(data.join("series.ron")).await?;
-            task::spawn_blocking(move || ron::de::from_str(&contents)).await??
-        };
-
-        let sets: Vec<Set> = {
-            let contents = fs::read_to_string(data.join("sets.ron")).await?;
-            task::spawn_blocking(move || ron::de::from_str(&contents)).await??
-        };
-
-        let cards: Vec<Card> = {
-            let contents = fs::read_to_string(data.join("cards.ron")).await?;
-            task::spawn_blocking(move || ron::de::from_str(&contents)).await??
-        };
-
-        Ok(Self {
-            pokemon: Map::new(pokemon, |pokemon| pokemon.id.clone()),
-            series: Map::new(series, |series| series.id.clone()),
-            sets: Map::new(sets, |set| set.id.clone()),
-            cards: Map::new(cards, |card| card.id.clone()),
+            Self {
+                pokemon: Map::new(pokemon, |pokemon| pokemon.id.clone()),
+                series: Map::new(series, |series| series.id.clone()),
+                sets: Map::new(sets, |set| set.id.clone()),
+                cards: Map::new(cards, |card| card.id.clone()),
+            }
         })
+        .await?)
     }
 
     pub fn generate(data: impl AsRef<Path>) -> Result<Self, anywho::Error> {
         use std::fs::{self, File};
         use std::io::BufReader;
 
-        let pokemon = load_pokemon()?;
+        let pokemon = load_pokemon();
 
         let mut series: BTreeMap<String, Series> = BTreeMap::new();
         let mut sets: BTreeMap<String, Set> = BTreeMap::new();
@@ -369,17 +341,25 @@ fn parse_rarity(rarity: String) -> Result<card::Rarity, String> {
     })
 }
 
-fn load_pokemon() -> Result<Vec<Pokemon>, anywho::Error> {
-    let pokemon: Vec<String> = ron::from_str(include_str!("../data/pokemon.ron"))?;
+fn load_pokemon() -> Vec<Pokemon> {
+    let pokemon: Vec<String> = decompress(include_bytes!("../data/pokemon.ron.gz"));
 
-    Ok(pokemon
+    pokemon
         .into_iter()
         .enumerate()
         .map(|(i, name)| Pokemon {
             id: pokemon::Id(i + 1),
             name: locale::Map::from_iter([(Locale("en".to_owned()), name)]),
         })
-        .collect())
+        .collect()
+}
+
+fn decompress<T: DeserializeOwned>(bytes: &[u8]) -> T {
+    use flate2::read::GzDecoder;
+
+    let decoder = GzDecoder::new(bytes);
+
+    ron::de::from_reader(decoder).expect("Database is corrupt! Decompression failed.")
 }
 
 impl fmt::Debug for Database {

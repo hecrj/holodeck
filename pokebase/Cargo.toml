@@ -3,9 +3,6 @@ name = "pokebase"
 version = "0.1.0"
 edition = "2024"
 
-[features]
-static = []
-
 [dependencies]
 serde.workspace = true
 serde.features = ["derive"]
@@ -15,5 +12,9 @@ tokio.features = ["fs", "rt"]
 
 anywho.workspace = true
 dirs.workspace = true
+flate2.workspace = true
 serde_json.workspace = true
 ron.workspace = true
+
+[build-dependencies]
+flate2.workspace = true

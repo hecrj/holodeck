@@ -215,9 +215,21 @@ impl Database {
                 // Fill in Pokedex entries
                 if locale.0 == "en" && card.pokedex.is_empty() {
                     for pokemon in &pokemon {
-                        if localized_card.name.contains(pokemon.name()) {
-                            card.pokedex = vec![pokemon.id];
-                            break;
+                        let name = pokemon.name();
+
+                        if let Some(start) = localized_card.name.find(name) {
+                            let end = start + name.len();
+                            let previous = start.saturating_sub(1);
+
+                            let left = localized_card.name[previous..start].chars();
+                            let right = localized_card.name
+                                [end..(end + 1).min(localized_card.name.len())]
+                                .chars();
+
+                            if left.chain(right).all(|c| c.is_whitespace() || c == '-') {
+                                card.pokedex = vec![pokemon.id];
+                                break;
+                            }
                         }
                     }
                 }

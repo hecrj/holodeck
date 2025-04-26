@@ -1,0 +1,25 @@
+[package]
+name = "pokebase-core"
+version = "0.1.0"
+edition = "2024"
+include = [
+  "/src",
+  "data/*.ron.gz",
+  "!data/*.ron",
+]
+
+[dependencies]
+serde.workspace = true
+serde.features = ["derive"]
+
+tokio.workspace = true
+tokio.features = ["rt"]
+
+anywho.workspace = true
+bytes.workspace = true
+flate2.workspace = true
+serde_json.workspace = true
+ron.workspace = true
+
+[build-dependencies]
+flate2.workspace = true

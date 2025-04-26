@@ -17,6 +17,7 @@ anywho.workspace = true
 bytes.workspace = true
 dirs.workspace = true
 function.workspace = true
+futures-util.workspace = true
 image.workspace = true
 log.workspace = true
 pokebase.workspace = true
@@ -29,16 +30,18 @@ tracing-subscriber.workspace = true
 iced_fontello.workspace = true
 
 [workspace]
-members = ["pokebase"]
+members = ["pokebase", "pokebase/core"]
 
 [workspace.dependencies]
 pokebase.path = "./pokebase"
+pokebase-core.path = "./pokebase/core"
 
 anywho = "0.1.0"
 bytes = "1"
 dirs = "6"
 flate2 = "1"
 function = "0.2"
+futures-util = "0.3"
 iced = "0.14.0-dev"
 iced_fontello = "0.13"
 image = "0.25"

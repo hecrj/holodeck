@@ -1,8 +1,7 @@
 use crate::binder;
 use crate::card;
 use crate::icon;
-use crate::pokebase::database;
-use crate::pokebase::{Card, Database};
+use crate::pokebase::{Card, Database, Search, Session};
 use crate::widget::pokeball;
 use crate::{Binder, Collection};
 
@@ -58,7 +57,7 @@ pub enum Message {
     NextPage,
     Add,
     SearchChanged(String),
-    SearchFinished(database::Search<Card>),
+    SearchFinished(Search<Card>),
     Close,
     CardShown(card::Id, Source),
     CardHovered(card::Id, Source, bool),
@@ -104,6 +103,7 @@ impl Binders {
         message: Message,
         collection: &mut Collection,
         database: &Database,
+        session: &Session,
     ) -> Task<Message> {
         match message {
             Message::ModeSelected(mode) => {
@@ -148,7 +148,7 @@ impl Binders {
                 }
 
                 let (search_cards, handle) =
-                    Task::perform(database.search_cards(""), Message::SearchFinished).abortable();
+                    Task::perform(card::search("", database), Message::SearchFinished).abortable();
 
                 self.state = State::Adding {
                     search: String::new(),
@@ -165,7 +165,7 @@ impl Binders {
                 };
 
                 let (search_cards, handle) = {
-                    let search = database.search_cards(&new_search);
+                    let search = card::search(&new_search, database);
 
                     Task::perform(
                         async move {
@@ -227,7 +227,7 @@ impl Binders {
                 let _ = self.images.insert(card.id.clone(), Image::Loading);
 
                 Task::perform(
-                    card::Image::fetch(card, database),
+                    card::Image::fetch(card, database, session),
                     Message::ImageFetched.with(card.id.clone()),
                 )
             }

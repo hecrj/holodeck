@@ -1719,6 +1719,7 @@ dependencies = [
  "bytes",
  "dirs",
  "function",
+ "futures-util",
  "iced",
  "iced_fontello",
  "image",
@@ -3344,8 +3345,21 @@ dependencies = [
 name = "pokebase"
 version = "0.1.0"
 dependencies = [
+ "bytes",
+ "futures-util",
+ "log",
+ "pokebase-core",
+ "reqwest",
+ "thiserror 1.0.69",
+ "tokio",
+]
+
+[[package]]
+name = "pokebase-core"
+version = "0.1.0"
+dependencies = [
  "anywho",
- "dirs",
+ "bytes",
  "flate2",
  "ron",
  "serde",

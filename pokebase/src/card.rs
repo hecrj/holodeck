@@ -1,82 +1,78 @@
-use crate::locale;
-use crate::pokemon;
-use crate::set;
+pub use crate::core::card::*;
 
-use serde::{Deserialize, Serialize};
-use std::collections::BTreeSet;
+use crate::{Database, Error, Search, Session};
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Card {
-    pub id: Id,
-    pub set: set::Id,
-    pub name: locale::Map,
-    pub types: BTreeSet<Type>,
-    pub rarity: Rarity,
-    pub variants: Variants,
-    pub illustrator: Option<String>,
-    pub pokedex: Vec<pokemon::Id>,
+use bytes::Bytes;
+use std::fmt;
+use std::sync::Arc;
+
+#[derive(Clone)]
+pub struct Image {
+    pub bytes: Bytes,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
-pub struct Id(pub(crate) String);
-
-impl Id {
-    pub fn as_str(&self) -> &str {
-        &self.0
+impl fmt::Debug for Image {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Image")
+            .field("bytes", &self.bytes.len())
+            .finish()
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Serialize, Deserialize)]
-pub enum Rarity {
-    #[default]
-    None,
-    Common,
-    Uncommon,
-    Rare,
-    HoloRare,
-    HoloRareLvx,
-    HoloRareV,
-    HoloRareVmax,
-    HoloRareVstar,
-    ShinyRare,
-    ShinyRareV,
-    ShinyRareVmax,
-    DoubleRare,
-    AceSpecRare,
-    AmazingRare,
-    RadiantRare,
-    RarePrime,
-    Legend,
-    ClassicCollection,
-    UltraRare,
-    ShinyUltraRare,
-    SecretRare,
-    FullArtTrainer,
-    IllustrationRare,
-    SpecialIllustrationRare,
-    HyperRare,
+impl Image {
+    pub async fn download<'a>(
+        card: &Card,
+        database: &Database,
+        session: &Session,
+    ) -> Result<Self, Error> {
+        use futures_util::TryFutureExt;
+
+        let download_from_pokemontcg = session.pokemon_tcg.download_image(card);
+        let download_from_tcgdex = session.tcgdex.download_image(card, database);
+
+        // Rationale on the order of image fetching:
+        // 1. PokemonTCG - Highest quality, but English only. 20,000 requests/day with an API key.
+        // 2. TCGdex - Lower quality, but supports multiple locales. Rate limiting unknown (?).
+        let bytes = download_from_pokemontcg
+            .or_else(|error| {
+                log::warn!("{error}");
+
+                download_from_tcgdex
+            })
+            .await?;
+
+        Ok(Self { bytes })
+    }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-pub enum Type {
-    Grass,
-    Fire,
-    Water,
-    Lightning,
-    Psychic,
-    Fighting,
-    Darkness,
-    Metal,
-    Fairy,
-    Dragon,
-    Colorless,
-}
+pub fn search<'a>(query: &str, database: &Database) -> impl Future<Output = Search<Card>> + 'a {
+    use tokio::task;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Variants {
-    pub first_edition: bool,
-    pub holo: bool,
-    pub normal: bool,
-    pub reverse: bool,
-    pub w_promo: bool,
+    let query = query.to_lowercase();
+    let database = database.clone();
+
+    async move {
+        let mut matches = Vec::new();
+
+        for card in database.cards.values().iter().rev() {
+            if !card.name.contains_key("en") && !card.name.contains_key("ja") {
+                continue;
+            }
+
+            if card
+                .name
+                .values()
+                .any(|name| name.as_str().to_lowercase().contains(&query))
+            {
+                matches.push(card.clone());
+            }
+
+            // Avoid blocking
+            task::yield_now().await;
+        }
+
+        Search {
+            matches: Arc::from(matches),
+        }
+    }
 }

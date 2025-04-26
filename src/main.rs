@@ -9,7 +9,7 @@ mod widget;
 
 use crate::binder::Binder;
 use crate::collection::Collection;
-use crate::pokebase::Database;
+use crate::pokebase::{Database, Result, Session};
 use crate::screen::Screen;
 use crate::screen::binders;
 use crate::screen::welcome;
@@ -17,6 +17,7 @@ use crate::widget::logo;
 
 use iced::widget::{button, center, column, container, row, text};
 use iced::{Center, Element, Fill, Font, Subscription, Task, Theme};
+use std::env;
 
 pub fn main() -> iced::Result {
     tracing_subscriber::fmt::init();
@@ -36,7 +37,11 @@ struct Holofoil {
 
 enum State {
     Loading,
-    Ready { database: Database, screen: Screen },
+    Ready {
+        database: Database,
+        session: Session,
+        screen: Screen,
+    },
 }
 
 #[derive(Debug, Clone)]
@@ -61,17 +66,18 @@ impl Holofoil {
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::Loaded(Ok(database)) => {
-                let (welcome, task) = screen::Welcome::new(&database);
+                let (welcome, task) = screen::Welcome::new();
 
                 self.state = State::Ready {
                     database,
+                    session: Session::new(env::var("POKEMONTCG_API_KEy").ok()), // TODO: Configuration
                     screen: Screen::Welcome(welcome),
                 };
 
                 task.map(Message::Welcome)
             }
             Message::Welcome(message) => {
-                let State::Ready { database, screen } = &mut self.state else {
+                let State::Ready { screen, .. } = &mut self.state else {
                     return Task::none();
                 };
 
@@ -79,7 +85,7 @@ impl Holofoil {
                     return Task::none();
                 };
 
-                match welcome.update(message, database) {
+                match welcome.update(message) {
                     welcome::Action::None => Task::none(),
                     welcome::Action::Run(task) => task.map(Message::Welcome),
                     welcome::Action::Select(collection) => {
@@ -97,6 +103,7 @@ impl Holofoil {
             Message::Binders(message) => {
                 let State::Ready {
                     database,
+                    session,
                     screen:
                         Screen::Collecting {
                             collection,
@@ -108,7 +115,7 @@ impl Holofoil {
                 };
 
                 binders
-                    .update(message, collection, database)
+                    .update(message, collection, database, session)
                     .map(Message::Binders)
             }
             Message::OpenBinders => {
@@ -140,7 +147,9 @@ impl Holofoil {
     fn view(&self) -> Element<Message> {
         match &self.state {
             State::Loading => center(text("Loading...")).into(),
-            State::Ready { database, screen } => match screen {
+            State::Ready {
+                database, screen, ..
+            } => match screen {
                 Screen::Welcome(welcome) => welcome.view(database).map(Message::Welcome),
                 Screen::Collecting { collection, screen } => {
                     let tabs = [

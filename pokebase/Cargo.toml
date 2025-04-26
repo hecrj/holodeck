@@ -2,24 +2,13 @@
 name = "pokebase"
 version = "0.1.0"
 edition = "2024"
-include = [
-  "/src",
-  "data/*.ron.gz",
-  "!data/*.ron",
-]
 
 [dependencies]
-serde.workspace = true
-serde.features = ["derive"]
+pokebase-core.workspace = true
 
+bytes.workspace = true
+futures-util.workspace = true
+log.workspace = true
+reqwest.workspace = true
+thiserror.workspace = true
 tokio.workspace = true
-tokio.features = ["fs", "rt"]
-
-anywho.workspace = true
-dirs.workspace = true
-flate2.workspace = true
-serde_json.workspace = true
-ron.workspace = true
-
-[build-dependencies]
-flate2.workspace = true

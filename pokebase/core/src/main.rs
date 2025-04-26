@@ -1,4 +1,4 @@
-use pokebase::Database;
+use pokebase_core::Database;
 
 use std::fs;
 use std::path::PathBuf;

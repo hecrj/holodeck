@@ -42,7 +42,7 @@ pub enum Action {
 }
 
 impl Welcome {
-    pub fn new(_database: &Database) -> (Self, Task<Message>) {
+    pub fn new() -> (Self, Task<Message>) {
         (
             Self {
                 state: State::Loading,
@@ -51,7 +51,7 @@ impl Welcome {
         )
     }
 
-    pub fn update(&mut self, message: Message, _database: &Database) -> Action {
+    pub fn update(&mut self, message: Message) -> Action {
         match message {
             Message::CollectionsListed(Ok(collections)) => {
                 if collections.is_empty() {

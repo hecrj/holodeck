@@ -1,16 +1,14 @@
-pub use crate::pokebase::card::{Card, Id};
+pub use crate::pokebase::card::{Card, Id, search};
 
-use crate::pokebase::set;
-use crate::pokebase::{Database, Locale};
-
-use iced::futures::TryFutureExt;
+use crate::pokebase::card;
+use crate::pokebase::{Database, Session};
 
 use bytes::Bytes;
+use futures_util::TryFutureExt;
 use std::env;
 use std::fmt;
 use std::io;
 use std::path::PathBuf;
-use std::time::Duration;
 use tokio::fs;
 use tokio::task;
 
@@ -21,31 +19,18 @@ pub struct Image {
     pub rgba: Bytes,
 }
 
-impl fmt::Debug for Image {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Image")
-            .field("width", &self.width)
-            .field("height", &self.height)
-            .field("rgba", &self.rgba.len())
-            .finish()
-    }
-}
-
 impl Image {
     pub fn fetch<'a>(
         card: &Card,
         database: &Database,
+        session: &Session,
     ) -> impl Future<Output = Result<Image, anywho::Error>> + 'a {
-        let database = database.clone();
         let card = card.clone();
+        let database = database.clone();
+        let session = session.clone();
 
         async move {
             let cache = cache_dir().join(format!("{id}.png", id = card.id.as_str()));
-
-            let client = reqwest::ClientBuilder::new()
-                .timeout(Duration::from_secs(3))
-                .build()
-                .expect("Build reqwest client");
 
             let fetch_from_cache = async {
                 let bytes = fs::read(&cache).await?;
@@ -53,125 +38,15 @@ impl Image {
                 Ok(Bytes::from(bytes))
             };
 
-            let fetch_from_pokemontcg = async {
-                if !card.name.contains_key("en") {
-                    return Err(Error::LocaleNotAvailable.into());
-                }
+            let download_image = async {
+                let image = card::Image::download(&card, &database, &session).await?;
 
-                // PokemonTCG does not pad with leading 0s
-                let set = {
-                    let prefix: String = card
-                        .set
-                        .as_str()
-                        .chars()
-                        .take_while(|c| !c.is_digit(10))
-                        .collect();
-
-                    let number = &card.set.as_str()[prefix.len()..];
-
-                    let replacement = if prefix.starts_with("swsh") && number.starts_with("12")
-                        || prefix.starts_with("sv")
-                    {
-                        "pt"
-                    } else {
-                        ""
-                    };
-
-                    format!(
-                        "{}{}",
-                        prefix.replace(".", replacement),
-                        number.trim_start_matches('0').replace(".", replacement)
-                    )
-                };
-
-                let number = card
-                    .id
-                    .as_str()
-                    .rsplit("-")
-                    .next()
-                    .unwrap_or(card.id.as_str())
-                    .trim_start_matches('0');
-
-                let url = format!("https://images.pokemontcg.io/{set}/{number}_hires.png");
-
-                log::info!("Downloading image: {url}");
-
-                let mut retries = 2;
-
-                let response = loop {
-                    let request = client.get(&url);
-
-                    let request = if let Ok(api_key) = env::var("POKEMONTCG_API_KEY") {
-                        request.header("X-Api-Key", api_key)
-                    } else {
-                        request
-                    };
-
-                    let response = request.send().await;
-
-                    match response {
-                        Ok(response) => {
-                            break Ok(response);
-                        }
-                        Err(error) => {
-                            if retries > 0 {
-                                log::warn!("Retrying request: {error}");
-                                retries -= 1;
-                            } else {
-                                break Err(error);
-                            }
-                        }
-                    }
-                };
-
-                Ok::<_, anywho::Error>(response?.error_for_status()?.bytes().await?)
+                Ok::<_, anywho::Error>(image.bytes)
             };
 
-            let fetch_from_tcgdex = async {
-                let Some(set) = database.sets.get(&card.set) else {
-                    return Err(Error::SetNotFound(card.set.clone()).into());
-                };
-
-                let locale = if card.name.contains_key("en") {
-                    "en" // TODO
-                } else if card.name.contains_key("ja") {
-                    "ja"
-                } else {
-                    card.name.keys().next().map(Locale::as_str).unwrap_or("en")
-                };
-
-                let url = format!(
-                    "https://assets.tcgdex.net/{locale}/{series}/{set}/{number}/high.png",
-                    series = set.series.as_str(),
-                    set = card.set.as_str(),
-                    number = card
-                        .id
-                        .as_str()
-                        .rsplit("-")
-                        .next()
-                        .unwrap_or(card.id.as_str())
-                );
-
-                log::info!("Downloading image: {url}");
-
-                let request = client.get(url);
-
-                Ok::<_, anywho::Error>(request.send().await?.error_for_status()?.bytes().await?)
-            };
-
-            // Rationale on the order of image fetching:
-            // 1. Cache - fast and avoids rate limits in the long term.
-            // 2. PokemonTCG - Highest quality, but English only. 20,000 requests/day with an API key.
-            // 3. TCGDex - Lower quality, but supports multiple locales. Rate limiting unknown (?).
-            let fetch = fetch_from_cache
-                .or_else(|_: anywho::Error| fetch_from_pokemontcg)
-                .or_else(|error| {
-                    log::warn!("{error}");
-
-                    fetch_from_tcgdex
-                });
-
-            let bytes = fetch.await?;
+            let bytes = fetch_from_cache
+                .or_else(|_: anywho::Error| download_image)
+                .await?;
 
             if !fs::try_exists(&cache).await.unwrap_or_default() {
                 let _ = fs::create_dir_all(cache.parent().unwrap_or(&cache)).await;
@@ -196,17 +71,19 @@ impl Image {
     }
 }
 
+impl fmt::Debug for Image {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Image")
+            .field("width", &self.width)
+            .field("height", &self.height)
+            .field("rgba", &self.rgba.len())
+            .finish()
+    }
+}
+
 fn cache_dir() -> PathBuf {
     dirs::cache_dir()
         .unwrap_or_default()
         .join(env!("CARGO_PKG_NAME"))
         .join("cards")
-}
-
-#[derive(Debug, Clone, thiserror::Error)]
-pub enum Error {
-    #[error("set not found: {0:?}")]
-    SetNotFound(set::Id),
-    #[error("locale not available")]
-    LocaleNotAvailable,
 }

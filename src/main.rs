@@ -22,16 +22,16 @@ use std::env;
 pub fn main() -> iced::Result {
     tracing_subscriber::fmt::init();
 
-    iced::application(Holofoil::new, Holofoil::update, Holofoil::view)
-        .subscription(Holofoil::subscription)
-        .theme(Holofoil::theme)
+    iced::application(Holodeck::new, Holodeck::update, Holodeck::view)
+        .subscription(Holodeck::subscription)
+        .theme(Holodeck::theme)
         .font(icon::FONT)
         .default_font(Font::MONOSPACE)
         .window_size((1700.0, 950.0))
         .run()
 }
 
-struct Holofoil {
+struct Holodeck {
     state: State,
 }
 
@@ -53,7 +53,7 @@ enum Message {
     Browse,
 }
 
-impl Holofoil {
+impl Holodeck {
     fn new() -> (Self, Task<Message>) {
         (
             Self {

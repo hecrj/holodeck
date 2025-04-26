@@ -1,10 +1,10 @@
 // Generated automatically by iced_fontello at build time.
-// Do not edit manually. Source: ../fonts/holofoil-icons.toml
-// 6abf5666186eb78fa470e232f14159b1019c690230467660bf9cbd2897cabee8
+// Do not edit manually. Source: ../fonts/holodeck-icons.toml
+// df010bd4723d936cdfd888fb0750d31c4bc22724f64e5e977e9da6b1180f0e3d
 use iced::widget::{text, Text};
 use iced::Font;
 
-pub const FONT: &[u8] = include_bytes!("../fonts/holofoil-icons.ttf");
+pub const FONT: &[u8] = include_bytes!("../fonts/holodeck-icons.ttf");
 
 pub fn add<'a>() -> Text<'a> {
     icon("\u{2B}")
@@ -27,5 +27,5 @@ pub fn cancel<'a>() -> Text<'a> {
 }
 
 fn icon(codepoint: &str) -> Text<'_> {
-    text(codepoint).font(Font::with_name("holofoil-icons"))
+    text(codepoint).font(Font::with_name("holodeck-icons"))
 }

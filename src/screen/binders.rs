@@ -697,7 +697,6 @@ fn item<'a>(
                         .content_fit(ContentFit::Cover)
                         .opacity(opacity)
                         .scale(scale)
-                        .float(true)
                         .translate(move |bounds, viewport| {
                             let scale = source.zoom();
                             let final_bounds = bounds.zoom(scale);

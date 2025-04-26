@@ -1,6 +1,6 @@
 // Generated automatically by iced_fontello at build time.
 // Do not edit manually. Source: ../fonts/holofoil-icons.toml
-// f491e302ff8defe16c5f2120ee069ae2355d481ce9a376926a99704277d8a1e6
+// 6abf5666186eb78fa470e232f14159b1019c690230467660bf9cbd2897cabee8
 use iced::widget::{text, Text};
 use iced::Font;
 
@@ -24,10 +24,6 @@ pub fn browse<'a>() -> Text<'a> {
 
 pub fn cancel<'a>() -> Text<'a> {
     icon("\u{2715}")
-}
-
-pub fn pointer<'a>() -> Text<'a> {
-    icon("\u{F25A}")
 }
 
 fn icon(codepoint: &str) -> Text<'_> {

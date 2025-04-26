@@ -48,7 +48,6 @@ enum State {
         matches: Arc<[Card]>,
         task: Option<task::Handle>,
         animations: HashMap<card::Id, AnimationSet>,
-        focus: Option<usize>,
     },
 }
 
@@ -67,6 +66,7 @@ pub enum Message {
     ImageFetched(card::Id, Result<card::Image, anywho::Error>),
     CollectionSaved(Result<(), anywho::Error>),
     TabPressed { shift: bool },
+    EscapePressed,
     EnterPressed,
     Tick(Instant),
 }
@@ -155,7 +155,6 @@ impl Binders {
                     matches: Arc::new([]),
                     animations: HashMap::new(),
                     task: Some(handle.abort_on_drop()),
-                    focus: None,
                 };
 
                 Task::batch([text_input::focus("search"), search_cards])
@@ -240,15 +239,14 @@ impl Binders {
                         }
                     }
                     Source::Search => {
-                        if let State::Adding {
-                            animations, focus, ..
-                        } = &mut self.state
-                        {
+                        if let State::Adding { animations, .. } = &mut self.state {
+                            for animation in animations.values_mut() {
+                                animation.zoom.go_mut(false);
+                            }
+
                             if let Some(animations) = animations.get_mut(&card) {
                                 animations.zoom.go_mut(hovered);
                             }
-
-                            *focus = None;
                         }
                     }
                 }
@@ -282,47 +280,106 @@ impl Binders {
             }
             Message::CollectionSaved(Ok(_)) => Task::none(),
             Message::TabPressed { shift } => {
-                let State::Adding { focus, .. } = &mut self.state else {
+                let State::Adding {
+                    matches,
+                    animations,
+                    ..
+                } = &mut self.state
+                else {
                     return Task::none();
                 };
 
-                match focus {
-                    Some(0) if shift => {
-                        *focus = None;
-                        text_input::focus("search")
+                let focus = matches.iter().enumerate().find_map(|(i, card)| {
+                    let animation = animations.get(&card.id)?;
+
+                    if animation.zoom.value() {
+                        Some((i, card))
+                    } else {
+                        None
                     }
-                    Some(focus) => {
-                        if shift {
-                            *focus -= 1;
-                        } else {
-                            *focus += 1
+                });
+
+                match focus {
+                    Some((index, card)) => {
+                        if let Some(animation) = animations.get_mut(&card.id) {
+                            animation.zoom.go_mut(false);
                         }
 
-                        // TODO
-                        text_input::focus("")
+                        let new_index = if shift {
+                            if index == 0 {
+                                return text_input::focus("search");
+                            }
+
+                            index - 1
+                        } else {
+                            index + 1
+                        };
+
+                        if let Some(card) = matches.get(new_index) {
+                            if let Some(animation) = animations.get_mut(&card.id) {
+                                animation.zoom.go_mut(true);
+                            }
+                        }
                     }
-                    None if !shift => {
-                        *focus = Some(0);
-                        text_input::focus("")
+                    None => {
+                        if shift {
+                            return text_input::focus("search");
+                        }
+
+                        if let Some(card) = matches.first() {
+                            if let Some(animation) = animations.get_mut(&card.id) {
+                                animation.zoom.go_mut(true);
+                            }
+                        }
                     }
-                    _ => Task::none(),
                 }
+
+                // TODO: Unfocus operation
+                text_input::focus("")
             }
             Message::EnterPressed => {
                 let State::Adding {
-                    focus: Some(focus),
                     matches,
+                    animations,
                     ..
                 } = &self.state
                 else {
                     return Task::none();
                 };
 
-                let Some(card) = matches.get(*focus) else {
+                let Some(card) = matches.iter().find(|card| {
+                    animations
+                        .get(&card.id)
+                        .is_some_and(|animation| animation.zoom.value())
+                }) else {
                     return Task::none();
                 };
 
                 self.add(card.id.clone(), collection, database)
+            }
+            Message::EscapePressed => {
+                let State::Adding {
+                    matches,
+                    animations,
+                    ..
+                } = &mut self.state
+                else {
+                    return Task::none();
+                };
+
+                for card in matches.iter() {
+                    if let Some(animation) = animations.get_mut(&card.id) {
+                        if animation.zoom.value() {
+                            animation.zoom.go_mut(false);
+
+                            return Task::none();
+                        }
+                    }
+                }
+
+                self.state = State::Idle;
+
+                Task::none()
             }
             Message::Tick(now) => {
                 self.now = now;
@@ -480,9 +537,8 @@ impl Binders {
                 search,
                 matches,
                 animations,
-                focus,
                 ..
-            } => Some(self.adding(search, matches, animations, *focus, collection)),
+            } => Some(self.adding(search, matches, animations, collection)),
         };
 
         let has_overlay = overlay.is_some();
@@ -547,7 +603,6 @@ impl Binders {
         search: &'a str,
         matches: &'a [Card],
         animations: &'a HashMap<card::Id, AnimationSet>,
-        focus: Option<usize>,
         collection: &'a Collection,
     ) -> Element<'a, Message> {
         let input = container(
@@ -569,7 +624,7 @@ impl Binders {
                 .into()
             } else {
                 scrollable(
-                    grid(matches.iter().take(100).enumerate().map(|(i, card)| {
+                    grid(matches.iter().take(100).map(|card| {
                         let owned_tag = |amount| {
                             right(
                                 container(text!("Owned x{amount}").size(10))
@@ -583,22 +638,6 @@ impl Binders {
                             .padding(5)
                         };
 
-                        let highlight = || {
-                            center(container(icon::pointer().size(30)).padding(20).style(
-                                |_theme| {
-                                    container::Style::default()
-                                        .background(Color::BLACK.scale_alpha(0.8))
-                                        .border(border::rounded(8))
-                                },
-                            ))
-                            .style(|theme| {
-                                let palette = theme.extended_palette();
-
-                                container::Style::default()
-                                    .border(border::width(5).color(palette.primary.strong.color))
-                            })
-                        };
-
                         stack![
                             container(item(
                                 card,
@@ -610,7 +649,6 @@ impl Binders {
                             .padding(1)
                         ]
                         .push_maybe(collection.cards.get(&card.id).map(owned_tag))
-                        .push_maybe((Some(i) == focus).then(highlight))
                         .into()
                     }))
                     .fluid(300)
@@ -636,7 +674,7 @@ impl Binders {
             Some(match key.as_ref() {
                 Key::Named(Named::ArrowLeft) if modifiers.is_empty() => Message::PreviousPage,
                 Key::Named(Named::ArrowRight) if modifiers.is_empty() => Message::NextPage,
-                Key::Named(Named::Escape) => Message::Close,
+                Key::Named(Named::Escape) => Message::EscapePressed,
                 Key::Named(Named::Tab) => Message::TabPressed {
                     shift: modifiers.shift(),
                 },

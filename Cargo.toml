@@ -21,9 +21,7 @@ futures-util.workspace = true
 image.workspace = true
 log.workspace = true
 pokebase.workspace = true
-reqwest.workspace = true
 ron.workspace = true
-thiserror.workspace = true
 tracing-subscriber.workspace = true
 
 [build-dependencies]

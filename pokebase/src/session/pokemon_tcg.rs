@@ -2,6 +2,7 @@ use crate::session;
 use crate::{Card, Error};
 
 use bytes::Bytes;
+use serde::Deserialize;
 
 #[derive(Debug, Clone)]
 pub struct PokemonTcg {
@@ -27,9 +28,27 @@ impl PokemonTcg {
         let url = format!("https://images.pokemontcg.io/{set}/{number}_hires.png");
 
         log::info!("Downloading image: {url}");
-        let response = session::retry(2, || self.get(&url).send()).await;
+        let response = session::retry(2, || self.get(&url).send()).await?;
 
-        Ok(response?.error_for_status()?.bytes().await?)
+        Ok(response.error_for_status()?.bytes().await?)
+    }
+
+    pub async fn fetch_pricing(&self, card: &Card) -> Result<Pricing, Error> {
+        let set = set_name(card);
+        let number = card_number(card);
+        let url = format!("https://api.pokemontcg.io/v2/cards/{set}-{number}");
+
+        #[derive(Deserialize)]
+        struct Response {
+            data: Pricing,
+        }
+
+        log::info!("Fetching price: {url}");
+
+        let response = session::retry(2, || self.get(&url).send()).await?;
+        let response: Response = response.error_for_status()?.json().await?;
+
+        Ok(response.data)
     }
 
     fn get(&self, url: impl AsRef<str>) -> reqwest::RequestBuilder {
@@ -41,6 +60,12 @@ impl PokemonTcg {
             request
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
+pub struct Pricing {
+    pub tcgplayer: tcgplayer::Pricing,
+    pub cardmarket: cardmarket::Pricing,
 }
 
 fn set_name(card: &Card) -> String {
@@ -75,4 +100,71 @@ fn card_number(card: &Card) -> &str {
         .next()
         .unwrap_or(card.id.as_str())
         .trim_start_matches('0')
+}
+
+pub mod tcgplayer {
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+    pub struct Pricing {
+        pub prices: Prices,
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct Prices {
+        #[serde(default)]
+        pub normal: Option<Spread>,
+        #[serde(default)]
+        pub holofoil: Option<Spread>,
+        #[serde(default)]
+        pub reverse_holofoil: Option<Spread>,
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct Spread {
+        pub low: f64,
+        pub mid: f64,
+        pub high: f64,
+        pub market: f64,
+    }
+}
+
+pub mod cardmarket {
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+    pub struct Pricing {
+        pub prices: Prices,
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct Prices {
+        #[serde(default)]
+        pub average_sell_price: f64,
+        #[serde(default)]
+        pub low_price: f64,
+        #[serde(default)]
+        pub trend_price: f64,
+        #[serde(default)]
+        pub avg1: f64,
+        #[serde(default)]
+        pub avg7: f64,
+        #[serde(default)]
+        pub avg30: f64,
+        #[serde(default)]
+        pub reverse_holo_sell: f64,
+        #[serde(default)]
+        pub reverse_holo_low: f64,
+        #[serde(default)]
+        pub reverse_holo_trend: f64,
+        #[serde(default)]
+        pub reverse_holo_avg1: f64,
+        #[serde(default)]
+        pub reverse_holo_avg7: f64,
+        #[serde(default)]
+        pub reverse_holo_avg30: f64,
+    }
 }

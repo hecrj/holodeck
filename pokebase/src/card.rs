@@ -1,3 +1,5 @@
+pub mod pricing;
+
 pub use crate::core::card::*;
 
 use crate::{Database, Error, Search, Session};

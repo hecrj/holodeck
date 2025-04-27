@@ -8,6 +8,7 @@ mod screen;
 mod widget;
 
 use crate::binder::Binder;
+use crate::card::pricing;
 use crate::collection::Collection;
 use crate::pokebase::{Database, Result, Session};
 use crate::screen::Screen;
@@ -41,6 +42,7 @@ enum State {
         database: Database,
         session: Session,
         screen: Screen,
+        prices: pricing::Map,
     },
 }
 
@@ -51,6 +53,7 @@ enum Message {
     Binders(binders::Message),
     OpenBinders,
     Browse,
+    PricingUpdated(pricing::Update),
 }
 
 impl Holodeck {
@@ -68,13 +71,21 @@ impl Holodeck {
             Message::Loaded(Ok(database)) => {
                 let (welcome, task) = screen::Welcome::new();
 
+                let session = Session::new(env::var("POKEMONTCG_API_KEy").ok()); // TODO: Configuration
+
+                let prices = Task::run(
+                    pricing::Update::subscribe(&database, &session),
+                    Message::PricingUpdated,
+                );
+
                 self.state = State::Ready {
                     database,
-                    session: Session::new(env::var("POKEMONTCG_API_KEy").ok()), // TODO: Configuration
+                    session,
                     screen: Screen::Welcome(welcome),
+                    prices: pricing::Map::new(),
                 };
 
-                task.map(Message::Welcome)
+                Task::batch([task.map(Message::Welcome), prices])
             }
             Message::Welcome(message) => {
                 let State::Ready { screen, .. } = &mut self.state else {
@@ -109,6 +120,7 @@ impl Holodeck {
                             collection,
                             screen: screen::Collecting::Binders(binders),
                         },
+                    ..
                 } = &mut self.state
                 else {
                     return Task::none();
@@ -134,6 +146,15 @@ impl Holodeck {
             }
             Message::Browse => {
                 // TODO
+                Task::none()
+            }
+            Message::PricingUpdated(update) => {
+                let State::Ready { prices, .. } = &mut self.state else {
+                    return Task::none();
+                };
+
+                let _ = prices.insert(update.card, update.pricing);
+
                 Task::none()
             }
             Message::Loaded(Err(error)) => {

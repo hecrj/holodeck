@@ -142,7 +142,7 @@ impl Pricing {
                         .then_some(normal_or_holofoil),
                     reverse_holofoil: tcgplayer
                         .prices
-                        .holofoil
+                        .reverse_holofoil
                         .is_some()
                         .then_some(reverse_holofoil),
                 }

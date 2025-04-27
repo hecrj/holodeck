@@ -195,7 +195,7 @@ impl Pricing {
                         continue;
                     };
 
-                    if let Ok(pricing) = dbg!(Pricing::fetch(card, &session).await) {
+                    if let Ok(pricing) = Pricing::fetch(card, &session).await {
                         prices.insert(card.id.clone(), pricing);
                         let _ = sender.send(Event::Updated(card.id.clone(), pricing)).await;
                     }

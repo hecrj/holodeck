@@ -88,7 +88,13 @@ impl Holodeck {
                 Task::batch([task.map(Message::Welcome), prices])
             }
             Message::Welcome(message) => {
-                let State::Ready { screen, .. } = &mut self.state else {
+                let State::Ready {
+                    screen,
+                    database,
+                    session,
+                    ..
+                } = &mut self.state
+                else {
                     return Task::none();
                 };
 
@@ -96,7 +102,7 @@ impl Holodeck {
                     return Task::none();
                 };
 
-                match welcome.update(message) {
+                match welcome.update(message, database, session) {
                     welcome::Action::None => Task::none(),
                     welcome::Action::Run(task) => task.map(Message::Welcome),
                     welcome::Action::Select(collection) => {
@@ -244,7 +250,7 @@ impl Holodeck {
         };
 
         match screen {
-            Screen::Welcome(_) => Subscription::none(),
+            Screen::Welcome(welcome) => welcome.subscription().map(Message::Welcome),
             Screen::Collecting { screen, .. } => match screen {
                 screen::Collecting::Binders(binders) => {
                     binders.subscription().map(Message::Binders)

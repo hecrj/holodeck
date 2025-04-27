@@ -1,5 +1,5 @@
-use crate::pokebase::Database;
 use crate::pokebase::card;
+use crate::pokebase::{Card, Database};
 
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
@@ -12,7 +12,7 @@ pub struct Collection {
     pub cards: BTreeMap<card::Id, usize>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct Name(String);
 
@@ -102,6 +102,18 @@ impl Collection {
         );
 
         pokemon.len()
+    }
+
+    pub fn rarest_cards<'a>(&'a self, database: &'a Database) -> impl Iterator<Item = &'a Card> {
+        let mut rares: Vec<_> = self
+            .cards
+            .keys()
+            .filter_map(|card| database.cards.get(card))
+            .filter(|card| card.rarity >= card::Rarity::HoloRare)
+            .collect();
+        rares.sort_unstable_by(|a, b| a.rarity.cmp(&b.rarity).reverse());
+
+        rares.into_iter()
     }
 }
 

@@ -12,6 +12,15 @@ pub struct PokemonTcg {
 
 impl PokemonTcg {
     pub fn new(api_key: Option<String>) -> Self {
+        if let Some(api_key) = api_key.as_ref() {
+            log::info!(
+                "PokemonTCG session started (API key: {})",
+                api_key.replace(|c: char| c.is_alphanumeric(), "*")
+            )
+        } else {
+            log::warn!("PokemonTCG session started without an API key!")
+        }
+
         Self {
             client: session::CLIENT.clone(),
             api_key,

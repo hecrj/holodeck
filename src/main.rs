@@ -71,7 +71,7 @@ impl Holodeck {
             Message::Loaded(Ok(database)) => {
                 let (welcome, task) = screen::Welcome::new();
 
-                let session = Session::new(env::var("POKEMONTCG_API_KEy").ok()); // TODO: Configuration
+                let session = Session::new(env::var("POKEMONTCG_API_KEY").ok()); // TODO: Configuration
 
                 let prices = Task::run(
                     pricing::Update::subscribe(&database, &session),

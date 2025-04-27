@@ -21,6 +21,7 @@ futures-util.workspace = true
 image.workspace = true
 log.workspace = true
 pokebase.workspace = true
+reqwest.workspace = true
 ron.workspace = true
 tracing-subscriber.workspace = true
 
@@ -34,7 +35,7 @@ members = ["pokebase", "pokebase/core"]
 pokebase.path = "./pokebase"
 pokebase-core.path = "./pokebase/core"
 
-anywho = "0.1.0"
+anywho = "0.1.2"
 bytes = "1"
 dirs = "6"
 flate2 = "1"

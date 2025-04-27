@@ -1,4 +1,5 @@
 use crate::binder;
+use crate::card::pricing;
 use crate::collection::{self, Collection};
 use crate::icon;
 use crate::pokebase::Database;
@@ -105,14 +106,14 @@ impl Welcome {
         }
     }
 
-    pub fn view(&self, database: &Database) -> Element<Message> {
+    pub fn view(&self, database: &Database, prices: &pricing::Map) -> Element<Message> {
         let content: Element<_> = match &self.state {
             State::Loading => text("Loading...").into(),
             State::Selection { collections } => column![
                 column(
                     collections
                         .iter()
-                        .map(|collection| card(collection, database)),
+                        .map(|collection| card(collection, database, prices)),
                 )
                 .spacing(10),
                 button(
@@ -171,12 +172,17 @@ impl Welcome {
     }
 }
 
-fn card<'a>(collection: &'a Collection, database: &Database) -> Element<'a, Message> {
+fn card<'a>(
+    collection: &'a Collection,
+    database: &Database,
+    prices: &pricing::Map,
+) -> Element<'a, Message> {
     let name = text(collection.name.as_str()).size(20);
 
     let total_cards = collection.total_cards();
     let unique_cards = collection.unique_cards();
     let total_pokemon = collection.total_pokemon(database);
+    let total_value = prices.total_value(collection);
 
     let stat = |stat| text(stat).size(14);
 
@@ -215,6 +221,8 @@ fn card<'a>(collection: &'a Collection, database: &Database) -> Element<'a, Mess
                 row![
                     badge,
                     horizontal_space(),
+                    stat(format!("{}", total_value.america)),
+                    stat(format!("{}", total_value.europe)),
                     stat(format!("{progress:.1}% completed"))
                 ]
                 .spacing(20)

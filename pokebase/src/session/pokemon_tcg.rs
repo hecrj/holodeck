@@ -43,8 +43,9 @@ impl PokemonTcg {
     }
 
     pub async fn fetch_pricing(&self, card: &Card) -> Result<Pricing, Error> {
-        let set = set_name(card);
         let number = card_number(card);
+        let set = set_name(card);
+
         let url = format!("https://api.pokemontcg.io/v2/cards/{set}-{number}");
 
         #[derive(Deserialize)]
@@ -95,11 +96,17 @@ fn set_name(card: &Card) -> String {
             ""
         };
 
-    format!(
+    let mut name = format!(
         "{}{}",
         prefix.replace(".", replacement),
         number.trim_start_matches('0').replace(".", replacement)
-    )
+    );
+
+    if card_number(card).starts_with("TG") {
+        name.push_str("tg");
+    }
+
+    name
 }
 
 fn card_number(card: &Card) -> &str {
@@ -114,12 +121,12 @@ fn card_number(card: &Card) -> &str {
 pub mod tcgplayer {
     use serde::{Deserialize, Serialize};
 
-    #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+    #[derive(Debug, Clone, Copy, PartialEq, Default, Serialize, Deserialize)]
     pub struct Pricing {
         pub prices: Prices,
     }
 
-    #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+    #[derive(Debug, Clone, Copy, PartialEq, Default, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Prices {
         #[serde(default)]
@@ -143,12 +150,12 @@ pub mod tcgplayer {
 pub mod cardmarket {
     use serde::{Deserialize, Serialize};
 
-    #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+    #[derive(Debug, Clone, Copy, PartialEq, Default, Serialize, Deserialize)]
     pub struct Pricing {
         pub prices: Prices,
     }
 
-    #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+    #[derive(Debug, Clone, Copy, PartialEq, Default, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Prices {
         #[serde(default)]

@@ -8,7 +8,7 @@ mod screen;
 mod widget;
 
 use crate::binder::Binder;
-use crate::card::pricing;
+use crate::card::pricing::{self, Pricing};
 use crate::collection::Collection;
 use crate::pokebase::{Database, Result, Session};
 use crate::screen::Screen;
@@ -53,7 +53,7 @@ enum Message {
     Binders(binders::Message),
     OpenBinders,
     Browse,
-    PricingUpdated(pricing::Update),
+    PricingUpdated(pricing::Event),
 }
 
 impl Holodeck {
@@ -74,7 +74,7 @@ impl Holodeck {
                 let session = Session::new(env::var("POKEMONTCG_API_KEY").ok()); // TODO: Configuration
 
                 let prices = Task::run(
-                    pricing::Update::subscribe(&database, &session),
+                    Pricing::subscribe(&database, &session),
                     Message::PricingUpdated,
                 );
 
@@ -148,12 +148,19 @@ impl Holodeck {
                 // TODO
                 Task::none()
             }
-            Message::PricingUpdated(update) => {
+            Message::PricingUpdated(event) => {
                 let State::Ready { prices, .. } = &mut self.state else {
                     return Task::none();
                 };
 
-                let _ = prices.insert(update.card, update.pricing);
+                match event {
+                    pricing::Event::Loaded(new_prices) => {
+                        *prices = new_prices;
+                    }
+                    pricing::Event::Updated(id, pricing) => {
+                        let _ = prices.insert(id, pricing);
+                    }
+                }
 
                 Task::none()
             }
@@ -169,9 +176,12 @@ impl Holodeck {
         match &self.state {
             State::Loading => center(text("Loading...")).into(),
             State::Ready {
-                database, screen, ..
+                database,
+                screen,
+                prices,
+                ..
             } => match screen {
-                Screen::Welcome(welcome) => welcome.view(database).map(Message::Welcome),
+                Screen::Welcome(welcome) => welcome.view(database, prices).map(Message::Welcome),
                 Screen::Collecting { collection, screen } => {
                     let tabs = [
                         (

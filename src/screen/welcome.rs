@@ -367,9 +367,9 @@ fn card<'a>(
                 container::Style::default()
                     .background(
                         gradient::Linear::new(Degrees(180.0))
-                            .add_stop(0.03, Color::BLACK)
+                            .add_stop(0.05, Color::BLACK.scale_alpha(0.98))
                             .add_stop(0.5, Color::TRANSPARENT)
-                            .add_stop(0.97, Color::BLACK),
+                            .add_stop(0.95, Color::BLACK.scale_alpha(0.98)),
                     )
                     .border(border::rounded(12.0))
             }))

@@ -734,7 +734,10 @@ fn item<'a>(
                         .height(Fill)
                         .content_fit(ContentFit::Cover)
                         .opacity(opacity)
-                        .scale(scale)
+                        .scale(match source {
+                            Source::Binder => scale * (1.1 - (0.1 * opacity)),
+                            Source::Search => scale,
+                        })
                         .translate(move |bounds, viewport| {
                             let scale = source.zoom();
                             let final_bounds = bounds.zoom(scale);

@@ -144,7 +144,7 @@ impl Pricing {
 
         iced::stream::channel(1, async move |mut sender| {
             let mut prices = loop {
-                log::info!("Scanning prices cache...");
+                log::debug!("Scanning prices cache...");
 
                 let Ok(collections) = Collection::list().await else {
                     time::sleep(Duration::from_secs(60)).await;
@@ -170,7 +170,7 @@ impl Pricing {
             let _ = sender.send(Event::Loaded(prices.clone())).await;
 
             loop {
-                log::info!("Scanning for out of date prices...");
+                log::debug!("Scanning for out of date prices...");
 
                 let Ok(collections) = Collection::list().await else {
                     time::sleep(Duration::from_secs(60)).await;

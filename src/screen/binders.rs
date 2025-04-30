@@ -11,8 +11,9 @@ use iced::keyboard;
 use iced::task;
 use iced::time::{Instant, milliseconds};
 use iced::widget::{
-    bottom_right, button, center, center_x, center_y, column, container, grid, horizontal_space,
-    image, mouse_area, opaque, pick_list, pop, right, row, scrollable, stack, text, text_input,
+    bottom_right, button, center, center_x, center_y, column, container, float, grid,
+    horizontal_space, image, mouse_area, opaque, pick_list, pop, right, row, scrollable, stack,
+    text, text_input,
 };
 use iced::window;
 use iced::{
@@ -31,7 +32,6 @@ pub struct Binders {
     state: State,
     images: HashMap<card::Id, Image>,
     animations: HashMap<card::Id, AnimationSet>,
-    now: Instant,
 }
 
 enum Image {
@@ -67,7 +67,7 @@ pub enum Message {
     TabPressed { shift: bool },
     EscapePressed,
     EnterPressed,
-    Tick(Instant),
+    Tick,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -94,7 +94,6 @@ impl Binders {
             state: State::Idle,
             images: HashMap::new(),
             animations: HashMap::new(),
-            now: Instant::now(),
         }
     }
 
@@ -104,6 +103,7 @@ impl Binders {
         collection: &mut Collection,
         database: &Database,
         session: &Session,
+        now: Instant,
     ) -> Task<Message> {
         match message {
             Message::ModeSelected(mode) => {
@@ -212,11 +212,12 @@ impl Binders {
                 if self.images.contains_key(&card.id) {
                     match source {
                         Source::Binder => {
-                            self.animations.insert(card.id.clone(), AnimationSet::new());
+                            self.animations
+                                .insert(card.id.clone(), AnimationSet::new(now));
                         }
                         Source::Search => {
                             if let State::Adding { animations, .. } = &mut self.state {
-                                animations.insert(card.id.clone(), AnimationSet::new());
+                                animations.insert(card.id.clone(), AnimationSet::new(now));
                             }
                         }
                     }
@@ -235,17 +236,17 @@ impl Binders {
                 match source {
                     Source::Binder => {
                         if let Some(animations) = self.animations.get_mut(&card) {
-                            animations.zoom.go_mut(hovered);
+                            animations.zoom.go_mut(hovered, now);
                         }
                     }
                     Source::Search => {
                         if let State::Adding { animations, .. } = &mut self.state {
                             for animation in animations.values_mut() {
-                                animation.zoom.go_mut(false);
+                                animation.zoom.go_mut(false, now);
                             }
 
                             if let Some(animations) = animations.get_mut(&card) {
-                                animations.zoom.go_mut(hovered);
+                                animations.zoom.go_mut(hovered, now);
                             }
                         }
                     }
@@ -271,10 +272,10 @@ impl Binders {
                 );
 
                 if let State::Adding { animations, .. } = &mut self.state {
-                    animations.insert(card.clone(), AnimationSet::new());
+                    animations.insert(card.clone(), AnimationSet::new(now));
                 }
 
-                self.animations.insert(card, AnimationSet::new());
+                self.animations.insert(card, AnimationSet::new(now));
 
                 Task::none()
             }
@@ -302,7 +303,7 @@ impl Binders {
                 match focus {
                     Some((index, card)) => {
                         if let Some(animation) = animations.get_mut(&card.id) {
-                            animation.zoom.go_mut(false);
+                            animation.zoom.go_mut(false, now);
                         }
 
                         let new_index = if shift {
@@ -317,7 +318,7 @@ impl Binders {
 
                         if let Some(card) = matches.get(new_index) {
                             if let Some(animation) = animations.get_mut(&card.id) {
-                                animation.zoom.go_mut(true);
+                                animation.zoom.go_mut(true, now);
                             }
                         }
                     }
@@ -328,7 +329,7 @@ impl Binders {
 
                         if let Some(card) = matches.first() {
                             if let Some(animation) = animations.get_mut(&card.id) {
-                                animation.zoom.go_mut(true);
+                                animation.zoom.go_mut(true, now);
                             }
                         }
                     }
@@ -370,7 +371,7 @@ impl Binders {
                 for card in matches.iter() {
                     if let Some(animation) = animations.get_mut(&card.id) {
                         if animation.zoom.value() {
-                            animation.zoom.go_mut(false);
+                            animation.zoom.go_mut(false, now);
 
                             return Task::none();
                         }
@@ -381,11 +382,7 @@ impl Binders {
 
                 Task::none()
             }
-            Message::Tick(now) => {
-                self.now = now;
-
-                Task::none()
-            }
+            Message::Tick => Task::none(),
             Message::ImageFetched(card, Err(error)) => {
                 log::error!("{error}");
 
@@ -423,6 +420,7 @@ impl Binders {
         &'a self,
         collection: &'a Collection,
         database: &'a Database,
+        now: Instant,
     ) -> Element<'a, Message> {
         let Some(pair) = self.binders.open(self.spread) else {
             // TODO
@@ -516,14 +514,14 @@ impl Binders {
             )
             .into(),
             binder::Surface::Content(content) => {
-                self.page(pair.binder, content, collection, database)
+                self.page(pair.binder, content, collection, database, now)
             }
         };
 
         let right_page = match pair.right {
             binder::Surface::Cover => horizontal_space().into(),
             binder::Surface::Content(content) => {
-                self.page(pair.binder, content, collection, database)
+                self.page(pair.binder, content, collection, database, now)
             }
         };
 
@@ -538,7 +536,7 @@ impl Binders {
                 matches,
                 animations,
                 ..
-            } => Some(self.adding(search, matches, animations, collection)),
+            } => Some(self.adding(search, matches, animations, collection, now)),
         };
 
         let has_overlay = overlay.is_some();
@@ -567,6 +565,7 @@ impl Binders {
         content: binder::Content,
         collection: &Collection,
         database: &'a Database,
+        now: Instant,
     ) -> Element<'a, Message> {
         let total = self.mode.total_cards(database);
 
@@ -579,7 +578,7 @@ impl Binders {
                             card,
                             self.images.get(&card.id),
                             self.animations.get(&card.id),
-                            self.now,
+                            now,
                             Source::Binder,
                         )
                     })
@@ -604,6 +603,7 @@ impl Binders {
         matches: &'a [Card],
         animations: &'a HashMap<card::Id, AnimationSet>,
         collection: &'a Collection,
+        now: Instant,
     ) -> Element<'a, Message> {
         let input = container(
             text_input("Search for your card...", search)
@@ -643,7 +643,7 @@ impl Binders {
                                 card,
                                 self.images.get(&card.id),
                                 animations.get(&card.id),
-                                self.now,
+                                now,
                                 Source::Search,
                             ))
                             .padding(1)
@@ -667,7 +667,7 @@ impl Binders {
         center(content).padding(10).into()
     }
 
-    pub fn subscription(&self) -> Subscription<Message> {
+    pub fn subscription(&self, now: Instant) -> Subscription<Message> {
         let hotkeys = keyboard::on_key_press(|key, modifiers| {
             use keyboard::key::{Key, Named};
 
@@ -688,7 +688,7 @@ impl Binders {
             let is_animating = |animations: &HashMap<card::Id, AnimationSet>| {
                 animations
                     .values()
-                    .any(|animation| animation.is_animating(self.now))
+                    .any(|animation| animation.is_animating(now))
             };
 
             let is_animating = if let State::Adding { animations, .. } = &self.state {
@@ -698,7 +698,7 @@ impl Binders {
             };
 
             if is_animating {
-                window::frames().map(Message::Tick)
+                window::frames().map(|_| Message::Tick)
             } else {
                 Subscription::none()
             }
@@ -729,29 +729,31 @@ fn item<'a>(
 
             let card = mouse_area(
                 button(
-                    image(handle)
-                        .width(Fill)
-                        .height(Fill)
-                        .content_fit(ContentFit::Cover)
-                        .opacity(opacity)
-                        .scale(match source {
-                            Source::Binder => scale * (1.1 - (0.1 * opacity)),
-                            Source::Search => scale,
-                        })
-                        .translate(move |bounds, viewport| {
-                            let scale = source.zoom();
-                            let final_bounds = bounds.zoom(scale);
+                    float(
+                        image(handle)
+                            .width(Fill)
+                            .height(Fill)
+                            .content_fit(ContentFit::Cover)
+                            .opacity(opacity),
+                    )
+                    .scale(match source {
+                        Source::Binder => scale * (1.1 - (0.1 * opacity)),
+                        Source::Search => scale,
+                    })
+                    .translate(move |bounds, viewport| {
+                        let scale = source.zoom();
+                        let final_bounds = bounds.zoom(scale);
 
-                            final_bounds.offset(&viewport.shrink(10)) * shadow
-                        })
-                        .style(move |_theme| image::Style {
-                            shadow: Shadow {
-                                color: Color::BLACK.scale_alpha(shadow),
-                                blur_radius: 10.0 * shadow,
-                                ..Shadow::default()
-                            },
-                            shadow_border_radius: border::radius(10.0 * scale),
-                        }),
+                        final_bounds.offset(&viewport.shrink(10)) * shadow
+                    })
+                    .style(move |_theme| float::Style {
+                        shadow: Shadow {
+                            color: Color::BLACK.scale_alpha(shadow),
+                            blur_radius: 10.0 * shadow,
+                            ..Shadow::default()
+                        },
+                        shadow_border_radius: border::radius(10.0 * scale),
+                    }),
                 )
                 .on_press_with(move || Message::CardChosen(card.id.clone(), source))
                 .padding(0)
@@ -823,12 +825,12 @@ struct AnimationSet {
 }
 
 impl AnimationSet {
-    fn new() -> Self {
+    fn new(now: Instant) -> Self {
         Self {
             fade_in: Animation::new(false)
                 .easing(animation::Easing::EaseInOut)
                 .slow()
-                .go(true),
+                .go(true, now),
             zoom: Animation::new(false).quick(),
         }
     }

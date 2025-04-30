@@ -7,6 +7,9 @@ edition = "2024"
 iced.workspace = true
 iced.features = ["tokio", "canvas", "image", "debug"]
 
+iced_palace.workspace = true
+iced_palace.features = ["geometry"]
+
 serde.workspace = true
 serde.features = ["derive"]
 
@@ -43,6 +46,7 @@ function = "0.2"
 futures-util = "0.3"
 iced = "0.14.0-dev"
 iced_fontello = "0.13"
+iced_palace = "0.14.0-dev"
 image = "0.25"
 log = "0.4"
 reqwest = "0.12"
@@ -55,4 +59,13 @@ tracing-subscriber = "0.3"
 
 [patch.crates-io]
 iced.git = "https://github.com/iced-rs/iced.git"
-iced.rev = "c4e6e42759a293e2e4d6a18db1b92316273efd20"
+iced.rev = "97b4ed0d84f23dd66c6f259320a0a6db81b89a08"
+
+iced_core.git = "https://github.com/iced-rs/iced.git"
+iced_core.rev = "97b4ed0d84f23dd66c6f259320a0a6db81b89a08"
+
+iced_widget.git = "https://github.com/iced-rs/iced.git"
+iced_widget.rev = "97b4ed0d84f23dd66c6f259320a0a6db81b89a08"
+
+iced_palace.git = "https://github.com/hecrj/iced_palace.git"
+iced_palace.rev = "ca33905d833fee026ccc12c62ed92f6cab8f11d2"

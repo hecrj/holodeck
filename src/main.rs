@@ -16,24 +16,31 @@ use crate::screen::binders;
 use crate::screen::welcome;
 use crate::widget::logo;
 
+use iced::time::Instant;
 use iced::widget::{button, center, column, container, row, text};
 use iced::{Center, Element, Fill, Font, Subscription, Task, Theme};
+
 use std::env;
 
 pub fn main() -> iced::Result {
     tracing_subscriber::fmt::init();
 
-    iced::application(Holodeck::new, Holodeck::update, Holodeck::view)
-        .subscription(Holodeck::subscription)
-        .theme(Holodeck::theme)
-        .font(icon::FONT)
-        .default_font(Font::MONOSPACE)
-        .window_size((1700.0, 950.0))
-        .run()
+    iced::application::timed(
+        Holodeck::new,
+        Holodeck::update,
+        Holodeck::subscription,
+        Holodeck::view,
+    )
+    .theme(Holodeck::theme)
+    .font(icon::FONT)
+    .default_font(Font::MONOSPACE)
+    .window_size((1700.0, 950.0))
+    .run()
 }
 
 struct Holodeck {
     state: State,
+    now: Instant,
 }
 
 enum State {
@@ -61,12 +68,15 @@ impl Holodeck {
         (
             Self {
                 state: State::Loading,
+                now: Instant::now(),
             },
             Task::perform(Database::load(), Message::Loaded),
         )
     }
 
-    fn update(&mut self, message: Message) -> Task<Message> {
+    fn update(&mut self, message: Message, now: Instant) -> Task<Message> {
+        self.now = now;
+
         match message {
             Message::Loaded(Ok(database)) => {
                 let (welcome, task) = screen::Welcome::new();
@@ -102,7 +112,7 @@ impl Holodeck {
                     return Task::none();
                 };
 
-                match welcome.update(message, database, session) {
+                match welcome.update(message, database, session, self.now) {
                     welcome::Action::None => Task::none(),
                     welcome::Action::Run(task) => task.map(Message::Welcome),
                     welcome::Action::Select(collection) => {
@@ -133,7 +143,7 @@ impl Holodeck {
                 };
 
                 binders
-                    .update(message, collection, database, session)
+                    .update(message, collection, database, session, self.now)
                     .map(Message::Binders)
             }
             Message::OpenBinders => {
@@ -187,7 +197,9 @@ impl Holodeck {
                 prices,
                 ..
             } => match screen {
-                Screen::Welcome(welcome) => welcome.view(database, prices).map(Message::Welcome),
+                Screen::Welcome(welcome) => welcome
+                    .view(database, prices, self.now)
+                    .map(Message::Welcome),
                 Screen::Collecting { collection, screen } => {
                     let tabs = [
                         (
@@ -233,9 +245,9 @@ impl Holodeck {
                     .style(container::dark);
 
                     let screen = match screen {
-                        screen::Collecting::Binders(binders) => {
-                            binders.view(collection, database).map(Message::Binders)
-                        }
+                        screen::Collecting::Binders(binders) => binders
+                            .view(collection, database, self.now)
+                            .map(Message::Binders),
                     };
 
                     column![container(screen).height(Fill), navbar].into()
@@ -250,10 +262,10 @@ impl Holodeck {
         };
 
         match screen {
-            Screen::Welcome(welcome) => welcome.subscription().map(Message::Welcome),
+            Screen::Welcome(welcome) => welcome.subscription(self.now).map(Message::Welcome),
             Screen::Collecting { screen, .. } => match screen {
                 screen::Collecting::Binders(binders) => {
-                    binders.subscription().map(Message::Binders)
+                    binders.subscription(self.now).map(Message::Binders)
                 }
             },
         }

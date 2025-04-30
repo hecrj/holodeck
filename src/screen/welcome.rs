@@ -12,11 +12,14 @@ use iced::border;
 use iced::gradient;
 use iced::time::{Instant, seconds};
 use iced::widget::{
-    bottom_center, button, center, column, container, image, mouse_area, row, stack, text,
+    bottom_center, button, center, column, container, float, image, mouse_area, row, stack, text,
     text_input, vertical_space,
 };
 use iced::window;
-use iced::{Animation, Center, Color, ContentFit, Degrees, Element, Fill, Subscription, Task};
+use iced::{
+    Animation, Center, Color, ContentFit, Degrees, Element, Fill, Shadow, Subscription, Task,
+};
+use iced_palace::widget::dynamic_text;
 
 use std::collections::HashMap;
 
@@ -34,7 +37,7 @@ pub enum Message {
     NameChanged(String),
     Create(collection::Name),
     Created(Result<Collection, anywho::Error>),
-    Tick(Instant),
+    Tick,
 }
 
 pub enum State {
@@ -42,7 +45,6 @@ pub enum State {
     Selection {
         collections: Vec<Collection>,
         animations: HashMap<collection::Name, AnimationSet>,
-        now: Instant,
     },
     Creation {
         name: String,
@@ -73,7 +75,13 @@ impl Welcome {
         )
     }
 
-    pub fn update(&mut self, message: Message, database: &Database, session: &Session) -> Action {
+    pub fn update(
+        &mut self,
+        message: Message,
+        database: &Database,
+        session: &Session,
+        now: Instant,
+    ) -> Action {
         match message {
             Message::Listed(Ok(collections)) => {
                 if collections.is_empty() {
@@ -99,7 +107,6 @@ impl Welcome {
                     self.state = State::Selection {
                         collections,
                         animations: HashMap::new(),
-                        now: Instant::now(),
                     };
 
                     Action::Run(load_images)
@@ -129,12 +136,12 @@ impl Welcome {
                         fade_in: Animation::new(false)
                             .duration(seconds(1))
                             .easing(animation::Easing::EaseIn)
-                            .go(true),
+                            .go(true, now),
                         current: Animation::new(0.0)
                             .duration(seconds(2))
                             .delay(seconds(2))
-                            .go(1.0),
-                        zoom: Animation::new(false).quick(),
+                            .go(1.0, now),
+                        zoom: Animation::new(false).very_quick(),
                         images,
                     },
                 );
@@ -147,7 +154,7 @@ impl Welcome {
                 };
 
                 if let Some(animation) = animations.get_mut(&collection) {
-                    animation.zoom.go_mut(hovered);
+                    animation.zoom.go_mut(hovered, now);
                 }
 
                 Action::None
@@ -185,19 +192,16 @@ impl Welcome {
 
                 Action::None
             }
-            Message::Tick(instant) => {
-                let State::Selection {
-                    now, animations, ..
-                } = &mut self.state
-                else {
+            Message::Tick => {
+                let State::Selection { animations, .. } = &mut self.state else {
                     return Action::None;
                 };
 
-                *now = instant;
-
                 for animation in animations.values_mut() {
-                    if !animation.current.is_animating(*now) {
-                        animation.current.go_mut(animation.current.value() + 1.0);
+                    if !animation.current.is_animating(now) {
+                        animation
+                            .current
+                            .go_mut(animation.current.value() + 1.0, now);
                     }
                 }
 
@@ -206,20 +210,24 @@ impl Welcome {
         }
     }
 
-    pub fn view(&self, database: &Database, prices: &pricing::Map) -> Element<Message> {
+    pub fn view(
+        &self,
+        database: &Database,
+        prices: &pricing::Map,
+        now: Instant,
+    ) -> Element<Message> {
         let content: Element<_> = match &self.state {
             State::Loading => text("Loading...").height(512).center().into(),
             State::Selection {
                 collections,
                 animations,
-                now,
             } => column![
                 column(collections.iter().map(|collection| card(
                     collection,
                     animations.get(&collection.name),
                     database,
                     prices,
-                    *now,
+                    now,
                 )))
                 .spacing(10),
                 button(
@@ -271,17 +279,16 @@ impl Welcome {
         .into()
     }
 
-    pub fn subscription(&self) -> Subscription<Message> {
+    pub fn subscription(&self, now: Instant) -> Subscription<Message> {
         match &self.state {
-            State::Selection {
-                animations, now, ..
-            } if animations.values().any(|animation| {
-                animation.fade_in.is_animating(*now)
-                    || animation.current.is_animating(*now)
-                    || animation.zoom.is_animating(*now)
-            }) =>
+            State::Selection { animations, .. }
+                if animations.values().any(|animation| {
+                    animation.fade_in.is_animating(now)
+                        || animation.current.is_animating(now)
+                        || animation.zoom.is_animating(now)
+                }) =>
             {
-                window::frames().map(Message::Tick)
+                window::frames().map(|_| Message::Tick)
             }
             _ => Subscription::none(),
         }
@@ -295,14 +302,21 @@ fn card<'a>(
     prices: &pricing::Map,
     now: Instant,
 ) -> Element<'a, Message> {
-    let name = text(collection.name.as_str()).size(25);
+    // let is_zooming =
+    //     animations.is_some_and(|animation| animation.zoom.interpolate(1.0, 1.2, now) > 1.0);
+
+    let is_zooming = animations.is_some_and(|animation| animation.zoom.is_animating(now));
+
+    let name = dynamic_text(collection.name.as_str())
+        .size(25)
+        .vectorial(is_zooming);
 
     let total_cards = collection.total_cards();
     let unique_cards = collection.unique_cards();
     let total_pokemon = collection.total_pokemon(database);
     let total_value = prices.total_value(collection);
 
-    let stat = |stat| text(stat).size(14);
+    let stat = |stat| dynamic_text(stat).size(14).vectorial(is_zooming);
 
     let progress = binder::Mode::GottaCatchEmAll.progress(collection, database);
 
@@ -348,9 +362,9 @@ fn card<'a>(
     let content: Element<_> = if let Some(animations) = animations {
         let current = animations.current.interpolate_with(|value| value, now) + 1.0;
         let fade_in = animations.fade_in.interpolate(0.0, 1.0, now);
-        let _zoom = animations.zoom.interpolate(1.0, 1.2, now);
+        let zoom = animations.zoom.interpolate(1.0, 1.2, now);
 
-        stack![
+        float(stack![
             container(
                 image(&animations.images[(current as usize - 1) % animations.images.len()])
                     .content_fit(ContentFit::Cover)
@@ -371,11 +385,20 @@ fn card<'a>(
                             .add_stop(0.5, Color::TRANSPARENT)
                             .add_stop(0.95, Color::BLACK.scale_alpha(0.98)),
                     )
-                    .border(border::rounded(12.0))
+                    .border(border::rounded(12))
             }))
             .on_enter(Message::Hovered(collection.name.clone(), true))
             .on_exit(Message::Hovered(collection.name.clone(), false))
-        ]
+        ])
+        .scale((zoom * 120.0).round() / 120.0)
+        .style(move |_theme| float::Style {
+            shadow: Shadow {
+                color: Color::BLACK.scale_alpha(animations.zoom.interpolate(0.0, 1.0, now)),
+                blur_radius: 10.0,
+                ..Shadow::default()
+            },
+            shadow_border_radius: border::radius(12),
+        })
         .into()
     } else {
         container(content).padding(20).style(container::dark).into()

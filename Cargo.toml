@@ -68,4 +68,4 @@ iced_widget.git = "https://github.com/iced-rs/iced.git"
 iced_widget.rev = "97b4ed0d84f23dd66c6f259320a0a6db81b89a08"
 
 iced_palace.git = "https://github.com/hecrj/iced_palace.git"
-iced_palace.rev = "ca33905d833fee026ccc12c62ed92f6cab8f11d2"
+iced_palace.rev = "e6b51ea1e0bb6fa09b45ad1a97f978f952b96906"

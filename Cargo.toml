@@ -45,7 +45,7 @@ flate2 = "1"
 function = "0.2"
 futures-util = "0.3"
 iced = "0.14.0-dev"
-iced_fontello = "0.13"
+iced_fontello = "0.14.0-dev"
 iced_palace = "0.14.0-dev"
 image = "0.25"
 log = "0.4"
@@ -59,13 +59,13 @@ tracing-subscriber = "0.3"
 
 [patch.crates-io]
 iced.git = "https://github.com/iced-rs/iced.git"
-iced.rev = "97b4ed0d84f23dd66c6f259320a0a6db81b89a08"
+iced.rev = "c4b7665a6ceaf452ad8eb5be9c5ff34c447674dc"
 
 iced_core.git = "https://github.com/iced-rs/iced.git"
-iced_core.rev = "97b4ed0d84f23dd66c6f259320a0a6db81b89a08"
+iced_core.rev = "c4b7665a6ceaf452ad8eb5be9c5ff34c447674dc"
 
 iced_widget.git = "https://github.com/iced-rs/iced.git"
-iced_widget.rev = "97b4ed0d84f23dd66c6f259320a0a6db81b89a08"
+iced_widget.rev = "c4b7665a6ceaf452ad8eb5be9c5ff34c447674dc"
 
 iced_palace.git = "https://github.com/hecrj/iced_palace.git"
-iced_palace.rev = "e6b51ea1e0bb6fa09b45ad1a97f978f952b96906"
+iced_palace.rev = "3d92d30188a5027b60415bf5e262dcd0509291c6"

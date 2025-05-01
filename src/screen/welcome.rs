@@ -141,7 +141,7 @@ impl Welcome {
                             .duration(seconds(2))
                             .delay(seconds(2))
                             .go(1.0, now),
-                        zoom: Animation::new(false).very_quick(),
+                        zoom: Animation::new(false).quick(),
                         images,
                     },
                 );
@@ -390,6 +390,7 @@ fn card<'a>(
             .on_enter(Message::Hovered(collection.name.clone(), true))
             .on_exit(Message::Hovered(collection.name.clone(), false))
         ])
+        .opaque(false)
         .scale((zoom * 120.0).round() / 120.0)
         .style(move |_theme| float::Style {
             shadow: Shadow {

@@ -736,6 +736,7 @@ fn item<'a>(
                             .content_fit(ContentFit::Cover)
                             .opacity(opacity),
                     )
+                    .opaque(false)
                     .scale(match source {
                         Source::Binder => scale * (1.1 - (0.1 * opacity)),
                         Source::Search => scale,

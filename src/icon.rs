@@ -1,8 +1,8 @@
 // Generated automatically by iced_fontello at build time.
 // Do not edit manually. Source: ../fonts/holodeck-icons.toml
 // df010bd4723d936cdfd888fb0750d31c4bc22724f64e5e977e9da6b1180f0e3d
-use iced::widget::{text, Text};
 use iced::Font;
+use iced::widget::{Text, text};
 
 pub const FONT: &[u8] = include_bytes!("../fonts/holodeck-icons.ttf");
 

@@ -36,7 +36,7 @@ An application to track, manage, and visualize your TCG collection — Pokémon 
 No pre-built binaries yet! Use `cargo` to try it out:
 
 ```bash
-cargo install --git https://github.com/hecrj/holodeck.git
+cargo install --git https://github.com/hecrj/holodeck.git holodeck
 ```
 
 If you want the highest quality images, it is also recommended that you get an API key

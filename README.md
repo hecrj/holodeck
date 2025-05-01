@@ -17,6 +17,7 @@ An application to track, manage, and visualize your TCG collection — Pokémon 
 
 ## Features
 
+- **Very experimental, very work in progress!**
 - Extensive embedded database (~29,000 cards)
 - Binder view for easy IRL collection
 - Price tracking
@@ -24,7 +25,6 @@ An application to track, manage, and visualize your TCG collection — Pokémon 
 - Minimum remote API usage for maximum speed
 - Cool animations!
 - Powered by [PokemonTCG] and [TCGdex]
-- Very experimental, very work in progress!
 - ... more to come!
 
 [PokemonTCG]: https://pokemontcg.io

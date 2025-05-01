@@ -29,6 +29,8 @@ impl Database {
             let sets: Vec<Set> = decompress(include_bytes!("../data/sets.ron.gz"));
             let cards: Vec<Card> = decompress(include_bytes!("../data/cards.ron.gz"));
 
+            log::info!("Loaded database with {} cards", cards.len());
+
             Self {
                 pokemon: Map::new(pokemon, |pokemon| pokemon.id.clone()),
                 series: Map::new(series, |series| series.id.clone()),

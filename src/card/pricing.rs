@@ -112,7 +112,7 @@ impl Pricing {
                     Err(error) => Err(error)?,
                 };
 
-                let cache = cache_dir().join(card.id.as_str()).with_extension("ron");
+                let cache = cache_dir().join(format!("{}.ron", card.id.as_str()));
 
                 if !fs::try_exists(&cache).await.unwrap_or(false) {
                     let _ = fs::create_dir_all(cache.parent().unwrap_or(&cache)).await;
@@ -213,7 +213,7 @@ impl Pricing {
     }
 
     async fn fetch_cache(card: &card::Id) -> Result<Self, anywho::Error> {
-        let cache = cache_dir().join(card.as_str()).with_extension("ron");
+        let cache = cache_dir().join(format!("{}.ron", card.as_str()));
 
         let pricing = fs::read_to_string(&cache).await?;
 

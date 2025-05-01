@@ -364,42 +364,44 @@ fn card<'a>(
         let fade_in = animations.fade_in.interpolate(0.0, 1.0, now);
         let zoom = animations.zoom.interpolate(1.0, 1.2, now);
 
-        float(stack![
-            container(
-                image(&animations.images[(current as usize - 1) % animations.images.len()])
-                    .content_fit(ContentFit::Cover)
-                    .opacity(fade_in * (1.0 - current.fract()))
-            )
-            .padding(1),
-            container(
-                image(&animations.images[current as usize % animations.images.len()])
-                    .content_fit(ContentFit::Cover)
-                    .opacity(fade_in * current.fract())
-            )
-            .padding(1),
-            mouse_area(container(content).padding(20).style(move |_theme| {
-                container::Style::default()
-                    .background(
-                        gradient::Linear::new(Degrees(180.0))
-                            .add_stop(0.05, Color::BLACK.scale_alpha(0.98))
-                            .add_stop(0.5, Color::TRANSPARENT)
-                            .add_stop(0.95, Color::BLACK.scale_alpha(0.98)),
-                    )
-                    .border(border::rounded(12))
-            }))
-            .on_enter(Message::Hovered(collection.name.clone(), true))
-            .on_exit(Message::Hovered(collection.name.clone(), false))
-        ])
-        .opaque(false)
-        .scale((zoom * 120.0).round() / 120.0)
-        .style(move |_theme| float::Style {
-            shadow: Shadow {
-                color: Color::BLACK.scale_alpha(animations.zoom.interpolate(0.0, 1.0, now)),
-                blur_radius: 10.0,
-                ..Shadow::default()
-            },
-            shadow_border_radius: border::radius(12),
-        })
+        mouse_area(
+            float(stack![
+                container(
+                    image(&animations.images[(current as usize - 1) % animations.images.len()])
+                        .content_fit(ContentFit::Cover)
+                        .opacity(fade_in * (1.0 - current.fract()))
+                )
+                .padding(1),
+                container(
+                    image(&animations.images[current as usize % animations.images.len()])
+                        .content_fit(ContentFit::Cover)
+                        .opacity(fade_in * current.fract())
+                )
+                .padding(1),
+                container(content).padding(20).style(move |_theme| {
+                    container::Style::default()
+                        .background(
+                            gradient::Linear::new(Degrees(180.0))
+                                .add_stop(0.05, Color::BLACK.scale_alpha(0.98))
+                                .add_stop(0.5, Color::TRANSPARENT)
+                                .add_stop(0.95, Color::BLACK.scale_alpha(0.98)),
+                        )
+                        .border(border::rounded(12))
+                })
+            ])
+            .opaque(false)
+            .scale((zoom * 120.0).round() / 120.0)
+            .style(move |_theme| float::Style {
+                shadow: Shadow {
+                    color: Color::BLACK.scale_alpha(animations.zoom.interpolate(0.0, 1.0, now)),
+                    blur_radius: 10.0,
+                    ..Shadow::default()
+                },
+                shadow_border_radius: border::radius(12),
+            }),
+        )
+        .on_enter(Message::Hovered(collection.name.clone(), true))
+        .on_exit(Message::Hovered(collection.name.clone(), false))
         .into()
     } else {
         container(content).padding(20).style(container::dark).into()

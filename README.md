@@ -10,11 +10,8 @@
 
 An application to track, manage, and visualize your TCG collection — Pokémon only for now!
 
-
-<p>
-<img alt="Holodeck - Binder" src="assets/binder.webp" width="45%">
-<img alt="Holodeck - Adding" src="assets/mew.webp" width="45%">
-</p>
+<img alt="Holodeck - Binder" src="assets/binder.webp" width="49%">
+<img alt="Holodeck - Adding" src="assets/mew.webp" width="49%">
 
 </div>
 

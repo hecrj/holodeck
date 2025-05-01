@@ -27,7 +27,7 @@ impl PokemonTcg {
         }
     }
 
-    pub async fn download_image<'a>(&self, card: &Card) -> Result<Bytes, Error> {
+    pub async fn download_image(&self, card: &Card) -> Result<Bytes, Error> {
         if !card.name.contains_key("en") {
             return Err(Error::LocaleNotAvailable);
         }
@@ -84,7 +84,7 @@ fn set_name(card: &Card) -> String {
         .set
         .as_str()
         .chars()
-        .take_while(|c| !c.is_digit(10))
+        .take_while(|c| !c.is_ascii_digit())
         .collect();
 
     let number = &card.set.as_str()[prefix.len()..];

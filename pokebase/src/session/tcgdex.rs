@@ -17,7 +17,7 @@ impl Tcgdex {
 
     pub async fn download_image(&self, card: &Card, database: &Database) -> Result<Bytes, Error> {
         let Some(set) = database.sets.get(&card.set) else {
-            return Err(Error::SetNotFound(card.set.clone()).into());
+            return Err(Error::SetNotFound(card.set.clone()));
         };
 
         let locale = if card.name.contains_key("en") {
@@ -44,5 +44,11 @@ impl Tcgdex {
         let response = session::retry(2, || self.client.get(&url).send()).await;
 
         Ok(response?.error_for_status()?.bytes().await?)
+    }
+}
+
+impl Default for Tcgdex {
+    fn default() -> Self {
+        Self::new()
     }
 }

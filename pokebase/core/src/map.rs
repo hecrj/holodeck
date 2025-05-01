@@ -42,6 +42,10 @@ impl<K, V> Map<K, V> {
         self.0.values.len()
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.0.values.is_empty()
+    }
+
     pub fn values(&self) -> &[V] {
         &self.0.values
     }

@@ -69,3 +69,6 @@ iced_widget.rev = "c4b7665a6ceaf452ad8eb5be9c5ff34c447674dc"
 
 iced_palace.git = "https://github.com/hecrj/iced_palace.git"
 iced_palace.rev = "3d92d30188a5027b60415bf5e262dcd0509291c6"
+
+[lints.clippy]
+single-component-path-imports = "allow"

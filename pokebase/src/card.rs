@@ -22,7 +22,7 @@ impl fmt::Debug for Image {
 }
 
 impl Image {
-    pub async fn download<'a>(
+    pub async fn download(
         card: &Card,
         database: &Database,
         session: &Session,

@@ -32,7 +32,7 @@ impl Database {
             log::info!("Loaded database with {} cards", cards.len());
 
             Self {
-                pokemon: Map::new(pokemon, |pokemon| pokemon.id.clone()),
+                pokemon: Map::new(pokemon, |pokemon| pokemon.id),
                 series: Map::new(series, |series| series.id.clone()),
                 sets: Map::new(sets, |set| set.id.clone()),
                 cards: Map::new(cards, |card| card.id.clone()),
@@ -243,7 +243,7 @@ impl Database {
         sets.sort_by(|a, b| a.release_date.cmp(&b.release_date));
 
         Ok(Self {
-            pokemon: Map::new(pokemon, |pokemon| pokemon.id.clone()),
+            pokemon: Map::new(pokemon, |pokemon| pokemon.id),
             series: Map::new(series, |series| series.id.clone()),
             sets: Map::new(sets, |set| set.id.clone()),
             cards: Map::new(cards, |card| card.id.clone()),

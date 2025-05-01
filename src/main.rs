@@ -34,7 +34,7 @@ pub fn main() -> iced::Result {
     .theme(Holodeck::theme)
     .font(icon::FONT)
     .default_font(Font::MONOSPACE)
-    .window_size((1700.0 / 1.35, 950.0 / 1.3))
+    .window_size((1700.0, 950.0))
     .run()
 }
 
@@ -174,7 +174,7 @@ impl Holodeck {
                         *prices = new_prices;
                     }
                     pricing::Event::Updated(id, pricing) => {
-                        let _ = prices.insert(id, pricing);
+                        let _ = prices.insert(id, *pricing);
                     }
                 }
 

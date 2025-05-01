@@ -79,7 +79,7 @@ pub struct Pricing {
 #[derive(Debug, Clone)]
 pub enum Event {
     Loaded(Map),
-    Updated(card::Id, Pricing),
+    Updated(card::Id, Box<Pricing>),
 }
 
 #[derive(Serialize, Deserialize)]
@@ -197,7 +197,9 @@ impl Pricing {
 
                     if let Ok(pricing) = Pricing::fetch(card, &session).await {
                         prices.insert(card.id.clone(), pricing);
-                        let _ = sender.send(Event::Updated(card.id.clone(), pricing)).await;
+                        let _ = sender
+                            .send(Event::Updated(card.id.clone(), Box::new(pricing)))
+                            .await;
                     }
 
                     i += 1;

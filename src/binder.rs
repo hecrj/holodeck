@@ -228,7 +228,7 @@ impl Mode {
     pub fn position(self, card: &card::Id, database: &Database) -> Option<usize> {
         match self {
             Mode::GottaCatchEmAll => {
-                let card = database.cards.get(&card)?;
+                let card = database.cards.get(card)?;
 
                 card.pokedex
                     .first()

@@ -782,7 +782,7 @@ fn item<'a>(
                 .center()
                 .size(14),
         )),
-        _ => slot(horizontal_space()).into(),
+        _ => slot(horizontal_space()),
     };
 
     pop(item)

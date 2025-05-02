@@ -9,16 +9,14 @@ pub struct Map<K, V>(Arc<Inner<K, V>>);
 #[derive(Debug)]
 struct Inner<K, V> {
     entries: BTreeMap<K, usize>,
-    values: Arc<[V]>,
+    values: Vec<V>,
 }
 
 impl<K, V> Map<K, V> {
-    pub fn new(values: impl Into<Arc<[V]>>, to_key: impl Fn(&V) -> K) -> Self
+    pub fn new(values: Vec<V>, to_key: impl Fn(&V) -> K) -> Self
     where
         K: Ord,
     {
-        let values = values.into();
-
         Self(Arc::new(Inner {
             entries: BTreeMap::from_iter(
                 values

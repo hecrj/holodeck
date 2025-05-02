@@ -21,8 +21,6 @@ use iced::{
 };
 use iced_palace::widget::dynamic_text;
 
-use std::collections::HashMap;
-
 pub struct Welcome {
     state: State,
 }
@@ -43,20 +41,12 @@ pub enum Message {
 pub enum State {
     Loading,
     Selection {
-        collections: Vec<Collection>,
-        animations: HashMap<collection::Name, AnimationSet>,
+        collections: Vec<Entry>,
     },
     Creation {
         name: String,
         collections: Vec<Collection>,
     },
-}
-
-pub struct AnimationSet {
-    images: Vec<image::Handle>,
-    fade_in: Animation<bool>,
-    current: Animation<f32>,
-    zoom: Animation<bool>,
 }
 
 pub enum Action {
@@ -105,15 +95,14 @@ impl Welcome {
                     }));
 
                     self.state = State::Selection {
-                        collections,
-                        animations: HashMap::new(),
+                        collections: collections.into_iter().map(Entry::new).collect(),
                     };
 
                     Action::Run(load_images)
                 }
             }
             Message::ImagesLoaded(collection, images) => {
-                let State::Selection { animations, .. } = &mut self.state else {
+                let Some(entry) = self.entry_mut(&collection) else {
                     return Action::None;
                 };
 
@@ -130,32 +119,18 @@ impl Welcome {
                     return Action::None;
                 }
 
-                animations.insert(
-                    collection,
-                    AnimationSet {
-                        fade_in: Animation::new(false)
-                            .duration(seconds(1))
-                            .easing(animation::Easing::EaseIn)
-                            .go(true, now),
-                        current: Animation::new(0.0)
-                            .duration(seconds(2))
-                            .delay(seconds(2))
-                            .go(1.0, now),
-                        zoom: Animation::new(false).quick(),
-                        images,
-                    },
-                );
+                entry.images = images;
+                entry.fade_in.go_mut(true, now);
+                entry.current.go_mut(1.0, now);
 
                 Action::None
             }
             Message::Hovered(collection, hovered) => {
-                let State::Selection { animations, .. } = &mut self.state else {
+                let Some(entry) = self.entry_mut(&collection) else {
                     return Action::None;
                 };
 
-                if let Some(animation) = animations.get_mut(&collection) {
-                    animation.zoom.go_mut(hovered, now);
-                }
+                entry.zoom.go_mut(hovered, now);
 
                 Action::None
             }
@@ -164,13 +139,16 @@ impl Welcome {
                 Action::Run(Task::perform(Collection::create(name), Message::Created))
             }
             Message::New => {
-                let State::Selection { collections, .. } = &self.state else {
+                let State::Selection { collections, .. } = &mut self.state else {
                     return Action::None;
                 };
 
                 self.state = State::Creation {
                     name: String::new(),
-                    collections: collections.clone(),
+                    collections: std::mem::take(collections)
+                        .into_iter()
+                        .map(|entry| entry.collection)
+                        .collect(),
                 };
 
                 Action::None
@@ -193,21 +171,29 @@ impl Welcome {
                 Action::None
             }
             Message::Tick => {
-                let State::Selection { animations, .. } = &mut self.state else {
+                let State::Selection { collections, .. } = &mut self.state else {
                     return Action::None;
                 };
 
-                for animation in animations.values_mut() {
-                    if !animation.current.is_animating(now) {
-                        animation
-                            .current
-                            .go_mut(animation.current.value() + 1.0, now);
+                for entry in collections {
+                    if !entry.current.is_animating(now) {
+                        entry.current.go_mut(entry.current.value() + 1.0, now);
                     }
                 }
 
                 Action::None
             }
         }
+    }
+
+    fn entry_mut(&mut self, name: &collection::Name) -> Option<&mut Entry> {
+        let State::Selection { collections, .. } = &mut self.state else {
+            return None;
+        };
+
+        collections
+            .iter_mut()
+            .find(|entry| &entry.collection.name == name)
     }
 
     pub fn view(
@@ -218,18 +204,11 @@ impl Welcome {
     ) -> Element<Message> {
         let content: Element<_> = match &self.state {
             State::Loading => text("Loading...").height(512).center().into(),
-            State::Selection {
-                collections,
-                animations,
-            } => column![
-                column(collections.iter().map(|collection| card(
-                    collection,
-                    animations.get(&collection.name),
-                    database,
-                    prices,
-                    now,
-                )))
-                .spacing(10),
+            State::Selection { collections } => column![
+                row(collections
+                    .iter()
+                    .map(|entry| card(entry, database, prices, now,)))
+                .spacing(30),
                 button(
                     row![icon::add().size(14), text("New Profile").size(14)]
                         .spacing(10)
@@ -237,7 +216,7 @@ impl Welcome {
                 )
                 .on_press(Message::New),
             ]
-            .spacing(20)
+            .spacing(30)
             .align_x(Center)
             .into(),
             State::Creation { name, collections } => {
@@ -268,12 +247,13 @@ impl Welcome {
                     column![text("Your name"), row![name_input, submit].spacing(10)].spacing(10)
                 ]
                 .spacing(30)
+                .max_width(600)
                 .into()
             }
         };
 
         stack![
-            center(column![logo(50), content].spacing(20).align_x(Center)).padding(20),
+            center(column![logo(50), content].spacing(30).align_x(Center)).padding(20),
             legal_disclaimer()
         ]
         .into()
@@ -281,11 +261,11 @@ impl Welcome {
 
     pub fn subscription(&self, now: Instant) -> Subscription<Message> {
         match &self.state {
-            State::Selection { animations, .. }
-                if animations.values().any(|animation| {
-                    animation.fade_in.is_animating(now)
-                        || animation.current.is_animating(now)
-                        || animation.zoom.is_animating(now)
+            State::Selection { collections }
+                if collections.iter().any(|entry| {
+                    entry.fade_in.is_animating(now)
+                        || entry.current.is_animating(now)
+                        || entry.zoom.is_animating(now)
                 }) =>
             {
                 window::frames().map(|_| Message::Tick)
@@ -296,16 +276,22 @@ impl Welcome {
 }
 
 fn card<'a>(
-    collection: &'a Collection,
-    animations: Option<&'a AnimationSet>,
+    entry: &'a Entry,
     database: &Database,
     prices: &pricing::Map,
     now: Instant,
 ) -> Element<'a, Message> {
     // let is_zooming =
     //     animations.is_some_and(|animation| animation.zoom.interpolate(1.0, 1.2, now) > 1.0);
+    let Entry {
+        collection,
+        images,
+        fade_in,
+        current,
+        zoom,
+    } = entry;
 
-    let is_zooming = animations.is_some_and(|animation| animation.zoom.is_animating(now));
+    let is_zooming = zoom.is_animating(now);
 
     let name = dynamic_text(collection.name.as_str())
         .size(25)
@@ -359,53 +345,54 @@ fn card<'a>(
     .spacing(10)
     .align_x(Center);
 
-    let content: Element<_> = if let Some(animations) = animations {
-        let current = animations.current.interpolate_with(|value| value, now) + 1.0;
-        let fade_in = animations.fade_in.interpolate(0.0, 1.0, now);
-        let zoom = animations.zoom.interpolate(1.0, 1.2, now);
+    let content: Element<_> = if images.is_empty() {
+        container(content).padding(20).style(container::dark).into()
+    } else {
+        let current = current.interpolate_with(|value| value, now) + 1.0;
+        let fade_in = fade_in.interpolate(0.0, 1.0, now);
 
-        mouse_area(
-            float(stack![
-                container(
-                    image(&animations.images[(current as usize - 1) % animations.images.len()])
-                        .content_fit(ContentFit::Cover)
-                        .opacity(fade_in * (1.0 - current.fract()))
-                )
-                .padding(1),
-                container(
-                    image(&animations.images[current as usize % animations.images.len()])
-                        .content_fit(ContentFit::Cover)
-                        .opacity(fade_in * current.fract())
-                )
-                .padding(1),
-                container(content).padding(20).style(move |_theme| {
-                    container::Style::default()
-                        .background(
-                            gradient::Linear::new(Degrees(180.0))
-                                .add_stop(0.05, Color::BLACK.scale_alpha(0.98))
-                                .add_stop(0.5, Color::TRANSPARENT)
-                                .add_stop(0.95, Color::BLACK.scale_alpha(0.98)),
-                        )
-                        .border(border::rounded(12))
-                })
-            ])
+        stack![
+            container(
+                image(&images[(current as usize - 1) % images.len()])
+                    .content_fit(ContentFit::Cover)
+                    .opacity(fade_in * (1.0 - current.fract()))
+            )
+            .padding(1),
+            container(
+                image(&images[current as usize % images.len()])
+                    .content_fit(ContentFit::Cover)
+                    .opacity(fade_in * current.fract())
+            )
+            .padding(1),
+            container(content).padding(20).style(move |_theme| {
+                container::Style::default()
+                    .background(
+                        gradient::Linear::new(Degrees(180.0))
+                            .add_stop(0.05, Color::BLACK.scale_alpha(0.98))
+                            .add_stop(0.5, Color::TRANSPARENT)
+                            .add_stop(0.95, Color::BLACK.scale_alpha(0.98)),
+                    )
+                    .border(border::rounded(12))
+            })
+        ]
+        .into()
+    };
+
+    let content = mouse_area(
+        float(content)
             .opaque(false)
-            .scale((zoom * 120.0).round() / 120.0)
+            .scale(zoom.interpolate(1.0, 1.2, now))
             .style(move |_theme| float::Style {
                 shadow: Shadow {
-                    color: Color::BLACK.scale_alpha(animations.zoom.interpolate(0.0, 1.0, now)),
+                    color: Color::BLACK.scale_alpha(zoom.interpolate(0.0, 1.0, now)),
                     blur_radius: 10.0,
                     ..Shadow::default()
                 },
                 shadow_border_radius: border::radius(12),
             }),
-        )
-        .on_enter(Message::Hovered(collection.name.clone(), true))
-        .on_exit(Message::Hovered(collection.name.clone(), false))
-        .into()
-    } else {
-        container(content).padding(20).style(container::dark).into()
-    };
+    )
+    .on_enter(Message::Hovered(collection.name.clone(), true))
+    .on_exit(Message::Hovered(collection.name.clone(), false));
 
     button(content)
         .width(367)
@@ -431,4 +418,26 @@ fn legal_disclaimer<'a>() -> Element<'a, Message> {
     )
     .padding(10)
     .into()
+}
+
+pub struct Entry {
+    collection: Collection,
+    images: Vec<image::Handle>,
+    fade_in: Animation<bool>,
+    current: Animation<f32>,
+    zoom: Animation<bool>,
+}
+
+impl Entry {
+    pub fn new(collection: Collection) -> Self {
+        Self {
+            collection,
+            fade_in: Animation::new(false)
+                .duration(seconds(1))
+                .easing(animation::Easing::EaseIn),
+            current: Animation::new(0.0).duration(seconds(2)).delay(seconds(2)),
+            zoom: Animation::new(false).quick(),
+            images: Vec::new(),
+        }
+    }
 }

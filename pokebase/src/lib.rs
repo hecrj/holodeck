@@ -4,7 +4,7 @@ pub use crate::core::locale;
 pub use crate::core::pokemon;
 pub use crate::core::series;
 pub use crate::core::set;
-pub use crate::core::{Database, Map, Search};
+pub use crate::core::{Database, Map};
 
 pub use locale::Locale;
 pub use pokemon::Pokemon;

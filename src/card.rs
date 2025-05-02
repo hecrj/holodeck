@@ -1,6 +1,6 @@
 pub mod pricing;
 
-pub use crate::pokebase::card::{Card, Id, search};
+pub use crate::pokebase::card::{Card, Id, Search, search};
 
 use crate::pokebase::card;
 use crate::pokebase::{Database, Session};

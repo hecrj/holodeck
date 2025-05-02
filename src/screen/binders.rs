@@ -1,7 +1,7 @@
 use crate::binder;
 use crate::card;
 use crate::icon;
-use crate::pokebase::{Card, Database, Search, Session};
+use crate::pokebase::{Card, Database, Session};
 use crate::widget::pokeball;
 use crate::{Binder, Collection};
 
@@ -22,7 +22,6 @@ use iced::{
 
 use function::Binary;
 use std::collections::HashMap;
-use std::sync::Arc;
 use tokio::time;
 
 pub struct Binders {
@@ -43,8 +42,8 @@ enum Image {
 enum State {
     Idle,
     Adding {
-        search: String,
-        matches: Arc<[Card]>,
+        query: String,
+        search: card::Search,
         task: Option<task::Handle>,
         animations: HashMap<card::Id, AnimationSet>,
     },
@@ -57,7 +56,7 @@ pub enum Message {
     NextPage,
     Add,
     SearchChanged(String),
-    SearchFinished(Search<Card>),
+    SearchFinished(card::Search),
     Close,
     CardShown(card::Id, Source),
     CardHovered(card::Id, Source, bool),
@@ -151,21 +150,21 @@ impl Binders {
                     Task::perform(card::search("", database), Message::SearchFinished).abortable();
 
                 self.state = State::Adding {
-                    search: String::new(),
-                    matches: Arc::new([]),
+                    query: String::new(),
+                    search: card::Search::new([]),
                     animations: HashMap::new(),
                     task: Some(handle.abort_on_drop()),
                 };
 
                 Task::batch([text_input::focus("search"), search_cards])
             }
-            Message::SearchChanged(new_search) => {
-                let State::Adding { search, task, .. } = &mut self.state else {
+            Message::SearchChanged(new_query) => {
+                let State::Adding { query, task, .. } = &mut self.state else {
                     return Task::none();
                 };
 
                 let (search_cards, handle) = {
-                    let search = card::search(&new_search, database);
+                    let search = card::search(&new_query, database);
 
                     Task::perform(
                         async move {
@@ -177,27 +176,20 @@ impl Binders {
                     .abortable()
                 };
 
-                *search = new_search;
+                *query = new_query;
                 *task = Some(handle.abort_on_drop());
 
                 search_cards
             }
-            Message::SearchFinished(search) => {
-                let State::Adding { matches, task, .. } = &mut self.state else {
+            Message::SearchFinished(result) => {
+                let State::Adding { search, task, .. } = &mut self.state else {
                     return Task::none();
                 };
 
-                let old_matches = std::mem::replace(matches, search.matches);
+                *search = result;
                 *task = None;
 
-                Task::future(async move {
-                    let _ = tokio::task::spawn_blocking(move || {
-                        // Free memory concurrently
-                        drop(old_matches);
-                    })
-                    .await;
-                })
-                .discard()
+                Task::none()
             }
             Message::Close => {
                 self.state = State::Idle;
@@ -282,23 +274,26 @@ impl Binders {
             Message::CollectionSaved(Ok(_)) => Task::none(),
             Message::TabPressed { shift } => {
                 let State::Adding {
-                    matches,
-                    animations,
-                    ..
+                    search, animations, ..
                 } = &mut self.state
                 else {
                     return Task::none();
                 };
 
-                let focus = matches.iter().enumerate().find_map(|(i, card)| {
-                    let animation = animations.get(&card.id)?;
+                let focus = search
+                    .matches()
+                    .iter()
+                    .take(100) // TODO: Remove limit when auto-scrolling
+                    .enumerate()
+                    .find_map(|(i, card)| {
+                        let animation = animations.get(&card.id)?;
 
-                    if animation.zoom.value() {
-                        Some((i, card))
-                    } else {
-                        None
-                    }
-                });
+                        if animation.zoom.value() {
+                            Some((i, card))
+                        } else {
+                            None
+                        }
+                    });
 
                 match focus {
                     Some((index, card)) => {
@@ -316,7 +311,7 @@ impl Binders {
                             index + 1
                         };
 
-                        if let Some(card) = matches.get(new_index) {
+                        if let Some(card) = search.matches().get(new_index) {
                             if let Some(animation) = animations.get_mut(&card.id) {
                                 animation.zoom.go_mut(true, now);
                             }
@@ -327,7 +322,7 @@ impl Binders {
                             return text_input::focus("search");
                         }
 
-                        if let Some(card) = matches.first() {
+                        if let Some(card) = search.matches().first() {
                             if let Some(animation) = animations.get_mut(&card.id) {
                                 animation.zoom.go_mut(true, now);
                             }
@@ -340,15 +335,13 @@ impl Binders {
             }
             Message::EnterPressed => {
                 let State::Adding {
-                    matches,
-                    animations,
-                    ..
+                    search, animations, ..
                 } = &self.state
                 else {
                     return Task::none();
                 };
 
-                let Some(card) = matches.iter().find(|card| {
+                let Some(card) = search.matches().iter().find(|card| {
                     animations
                         .get(&card.id)
                         .is_some_and(|animation| animation.zoom.value())
@@ -360,15 +353,13 @@ impl Binders {
             }
             Message::EscapePressed => {
                 let State::Adding {
-                    matches,
-                    animations,
-                    ..
+                    search, animations, ..
                 } = &mut self.state
                 else {
                     return Task::none();
                 };
 
-                for card in matches.iter() {
+                for card in search.matches().iter().take(100) {
                     if let Some(animation) = animations.get_mut(&card.id) {
                         if animation.zoom.value() {
                             animation.zoom.go_mut(false, now);
@@ -532,11 +523,11 @@ impl Binders {
         let overlay: Option<Element<'_, Message>> = match &self.state {
             State::Idle => None,
             State::Adding {
+                query,
                 search,
-                matches,
                 animations,
                 ..
-            } => Some(self.adding(search, matches, animations, collection, now)),
+            } => Some(self.adding(query, search.matches(), animations, collection, now)),
         };
 
         let has_overlay = overlay.is_some();
@@ -599,14 +590,14 @@ impl Binders {
 
     fn adding<'a>(
         &'a self,
-        search: &'a str,
+        query: &'a str,
         matches: &'a [Card],
         animations: &'a HashMap<card::Id, AnimationSet>,
         collection: &'a Collection,
         now: Instant,
     ) -> Element<'a, Message> {
         let input = container(
-            text_input("Search for your card...", search)
+            text_input("Search for your card...", query)
                 .on_input(Message::SearchChanged)
                 .padding(10)
                 .id("search"),
@@ -615,9 +606,9 @@ impl Binders {
 
         let content: Element<_> = {
             // TODO: Infinite scrolling (?)
-            let matches: Element<_> = if !search.is_empty() && matches.is_empty() {
+            let matches: Element<_> = if !query.is_empty() && matches.is_empty() {
                 center(
-                    container(text!("No cards were found matching: \"{search}\" :/"))
+                    container(text!("No cards were found matching: \"{query}\" :/"))
                         .padding(10)
                         .style(container::bordered_box),
                 )

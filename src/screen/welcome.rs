@@ -9,8 +9,9 @@ use crate::widget::logo;
 use function::Binary;
 use iced::animation;
 use iced::border;
+use iced::futures::stream::FuturesOrdered;
 use iced::gradient;
-use iced::time::{Instant, seconds};
+use iced::time::{Instant, milliseconds, seconds};
 use iced::widget::{
     bottom_center, button, center, column, container, float, image, mouse_area, row, stack, text,
     text_input, vertical_space,
@@ -69,6 +70,7 @@ impl Welcome {
         &mut self,
         message: Message,
         database: &Database,
+        prices: &pricing::Map,
         session: &Session,
         now: Instant,
     ) -> Action {
@@ -83,13 +85,12 @@ impl Welcome {
                     Action::None
                 } else {
                     let load_images = Task::batch(collections.iter().map(|collection| {
-                        Task::batch(
-                            collection
-                                .rarest_cards(database)
+                        Task::stream(FuturesOrdered::from_iter(
+                            prices
+                                .most_expensive(collection, database)
                                 .take(8)
-                                .map(|card| card::Image::fetch(card, database, session))
-                                .map(Task::future),
-                        )
+                                .map(|card| card::Image::fetch(card, database, session)),
+                        ))
                         .collect()
                         .map(Message::ImagesLoaded.with(collection.name.clone()))
                     }));
@@ -436,7 +437,7 @@ impl Entry {
                 .duration(seconds(1))
                 .easing(animation::Easing::EaseIn),
             current: Animation::new(0.0).duration(seconds(2)).delay(seconds(2)),
-            zoom: Animation::new(false).quick(),
+            zoom: Animation::new(false).duration(milliseconds(150)),
             images: Vec::new(),
         }
     }

@@ -53,6 +53,35 @@ impl Map {
 
         Value { america, europe }
     }
+
+    pub fn most_expensive<'a>(
+        &self,
+        collection: &Collection,
+        database: &'a Database,
+    ) -> impl Iterator<Item = &'a Card> {
+        let mut cards: Vec<_> = collection
+            .cards
+            .keys()
+            .filter_map(|card| database.cards.get(card))
+            .collect();
+
+        cards.sort_by(|a, b| {
+            let price_a = self
+                .get(&a.id)
+                .and_then(|pricing| pricing.america.spread())
+                .unwrap_or_default()
+                .average;
+
+            let price_b = self
+                .get(&b.id)
+                .and_then(|pricing| pricing.america.spread())
+                .unwrap_or_default()
+                .average;
+
+            price_a.cmp(&price_b).reverse()
+        });
+        cards.into_iter()
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -76,12 +105,6 @@ pub struct Pricing {
     pub updated_at: SystemTime,
 }
 
-#[derive(Debug, Clone)]
-pub enum Event {
-    Loaded(Map),
-    Updated(card::Id, Box<Pricing>),
-}
-
 #[derive(Serialize, Deserialize)]
 struct Cache {
     tcgplayer: pricing::tcgplayer::Pricing,
@@ -90,6 +113,24 @@ struct Cache {
 }
 
 impl Pricing {
+    pub async fn list() -> Result<Map, anywho::Error> {
+        let collections = Collection::list().await?;
+
+        let mut prices = Map::new();
+
+        let cards = collections
+            .into_iter()
+            .flat_map(|collection| collection.cards.into_keys());
+
+        for card in cards {
+            if let Ok(pricing) = Self::fetch_cache(&card).await {
+                prices.insert(card, pricing);
+            }
+        }
+
+        Ok(prices)
+    }
+
     pub fn fetch<'a>(
         card: &Card,
         session: &Session,
@@ -138,7 +179,10 @@ impl Pricing {
         }
     }
 
-    pub fn subscribe<'a>(database: &Database, session: &Session) -> impl Stream<Item = Event> + 'a {
+    pub fn subscribe<'a>(
+        database: &Database,
+        session: &Session,
+    ) -> impl Stream<Item = (card::Id, Box<Pricing>)> + 'a {
         let database = database.clone();
         let session = session.clone();
 
@@ -146,28 +190,15 @@ impl Pricing {
             let mut prices = loop {
                 log::debug!("Scanning prices cache...");
 
-                let Ok(collections) = Collection::list().await else {
+                let Ok(prices) = Pricing::list().await else {
                     time::sleep(Duration::from_secs(60)).await;
                     continue;
                 };
-
-                let mut prices = Map::new();
-
-                let cards = collections
-                    .into_iter()
-                    .flat_map(|collection| collection.cards.into_keys());
-
-                for card in cards {
-                    if let Ok(pricing) = Pricing::fetch_cache(&card).await {
-                        prices.insert(card, pricing);
-                    }
-                }
 
                 break prices;
             };
 
             log::info!("Fetched {} prices from cache", prices.len());
-            let _ = sender.send(Event::Loaded(prices.clone())).await;
 
             loop {
                 log::debug!("Scanning for out of date prices...");
@@ -197,9 +228,7 @@ impl Pricing {
 
                     if let Ok(pricing) = Pricing::fetch(card, &session).await {
                         prices.insert(card.id.clone(), pricing);
-                        let _ = sender
-                            .send(Event::Updated(card.id.clone(), Box::new(pricing)))
-                            .await;
+                        let _ = sender.send((card.id.clone(), Box::new(pricing))).await;
                     }
 
                     i += 1;
@@ -325,7 +354,7 @@ impl<T> Variants<T> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct Spread<T> {
     pub low: T,
     pub high: T,
@@ -333,7 +362,7 @@ pub struct Spread<T> {
     pub market: T,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct Dollars {
     cents: u64,
 }
@@ -374,7 +403,7 @@ impl fmt::Display for Dollars {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct Euros {
     cents: u64,
 }

@@ -104,6 +104,7 @@ impl Collection {
         pokemon.len()
     }
 
+    #[allow(dead_code)]
     pub fn rarest_cards<'a>(&'a self, database: &'a Database) -> impl Iterator<Item = &'a Card> {
         let mut rares: Vec<_> = self
             .cards

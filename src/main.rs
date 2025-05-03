@@ -55,12 +55,12 @@ enum State {
 
 #[derive(Debug, Clone)]
 enum Message {
-    Loaded(Result<Database, anywho::Error>),
+    Loaded(Result<(Database, pricing::Map), anywho::Error>),
     Welcome(welcome::Message),
     Binders(binders::Message),
     OpenBinders,
     Browse,
-    PricingUpdated(pricing::Event),
+    PricingUpdated((card::Id, Box<Pricing>)),
 }
 
 impl Holodeck {
@@ -70,7 +70,15 @@ impl Holodeck {
                 state: State::Loading,
                 now: Instant::now(),
             },
-            Task::perform(Database::load(), Message::Loaded),
+            Task::perform(
+                async {
+                    let database = Database::load().await?;
+                    let prices = Pricing::list().await?;
+
+                    Ok((database, prices))
+                },
+                Message::Loaded,
+            ),
         )
     }
 
@@ -78,12 +86,12 @@ impl Holodeck {
         self.now = now;
 
         match message {
-            Message::Loaded(Ok(database)) => {
+            Message::Loaded(Ok((database, prices))) => {
                 let (welcome, task) = screen::Welcome::new();
 
                 let session = Session::new(env::var("POKEMONTCG_API_KEY").ok()); // TODO: Configuration
 
-                let prices = Task::run(
+                let price_updates = Task::run(
                     Pricing::subscribe(&database, &session),
                     Message::PricingUpdated,
                 );
@@ -92,15 +100,16 @@ impl Holodeck {
                     database,
                     session,
                     screen: Screen::Welcome(welcome),
-                    prices: pricing::Map::new(),
+                    prices,
                 };
 
-                Task::batch([task.map(Message::Welcome), prices])
+                Task::batch([task.map(Message::Welcome), price_updates])
             }
             Message::Welcome(message) => {
                 let State::Ready {
                     screen,
                     database,
+                    prices,
                     session,
                     ..
                 } = &mut self.state
@@ -112,7 +121,7 @@ impl Holodeck {
                     return Task::none();
                 };
 
-                match welcome.update(message, database, session, self.now) {
+                match welcome.update(message, database, prices, session, self.now) {
                     welcome::Action::None => Task::none(),
                     welcome::Action::Run(task) => task.map(Message::Welcome),
                     welcome::Action::Select(collection) => {
@@ -164,19 +173,12 @@ impl Holodeck {
                 // TODO
                 Task::none()
             }
-            Message::PricingUpdated(event) => {
+            Message::PricingUpdated((card, pricing)) => {
                 let State::Ready { prices, .. } = &mut self.state else {
                     return Task::none();
                 };
 
-                match event {
-                    pricing::Event::Loaded(new_prices) => {
-                        *prices = new_prices;
-                    }
-                    pricing::Event::Updated(id, pricing) => {
-                        let _ = prices.insert(id, *pricing);
-                    }
-                }
+                let _ = prices.insert(card, *pricing);
 
                 Task::none()
             }

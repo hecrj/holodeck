@@ -59,8 +59,9 @@ impl PokemonTcg {
 
         log::info!("Fetching price: {url}");
 
-        let response = session::retry(2, || self.get(&url).send()).await?;
-        let response: Response = response.error_for_status()?.json().await?;
+        let response =
+            session::retry(2, async || self.get(&url).send().await?.error_for_status()).await?;
+        let response: Response = response.json().await?;
 
         Ok(response.data)
     }

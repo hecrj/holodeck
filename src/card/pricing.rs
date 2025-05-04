@@ -143,27 +143,37 @@ impl Pricing {
         let session = session.clone();
 
         async move {
-            let fetch_from_cache = Self::fetch_cache(&card.id);
+            let fetch_from_cache = Self::fetch_cache(&card.id).and_then(async |cache| {
+                if is_outdated(cache.updated_at) {
+                    log::trace!("Pricing cache for {} is outdated", card.id.as_str());
+                    return Err(anywho!("Pricing cache for {card:?} is outdated"));
+                }
+
+                Ok(cache)
+            });
 
             let fetch_remotely = async {
                 let pricing = match pricing::Pricing::fetch(&card, &session).await {
-                    Ok(pricing) => pricing,
+                    Ok(pricing) => Some(pricing),
                     Err(Error::LocaleNotAvailable) => {
                         log::warn!("Locale not available for {id}", id = card.id.as_str());
-                        pricing::Pricing::default()
+                        None
                     }
                     Err(Error::RequestFailed(error))
                         if error.status() == Some(reqwest::StatusCode::NOT_FOUND) =>
                     {
-                        log::warn!("Pricing for {id} not found", id = card.id.as_str());
-                        pricing::Pricing::default()
+                        log::error!("Pricing for {id} not found", id = card.id.as_str());
+                        None
                     }
                     Err(error) => Err(error)?,
                 };
 
+                let found = pricing.is_some();
+                let pricing = pricing.unwrap_or_default();
+
                 let cache = cache_dir().join(format!("{}.ron", card.id.as_str()));
 
-                if !fs::try_exists(&cache).await.unwrap_or(false) {
+                if found || !fs::try_exists(&cache).await.unwrap_or(false) {
                     let _ = fs::create_dir_all(cache.parent().unwrap_or(&cache)).await;
                     let _ = fs::write(
                         cache,
@@ -218,22 +228,28 @@ impl Pricing {
 
                 let cards = collections
                     .into_iter()
-                    .flat_map(|collection| collection.cards.into_keys());
+                    .flat_map(|collection| collection.cards.into_keys().rev());
 
                 let mut i = 0;
 
-                for card in cards {
-                    if prices
-                        .get(&card)
-                        .is_some_and(|pricing| !is_outdated(pricing.updated_at))
-                    {
-                        continue;
-                    }
+                let mut outdated_prices: Vec<_> = cards
+                    .filter_map(|card| {
+                        if prices
+                            .get(&card)
+                            .is_none_or(|price| is_outdated(price.updated_at))
+                        {
+                            database.cards.get(&card)
+                        } else {
+                            None
+                        }
+                    })
+                    .collect();
 
-                    let Some(card) = database.cards.get(&card) else {
-                        continue;
-                    };
+                if !outdated_prices.is_empty() {
+                    log::info!("Found {} outdated prices", outdated_prices.len());
+                }
 
+                while let Some(card) = outdated_prices.pop() {
                     if let Ok(pricing) = Pricing::fetch(card, &session).await {
                         prices.insert(card.id.clone(), pricing);
                         let _ = sender.send((card.id.clone(), pricing)).await;
@@ -242,7 +258,11 @@ impl Pricing {
                     i += 1;
 
                     if i % 10 == 0 {
-                        time::sleep(Duration::from_secs(30)).await;
+                        log::info!("Outdated prices left: {}", outdated_prices.len());
+                    }
+
+                    if i % 5 == 0 {
+                        time::sleep(Duration::from_secs(1)).await;
                     }
                 }
 
@@ -257,10 +277,6 @@ impl Pricing {
         let pricing = fs::read_to_string(&cache).await?;
 
         let cache: Cache = task::spawn_blocking(move || ron::from_str(&pricing)).await??;
-
-        if is_outdated(cache.updated_at) {
-            return Err(anywho!("Pricing cache for {card:?} is outdated"));
-        }
 
         Ok(Self::from_raw(pricing::Pricing {
             tcgplayer: cache.tcgplayer,

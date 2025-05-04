@@ -23,6 +23,9 @@ pub struct Image {
 }
 
 impl Image {
+    pub const WIDTH: u32 = 734;
+    pub const HEIGHT: u32 = 1024;
+
     pub fn fetch<'a>(
         card: &Card,
         database: &Database,
@@ -58,10 +61,15 @@ impl Image {
 
             // Decode image as RGBA in a background blocking thread
             task::spawn_blocking(move || {
-                let image = image::ImageReader::new(io::Cursor::new(bytes))
+                let mut image = image::ImageReader::new(io::Cursor::new(bytes))
                     .with_guessed_format()?
                     .decode()?
                     .to_rgba8();
+
+                if !has_rounded_corners(&image) {
+                    log::warn!("Card without rounded corners: {id}", id = card.id.as_str());
+                    round_corners(&mut image);
+                }
 
                 Ok(Image {
                     width: image.width(),
@@ -89,4 +97,54 @@ fn cache_dir() -> PathBuf {
         .unwrap_or_default()
         .join(env!("CARGO_PKG_NAME"))
         .join("cards")
+}
+
+fn has_rounded_corners(rgba: &image::RgbaImage) -> bool {
+    rgba.get_pixel(0, 0).0[3] == 0
+}
+
+// Courtesy of ChatGPT
+fn round_corners(rgba: &mut image::RgbaImage) {
+    let (width, height) = rgba.dimensions();
+
+    let radius = (width as f32 * 0.05) as u32;
+    let radius_sq = radius * radius;
+    let aa_span = radius / 4;
+
+    for y in 0..height {
+        for x in 0..width {
+            let dist_x = if x < radius {
+                radius - x
+            } else if x >= width - radius {
+                x - (width - radius - 1)
+            } else {
+                0
+            };
+
+            let dist_y = if y < radius {
+                radius - y
+            } else if y >= height - radius {
+                y - (height - radius - 1)
+            } else {
+                0
+            };
+
+            let dist_sq = dist_x * dist_x + dist_y * dist_y;
+
+            if dist_sq > radius_sq {
+                let dist = (dist_sq as f32).sqrt();
+
+                if dist <= (radius + aa_span) as f32 {
+                    let alpha_scale =
+                        1.0 - (dist_sq - radius_sq) as f32 / (aa_span * aa_span) as f32;
+
+                    let pixel = rgba.get_pixel_mut(x, y);
+                    pixel.0[3] = (pixel.0[3] as f32 * alpha_scale) as u8;
+                } else {
+                    let pixel = rgba.get_pixel_mut(x, y);
+                    pixel.0 = [0; 4];
+                }
+            }
+        }
+    }
 }

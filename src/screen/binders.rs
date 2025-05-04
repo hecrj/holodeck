@@ -9,6 +9,7 @@ use crate::{Binder, Collection};
 use iced::animation;
 use iced::border;
 use iced::keyboard;
+use iced::padding;
 use iced::task;
 use iced::time::{Instant, milliseconds};
 use iced::widget::{
@@ -643,7 +644,7 @@ impl Binders {
                     })
             }))
             .columns(binder.columns)
-            .height(grid::aspect_ratio(734, 1024))
+            .height(grid::aspect_ratio(card::Image::WIDTH, card::Image::HEIGHT))
             .spacing(5),
         )
         .into()
@@ -708,7 +709,7 @@ impl Binders {
                         .into()
                     }))
                     .fluid(300)
-                    .height(grid::aspect_ratio(734, 1024))
+                    .height(grid::aspect_ratio(card::Image::WIDTH, card::Image::HEIGHT))
                     .spacing(8),
                 )
                 .width(Fill)
@@ -787,8 +788,7 @@ fn item<'a>(
 
             let image = image(handle)
                 .width(Fill)
-                .height(Fill)
-                .content_fit(ContentFit::Cover)
+                .content_fit(ContentFit::Contain)
                 .opacity(opacity);
 
             let stats = (shadow > 0.0).then(move || {
@@ -801,7 +801,7 @@ fn item<'a>(
                                 .add_stop(0.0, Color::BLACK.scale_alpha(shadow))
                                 .add_stop(shadow * 0.4, Color::TRANSPARENT),
                         )
-                        .border(border::rounded(10))
+                        .border(border::rounded(14.0))
                 };
 
                 let metadata = {
@@ -848,25 +848,27 @@ fn item<'a>(
 
             let card = mouse_area(
                 button(
-                    float(stack![container(image).padding(1)].push_maybe(stats))
-                        .scale(match source {
-                            Source::Binder => scale * (1.1 - (0.1 * opacity)),
-                            Source::Search => scale,
-                        })
-                        .translate(move |bounds, viewport| {
-                            let scale = source.zoom();
-                            let final_bounds = bounds.zoom(scale);
+                    float(
+                        stack![container(image).padding(padding::all(1).top(0))].push_maybe(stats),
+                    )
+                    .scale(match source {
+                        Source::Binder => scale * (1.1 - (0.1 * opacity)),
+                        Source::Search => scale,
+                    })
+                    .translate(move |bounds, viewport| {
+                        let scale = source.zoom();
+                        let final_bounds = bounds.zoom(scale);
 
-                            final_bounds.offset(&viewport.shrink(10)) * shadow
-                        })
-                        .style(move |_theme| float::Style {
-                            shadow: Shadow {
-                                color: Color::BLACK.scale_alpha(shadow),
-                                blur_radius: 10.0 * shadow,
-                                ..Shadow::default()
-                            },
-                            shadow_border_radius: border::radius(10.0 * scale),
-                        }),
+                        final_bounds.offset(&viewport.shrink(10)) * shadow
+                    })
+                    .style(move |_theme| float::Style {
+                        shadow: Shadow {
+                            color: Color::BLACK.scale_alpha(shadow),
+                            blur_radius: 10.0 * shadow,
+                            ..Shadow::default()
+                        },
+                        shadow_border_radius: border::radius(14.0 * scale),
+                    }),
                 )
                 .on_press_with(move || Message::CardChosen(card.id.clone(), source))
                 .padding(0)

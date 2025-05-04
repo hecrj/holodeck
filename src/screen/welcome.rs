@@ -393,8 +393,8 @@ fn card<'a>(
     .on_exit(Message::Hovered(collection.name.clone(), false));
 
     button(content)
-        .width(367)
-        .height(512)
+        .width(card::Image::WIDTH / 2)
+        .height(card::Image::HEIGHT / 2)
         .on_press_with(|| Message::Select(collection.clone()))
         .padding(0)
         .style(button::text)

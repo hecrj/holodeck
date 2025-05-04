@@ -47,8 +47,9 @@ enum State {
     Adding {
         query: String,
         search: card::Search,
-        task: Option<task::Handle>,
         animations: HashMap<card::Id, AnimationSet>,
+        search_task: Option<task::Handle>,
+        price_task: Option<task::Handle>,
     },
 }
 
@@ -65,6 +66,7 @@ pub enum Message {
     CardHovered(card::Id, Source, bool),
     CardChosen(card::Id, Source),
     ImageFetched(card::Id, Result<card::Image, anywho::Error>),
+    PriceFetched(card::Id, Result<card::Pricing, anywho::Error>),
     CollectionSaved(Result<(), anywho::Error>),
     TabPressed { shift: bool },
     EscapePressed,
@@ -104,6 +106,7 @@ impl Binders {
         message: Message,
         collection: &mut Collection,
         database: &Database,
+        prices: &mut pricing::Map,
         session: &Session,
         now: Instant,
     ) -> Task<Message> {
@@ -156,13 +159,17 @@ impl Binders {
                     query: String::new(),
                     search: card::Search::new([]),
                     animations: HashMap::new(),
-                    task: Some(handle.abort_on_drop()),
+                    search_task: Some(handle.abort_on_drop()),
+                    price_task: None,
                 };
 
                 Task::batch([text_input::focus("search"), search_cards])
             }
             Message::SearchChanged(new_query) => {
-                let State::Adding { query, task, .. } = &mut self.state else {
+                let State::Adding {
+                    query, search_task, ..
+                } = &mut self.state
+                else {
                     return Task::none();
                 };
 
@@ -180,17 +187,22 @@ impl Binders {
                 };
 
                 *query = new_query;
-                *task = Some(handle.abort_on_drop());
+                *search_task = Some(handle.abort_on_drop());
 
                 search_cards
             }
             Message::SearchFinished(result) => {
-                let State::Adding { search, task, .. } = &mut self.state else {
+                let State::Adding {
+                    search,
+                    search_task,
+                    ..
+                } = &mut self.state
+                else {
                     return Task::none();
                 };
 
                 *search = result;
-                *task = None;
+                *search_task = None;
 
                 Task::none()
             }
@@ -227,28 +239,57 @@ impl Binders {
                     Message::ImageFetched.with(card.id.clone()),
                 )
             }
-            Message::CardHovered(card, source, hovered) => {
-                match source {
-                    Source::Binder => {
-                        if let Some(animations) = self.animations.get_mut(&card) {
-                            animations.zoom.go_mut(hovered, now);
-                        }
+            Message::CardHovered(card, source, hovered) => match source {
+                Source::Binder => {
+                    if let Some(animations) = self.animations.get_mut(&card) {
+                        animations.zoom.go_mut(hovered, now);
                     }
-                    Source::Search => {
-                        if let State::Adding { animations, .. } = &mut self.state {
-                            for animation in animations.values_mut() {
-                                animation.zoom.go_mut(false, now);
-                            }
-
-                            if let Some(animations) = animations.get_mut(&card) {
-                                animations.zoom.go_mut(hovered, now);
-                            }
-                        }
-                    }
+                    Task::none()
                 }
+                Source::Search => {
+                    let State::Adding {
+                        animations,
+                        price_task,
+                        ..
+                    } = &mut self.state
+                    else {
+                        return Task::none();
+                    };
 
-                Task::none()
-            }
+                    let Some(card) = database.cards.get(&card) else {
+                        return Task::none();
+                    };
+
+                    for animation in animations.values_mut() {
+                        animation.zoom.go_mut(false, now);
+                    }
+
+                    if let Some(animations) = animations.get_mut(&card.id) {
+                        animations.zoom.go_mut(hovered, now);
+                    }
+
+                    if !hovered || prices.contains(&card.id) {
+                        *price_task = None;
+                        return Task::none();
+                    }
+
+                    let (task, handle) = Task::perform(
+                        {
+                            let fetch_price = card::Pricing::fetch(card, session);
+
+                            async move {
+                                time::sleep(milliseconds(500)).await;
+                                fetch_price.await
+                            }
+                        },
+                        Message::PriceFetched.with(card.id.clone()),
+                    )
+                    .abortable();
+
+                    *price_task = Some(handle.abort_on_drop());
+                    task
+                }
+            },
             Message::CardChosen(card, source) => match source {
                 Source::Binder => {
                     // TODO: Open card details
@@ -271,6 +312,11 @@ impl Binders {
                 }
 
                 self.animations.insert(card, AnimationSet::new(now));
+
+                Task::none()
+            }
+            Message::PriceFetched(id, Ok(pricing)) => {
+                prices.insert(id, pricing);
 
                 Task::none()
             }
@@ -384,7 +430,7 @@ impl Binders {
 
                 Task::none()
             }
-            Message::CollectionSaved(Err(error)) => {
+            Message::CollectionSaved(Err(error)) | Message::PriceFetched(_, Err(error)) => {
                 log::error!("{error}");
 
                 Task::none()
@@ -537,6 +583,7 @@ impl Binders {
                 animations,
                 collection,
                 database,
+                prices,
                 now,
             )),
         };
@@ -609,6 +656,7 @@ impl Binders {
         animations: &'a HashMap<card::Id, AnimationSet>,
         collection: &'a Collection,
         database: &'a Database,
+        prices: &pricing::Map,
         now: Instant,
     ) -> Element<'a, Message> {
         let input = container(
@@ -649,7 +697,7 @@ impl Binders {
                                 card,
                                 self.images.get(&card.id),
                                 animations.get(&card.id),
-                                None,
+                                prices.get(&card.id),
                                 database,
                                 now,
                                 Source::Search,

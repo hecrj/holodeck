@@ -43,6 +43,10 @@ impl PokemonTcg {
     }
 
     pub async fn fetch_pricing(&self, card: &Card) -> Result<Pricing, Error> {
+        if !card.name.has_english() {
+            return Err(Error::LocaleNotAvailable);
+        }
+
         let number = card_number(card);
         let set = set_name(card);
 

@@ -139,6 +139,7 @@ impl Holodeck {
             Message::Binders(message) => {
                 let State::Ready {
                     database,
+                    prices,
                     session,
                     screen:
                         Screen::Collecting {
@@ -152,7 +153,7 @@ impl Holodeck {
                 };
 
                 binders
-                    .update(message, collection, database, session, self.now)
+                    .update(message, collection, database, prices, session, self.now)
                     .map(Message::Binders)
             }
             Message::OpenBinders => {

@@ -28,6 +28,10 @@ impl Map {
         self.0.get(id).copied()
     }
 
+    pub fn contains(&self, id: &card::Id) -> bool {
+        self.0.contains_key(id)
+    }
+
     pub fn insert(&mut self, id: card::Id, pricing: Pricing) -> Option<Pricing> {
         self.0.insert(id, pricing)
     }
@@ -144,10 +148,14 @@ impl Pricing {
             let fetch_remotely = async {
                 let pricing = match pricing::Pricing::fetch(&card, &session).await {
                     Ok(pricing) => pricing,
+                    Err(Error::LocaleNotAvailable) => {
+                        log::warn!("Locale not available for {id}", id = card.id.as_str());
+                        pricing::Pricing::default()
+                    }
                     Err(Error::RequestFailed(error))
                         if error.status() == Some(reqwest::StatusCode::NOT_FOUND) =>
                     {
-                        log::warn!("Pricing for {card:?} not found");
+                        log::warn!("Pricing for {id} not found", id = card.id.as_str());
                         pricing::Pricing::default()
                     }
                     Err(error) => Err(error)?,

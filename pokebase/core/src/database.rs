@@ -82,7 +82,7 @@ impl Database {
                     .entry(localized_series.id.clone())
                     .or_insert_with(|| Series {
                         id: series::Id(localized_series.id),
-                        name: BTreeMap::new(),
+                        name: locale::Map::new(),
                         release_date: localized_series.release_date,
                     });
 
@@ -118,7 +118,7 @@ impl Database {
             for localized_set in localized_sets {
                 let set = sets.entry(localized_set.id.clone()).or_insert_with(|| Set {
                     id: set::Id(localized_set.id),
-                    name: BTreeMap::new(),
+                    name: locale::Map::new(),
                     series: series::Id(localized_set.serie.id),
                     release_date: localized_set.release_date,
                     total_cards: localized_set.card_count.total,
@@ -170,7 +170,7 @@ impl Database {
                     .entry(localized_card.id.clone())
                     .or_insert_with(|| Card {
                         id: card::Id(localized_card.id),
-                        name: BTreeMap::new(),
+                        name: locale::Map::new(),
                         set: set::Id(localized_card.set.id),
                         types: BTreeSet::new(),
                         rarity: card::Rarity::None,

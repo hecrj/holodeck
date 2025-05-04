@@ -28,7 +28,7 @@ impl PokemonTcg {
     }
 
     pub async fn download_image(&self, card: &Card) -> Result<Bytes, Error> {
-        if !card.name.contains_key("en") {
+        if !card.name.has_english() {
             return Err(Error::LocaleNotAvailable);
         }
 

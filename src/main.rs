@@ -248,7 +248,7 @@ impl Holodeck {
 
                     let screen = match screen {
                         screen::Collecting::Binders(binders) => binders
-                            .view(collection, database, self.now)
+                            .view(collection, database, prices, self.now)
                             .map(Message::Binders),
                     };
 

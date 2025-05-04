@@ -58,15 +58,11 @@ pub fn search<'a>(query: &str, database: &Database) -> impl Future<Output = Sear
         let mut matches = Vec::new();
 
         for card in database.cards.values().iter().rev() {
-            if !card.name.contains_key("en") && !card.name.contains_key("ja") {
+            if !card.name.is_supported() {
                 continue;
             }
 
-            if card
-                .name
-                .values()
-                .any(|name| name.as_str().to_lowercase().contains(&query))
-            {
+            if card.name.contains(&query) {
                 matches.push(card.clone());
             }
 

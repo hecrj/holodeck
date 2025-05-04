@@ -1,5 +1,6 @@
 use crate::binder;
 use crate::card;
+use crate::card::pricing;
 use crate::icon;
 use crate::pokebase::{Card, Database, Session};
 use crate::widget::pokeball;
@@ -11,14 +12,16 @@ use iced::keyboard;
 use iced::task;
 use iced::time::{Instant, milliseconds};
 use iced::widget::{
-    bottom_right, button, center, center_x, center_y, column, container, float, grid,
+    bottom, bottom_right, button, center, center_x, center_y, column, container, float, grid,
     horizontal_space, image, mouse_area, opaque, pick_list, pop, right, row, scrollable, stack,
     text, text_input,
 };
 use iced::window;
 use iced::{
-    Animation, Center, Color, ContentFit, Element, Fill, Shadow, Shrink, Subscription, Task, Theme,
+    Animation, Bottom, Center, Color, ContentFit, Element, Fill, Shadow, Shrink, Subscription,
+    Task, Theme,
 };
+use iced_palace::widget::typewriter;
 
 use function::Binary;
 use std::collections::HashMap;
@@ -411,6 +414,7 @@ impl Binders {
         &'a self,
         collection: &'a Collection,
         database: &'a Database,
+        prices: &pricing::Map,
         now: Instant,
     ) -> Element<'a, Message> {
         let Some(pair) = self.binders.open(self.spread) else {
@@ -505,14 +509,14 @@ impl Binders {
             )
             .into(),
             binder::Surface::Content(content) => {
-                self.page(pair.binder, content, collection, database, now)
+                self.page(pair.binder, content, collection, database, prices, now)
             }
         };
 
         let right_page = match pair.right {
             binder::Surface::Cover => horizontal_space().into(),
             binder::Surface::Content(content) => {
-                self.page(pair.binder, content, collection, database, now)
+                self.page(pair.binder, content, collection, database, prices, now)
             }
         };
 
@@ -527,7 +531,14 @@ impl Binders {
                 search,
                 animations,
                 ..
-            } => Some(self.adding(query, search.matches(), animations, collection, now)),
+            } => Some(self.adding(
+                query,
+                search.matches(),
+                animations,
+                collection,
+                database,
+                now,
+            )),
         };
 
         let has_overlay = overlay.is_some();
@@ -556,6 +567,7 @@ impl Binders {
         content: binder::Content,
         collection: &Collection,
         database: &'a Database,
+        prices: &pricing::Map,
         now: Instant,
     ) -> Element<'a, Message> {
         let total = self.mode.total_cards(database);
@@ -569,6 +581,8 @@ impl Binders {
                             card,
                             self.images.get(&card.id),
                             self.animations.get(&card.id),
+                            prices.get(&card.id),
+                            database,
                             now,
                             Source::Binder,
                         )
@@ -594,6 +608,7 @@ impl Binders {
         matches: &'a [Card],
         animations: &'a HashMap<card::Id, AnimationSet>,
         collection: &'a Collection,
+        database: &'a Database,
         now: Instant,
     ) -> Element<'a, Message> {
         let input = container(
@@ -634,6 +649,8 @@ impl Binders {
                                 card,
                                 self.images.get(&card.id),
                                 animations.get(&card.id),
+                                None,
+                                database,
                                 now,
                                 Source::Search,
                             ))
@@ -703,6 +720,8 @@ fn item<'a>(
     card: &'a Card,
     thumbnail: Option<&'a Image>,
     animations: Option<&'a AnimationSet>,
+    price: Option<card::Pricing>,
+    database: &'a Database,
     now: Instant,
     source: Source,
 ) -> Element<'a, Message> {
@@ -718,34 +737,88 @@ fn item<'a>(
                 (0.0, 1.0, 0.0)
             };
 
+            let image = image(handle)
+                .width(Fill)
+                .height(Fill)
+                .content_fit(ContentFit::Cover)
+                .opacity(opacity);
+
+            let stats = (shadow > 0.0).then(move || {
+                let translucent = move |_theme: &_| {
+                    use iced::gradient;
+
+                    container::Style::default()
+                        .background(
+                            gradient::Linear::new(0)
+                                .add_stop(0.0, Color::BLACK.scale_alpha(shadow))
+                                .add_stop(shadow * 0.4, Color::TRANSPARENT),
+                        )
+                        .border(border::rounded(10))
+                };
+
+                let metadata = {
+                    let name = typewriter(card.name.as_str()).size(12);
+
+                    let set = database.sets.get(&card.set).map(|set| {
+                        typewriter(format!("{} (#{})", set.name.as_str(), card.id.as_str()))
+                            .size(7)
+                            .very_quick()
+                    });
+
+                    column![name].push_maybe(set).spacing(5)
+                };
+
+                let pricing = price.map(|price| {
+                    let dollars = price
+                        .america
+                        .spread()
+                        .map(|spread| typewriter(spread.average.to_string()).size(7));
+
+                    let euros = price
+                        .europe
+                        .spread()
+                        .map(|spread| typewriter(spread.average.to_string()).size(7));
+
+                    row![].push_maybe(dollars).push_maybe(euros).spacing(8)
+                });
+
+                let stats: Element<_> = if shadow == 1.0 {
+                    container(
+                        row![metadata, horizontal_space()]
+                            .push_maybe(pricing)
+                            .spacing(5)
+                            .align_y(Bottom),
+                    )
+                    .padding(8)
+                    .into()
+                } else {
+                    horizontal_space().into()
+                };
+
+                bottom(stats).width(Fill).style(translucent)
+            });
+
             let card = mouse_area(
                 button(
-                    float(
-                        image(handle)
-                            .width(Fill)
-                            .height(Fill)
-                            .content_fit(ContentFit::Cover)
-                            .opacity(opacity),
-                    )
-                    .opaque(false)
-                    .scale(match source {
-                        Source::Binder => scale * (1.1 - (0.1 * opacity)),
-                        Source::Search => scale,
-                    })
-                    .translate(move |bounds, viewport| {
-                        let scale = source.zoom();
-                        let final_bounds = bounds.zoom(scale);
+                    float(stack![container(image).padding(1)].push_maybe(stats))
+                        .scale(match source {
+                            Source::Binder => scale * (1.1 - (0.1 * opacity)),
+                            Source::Search => scale,
+                        })
+                        .translate(move |bounds, viewport| {
+                            let scale = source.zoom();
+                            let final_bounds = bounds.zoom(scale);
 
-                        final_bounds.offset(&viewport.shrink(10)) * shadow
-                    })
-                    .style(move |_theme| float::Style {
-                        shadow: Shadow {
-                            color: Color::BLACK.scale_alpha(shadow),
-                            blur_radius: 10.0 * shadow,
-                            ..Shadow::default()
-                        },
-                        shadow_border_radius: border::radius(10.0 * scale),
-                    }),
+                            final_bounds.offset(&viewport.shrink(10)) * shadow
+                        })
+                        .style(move |_theme| float::Style {
+                            shadow: Shadow {
+                                color: Color::BLACK.scale_alpha(shadow),
+                                blur_radius: 10.0 * shadow,
+                                ..Shadow::default()
+                            },
+                            shadow_border_radius: border::radius(10.0 * scale),
+                        }),
                 )
                 .on_press_with(move || Message::CardChosen(card.id.clone(), source))
                 .padding(0)

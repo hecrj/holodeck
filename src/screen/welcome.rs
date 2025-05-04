@@ -379,19 +379,16 @@ fn card<'a>(
         .into()
     };
 
-    let content = mouse_area(
-        float(content)
-            .opaque(false)
-            .scale(zoom.interpolate(1.0, 1.2, now))
-            .style(move |_theme| float::Style {
-                shadow: Shadow {
-                    color: Color::BLACK.scale_alpha(zoom.interpolate(0.0, 1.0, now)),
-                    blur_radius: 10.0,
-                    ..Shadow::default()
-                },
-                shadow_border_radius: border::radius(12),
-            }),
-    )
+    let content = mouse_area(float(content).scale(zoom.interpolate(1.0, 1.2, now)).style(
+        move |_theme| float::Style {
+            shadow: Shadow {
+                color: Color::BLACK.scale_alpha(zoom.interpolate(0.0, 1.0, now)),
+                blur_radius: 10.0,
+                ..Shadow::default()
+            },
+            shadow_border_radius: border::radius(12),
+        },
+    ))
     .on_enter(Message::Hovered(collection.name.clone(), true))
     .on_exit(Message::Hovered(collection.name.clone(), false));
 

@@ -59,16 +59,16 @@ tracing-subscriber = "0.3"
 
 [patch.crates-io]
 iced.git = "https://github.com/iced-rs/iced.git"
-iced.rev = "f031b99196431692bf4084e38f7dd68771ab2d87"
+iced.rev = "6bf709e03efaf9ee477a742a13feb8e9262c647d"
 
 iced_core.git = "https://github.com/iced-rs/iced.git"
-iced_core.rev = "f031b99196431692bf4084e38f7dd68771ab2d87"
+iced_core.rev = "6bf709e03efaf9ee477a742a13feb8e9262c647d"
 
 iced_widget.git = "https://github.com/iced-rs/iced.git"
-iced_widget.rev = "f031b99196431692bf4084e38f7dd68771ab2d87"
+iced_widget.rev = "6bf709e03efaf9ee477a742a13feb8e9262c647d"
 
 iced_palace.git = "https://github.com/hecrj/iced_palace.git"
-iced_palace.rev = "28f6e392c6187b170e35429f38cf85f69d1f5b53"
+iced_palace.rev = "1c4014f80cbe78f1bb248cc81cc85620c6a11e93"
 
 # For testing new bleeding edge iced features
 # iced.path = "../iced"

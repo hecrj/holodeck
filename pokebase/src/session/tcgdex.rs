@@ -20,12 +20,16 @@ impl Tcgdex {
             return Err(Error::SetNotFound(card.set.clone()));
         };
 
-        let locale = if card.name.contains_key("en") {
+        let locale = if card.name.has_english() {
             "en" // TODO
-        } else if card.name.contains_key("ja") {
+        } else if card.name.has_japanese() {
             "ja"
         } else {
-            card.name.keys().next().map(Locale::as_str).unwrap_or("en")
+            card.name
+                .locales()
+                .next()
+                .map(Locale::as_str)
+                .unwrap_or("en")
         };
 
         let url = format!(

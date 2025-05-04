@@ -60,7 +60,7 @@ enum Message {
     Binders(binders::Message),
     OpenBinders,
     Browse,
-    PricingUpdated((card::Id, Box<Pricing>)),
+    PricingUpdated((card::Id, Pricing)),
 }
 
 impl Holodeck {
@@ -179,7 +179,7 @@ impl Holodeck {
                     return Task::none();
                 };
 
-                let _ = prices.insert(card, *pricing);
+                let _ = prices.insert(card, pricing);
 
                 Task::none()
             }

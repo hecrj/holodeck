@@ -190,7 +190,7 @@ impl Pricing {
     pub fn subscribe<'a>(
         database: &Database,
         session: &Session,
-    ) -> impl Stream<Item = (card::Id, Box<Pricing>)> + 'a {
+    ) -> impl Stream<Item = (card::Id, Pricing)> + 'a {
         let database = database.clone();
         let session = session.clone();
 
@@ -236,7 +236,7 @@ impl Pricing {
 
                     if let Ok(pricing) = Pricing::fetch(card, &session).await {
                         prices.insert(card.id.clone(), pricing);
-                        let _ = sender.send((card.id.clone(), Box::new(pricing))).await;
+                        let _ = sender.send((card.id.clone(), pricing)).await;
                     }
 
                     i += 1;

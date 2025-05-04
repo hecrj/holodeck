@@ -77,3 +77,5 @@ iced_palace.rev = "1c4014f80cbe78f1bb248cc81cc85620c6a11e93"
 
 [lints.clippy]
 single-component-path-imports = "allow"
+too-many-arguments = "allow"
+large-enum-variant = "allow"

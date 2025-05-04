@@ -1,15 +1,22 @@
 use crate::pokebase::card;
-use crate::pokebase::{Card, Database};
+use crate::pokebase::pokemon;
+use crate::pokebase::{Card, Database, Pokemon};
 
 use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 use tokio::fs;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Collection {
     pub name: Name,
     pub cards: BTreeMap<card::Id, usize>,
+
+    #[serde(skip)]
+    total_pokemon: RefCell<Option<usize>>,
+    #[serde(skip)]
+    rarest_card_by_pokemon: RefCell<BTreeMap<pokemon::Id, Option<card::Id>>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -35,6 +42,8 @@ impl Collection {
         let collection = Self {
             name,
             cards: BTreeMap::new(),
+            rarest_card_by_pokemon: RefCell::new(BTreeMap::new()),
+            total_pokemon: RefCell::new(None),
         };
 
         let _ = collection.save().await;
@@ -54,8 +63,10 @@ impl Collection {
 
     pub fn add(&mut self, card: card::Id) {
         let amount = self.cards.entry(card).or_default();
-
         *amount += 1;
+
+        *self.total_pokemon.borrow_mut() = None;
+        self.rarest_card_by_pokemon.borrow_mut().clear();
     }
 
     pub fn save<'a>(&self) -> impl Future<Output = Result<(), anywho::Error>> + 'a {
@@ -94,6 +105,10 @@ impl Collection {
     }
 
     pub fn total_pokemon(&self, database: &Database) -> usize {
+        if let Some(total) = *self.total_pokemon.borrow() {
+            return total;
+        }
+
         let pokemon = BTreeSet::from_iter(
             self.cards
                 .keys()
@@ -101,7 +116,9 @@ impl Collection {
                 .filter_map(|card| card.pokedex.first()),
         );
 
-        pokemon.len()
+        let total = pokemon.len();
+        *self.total_pokemon.borrow_mut() = Some(total);
+        total
     }
 
     #[allow(dead_code)]
@@ -115,6 +132,39 @@ impl Collection {
         rares.sort_unstable_by(|a, b| a.rarity.cmp(&b.rarity).reverse());
 
         rares.into_iter()
+    }
+
+    pub fn rarest_card_for<'a>(
+        &self,
+        pokemon: &Pokemon,
+        database: &'a Database,
+    ) -> Option<&'a Card> {
+        if let Some(card) = self.rarest_card_by_pokemon.borrow().get(&pokemon.id) {
+            return database.cards.get(card.as_ref()?);
+        }
+
+        let mut cards: Vec<_> = self
+            .cards
+            .keys()
+            .filter_map(|card| {
+                let card = database.cards.get(card)?;
+
+                if card.pokedex.contains(&pokemon.id) {
+                    Some(card)
+                } else {
+                    None
+                }
+            })
+            .collect();
+        cards.sort_unstable_by(|a, b| a.rarity.cmp(&b.rarity).reverse());
+
+        let card = cards.first().copied();
+
+        self.rarest_card_by_pokemon
+            .borrow_mut()
+            .insert(pokemon.id, card.map(|card| card.id.clone()));
+
+        card
     }
 }
 

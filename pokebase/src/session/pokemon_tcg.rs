@@ -79,7 +79,9 @@ impl PokemonTcg {
 
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
 pub struct Pricing {
+    #[serde(default)]
     pub tcgplayer: tcgplayer::Pricing,
+    #[serde(default)]
     pub cardmarket: cardmarket::Pricing,
 }
 

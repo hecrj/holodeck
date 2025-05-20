@@ -23,6 +23,7 @@ function.workspace = true
 futures-util.workspace = true
 image.workspace = true
 log.workspace = true
+num-traits.workspace = true
 pokebase.workspace = true
 reqwest.workspace = true
 ron.workspace = true
@@ -49,6 +50,7 @@ iced_fontello = "0.14.0-dev"
 iced_palace = "0.14.0-dev"
 image = "0.25"
 log = "0.4"
+num-traits = "0.2"
 reqwest = "0.12"
 ron = "0.10"
 serde = "1"
@@ -59,13 +61,13 @@ tracing-subscriber = "0.3"
 
 [patch.crates-io]
 iced.git = "https://github.com/iced-rs/iced.git"
-iced.rev = "6bf709e03efaf9ee477a742a13feb8e9262c647d"
+iced.rev = "3a3a02beef60efb793bebe97f292f6ab2a8fd363"
 
 iced_core.git = "https://github.com/iced-rs/iced.git"
-iced_core.rev = "6bf709e03efaf9ee477a742a13feb8e9262c647d"
+iced_core.rev = "3a3a02beef60efb793bebe97f292f6ab2a8fd363"
 
 iced_widget.git = "https://github.com/iced-rs/iced.git"
-iced_widget.rev = "6bf709e03efaf9ee477a742a13feb8e9262c647d"
+iced_widget.rev = "3a3a02beef60efb793bebe97f292f6ab2a8fd363"
 
 iced_palace.git = "https://github.com/hecrj/iced_palace.git"
 iced_palace.rev = "1c4014f80cbe78f1bb248cc81cc85620c6a11e93"

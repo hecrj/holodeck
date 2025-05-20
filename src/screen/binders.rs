@@ -1,6 +1,7 @@
 use crate::binder;
 use crate::card;
 use crate::card::pricing;
+use crate::collection;
 use crate::icon;
 use crate::pokebase::{Card, Database, Session};
 use crate::widget::pokeball;
@@ -14,8 +15,8 @@ use iced::task;
 use iced::time::{Instant, milliseconds};
 use iced::widget::{
     bottom, bottom_right, button, center, center_x, center_y, column, container, float, grid,
-    horizontal_space, image, mouse_area, opaque, pick_list, pop, right, row, scrollable, stack,
-    text, text_input,
+    horizontal_space, image, mouse_area, opaque, pick_list, pop, right, right_center, row,
+    scrollable, stack, text, text_input, tooltip,
 };
 use iced::window;
 use iced::{
@@ -46,6 +47,7 @@ enum Image {
 enum State {
     Idle,
     Adding {
+        variant: collection::Variant,
         query: String,
         search: card::Search,
         animations: HashMap<card::Id, AnimationSet>,
@@ -59,13 +61,15 @@ pub enum Message {
     ModeSelected(binder::Mode),
     PreviousPage,
     NextPage,
-    Add,
+    Add(collection::Variant),
+    ToggleReverseHolofoil,
     SearchChanged(String),
     SearchFinished(card::Search),
     Close,
     CardShown(card::Id, Source),
     CardHovered(card::Id, Source, bool),
-    CardChosen(card::Id, Source),
+    ShowCard(card::Id),
+    AddCard(card::Id),
     ImageFetched(card::Id, Result<card::Image, anywho::Error>),
     PriceFetched(card::Id, Result<card::Pricing, anywho::Error>),
     CollectionSaved(Result<(), anywho::Error>),
@@ -148,7 +152,7 @@ impl Binders {
 
                 Task::none()
             }
-            Message::Add => {
+            Message::Add(variant) => {
                 if let State::Adding { .. } = &self.state {
                     return Task::none();
                 }
@@ -157,6 +161,7 @@ impl Binders {
                     Task::perform(card::search("", database), Message::SearchFinished).abortable();
 
                 self.state = State::Adding {
+                    variant,
                     query: String::new(),
                     search: card::Search::new([]),
                     animations: HashMap::new(),
@@ -165,6 +170,18 @@ impl Binders {
                 };
 
                 Task::batch([text_input::focus("search"), search_cards])
+            }
+            Message::ToggleReverseHolofoil => {
+                let State::Adding { variant, .. } = &mut self.state else {
+                    return Task::none();
+                };
+
+                *variant = match variant {
+                    collection::Variant::Normal => collection::Variant::Reverse,
+                    collection::Variant::Reverse => collection::Variant::Normal,
+                };
+
+                Task::none()
             }
             Message::SearchChanged(new_query) => {
                 let State::Adding {
@@ -291,13 +308,19 @@ impl Binders {
                     task
                 }
             },
-            Message::CardChosen(card, source) => match source {
-                Source::Binder => {
-                    // TODO: Open card details
-                    Task::none()
-                }
-                Source::Search => self.add(card, collection, database),
-            },
+            Message::ShowCard(card) => {
+                // TODO
+                dbg!(card);
+
+                Task::none()
+            }
+            Message::AddCard(card) => {
+                let State::Adding { variant, .. } = &self.state else {
+                    return Task::none();
+                };
+
+                self.add(card, *variant, collection, database)
+            }
             Message::ImageFetched(card, Ok(image)) => {
                 let _ = self.images.insert(
                     card.clone(),
@@ -399,7 +422,12 @@ impl Binders {
                     return Task::none();
                 };
 
-                self.add(card.id.clone(), collection, database)
+                self.add(
+                    card.id.clone(),
+                    collection::Variant::Normal,
+                    collection,
+                    database,
+                )
             }
             Message::EscapePressed => {
                 let State::Adding {
@@ -442,6 +470,7 @@ impl Binders {
     pub fn add(
         &mut self,
         card: card::Id,
+        variant: collection::Variant,
         collection: &mut Collection,
         database: &Database,
     ) -> Task<Message> {
@@ -452,7 +481,7 @@ impl Binders {
             let _ = self.animations.remove(&card);
         }
 
-        collection.add(card);
+        collection.add(card, variant);
 
         Task::perform(collection.save(), Message::CollectionSaved).discard()
     }
@@ -528,7 +557,7 @@ impl Binders {
                 .align_y(Center)
                 .spacing(5),
             )
-            .on_press(Message::Add)
+            .on_press(Message::Add(collection::Variant::Normal))
             .padding([0, 10]);
 
             let controls = row![mode, add].spacing(10).height(Shrink).align_y(Center);
@@ -574,11 +603,13 @@ impl Binders {
         let overlay: Option<Element<'_, Message>> = match &self.state {
             State::Idle => None,
             State::Adding {
+                variant,
                 query,
                 search,
                 animations,
                 ..
             } => Some(self.adding(
+                *variant,
                 query,
                 search.matches(),
                 animations,
@@ -652,6 +683,7 @@ impl Binders {
 
     fn adding<'a>(
         &'a self,
+        variant: collection::Variant,
         query: &'a str,
         matches: &'a [Card],
         animations: &'a HashMap<card::Id, AnimationSet>,
@@ -660,13 +692,45 @@ impl Binders {
         prices: &pricing::Map,
         now: Instant,
     ) -> Element<'a, Message> {
-        let input = container(
-            text_input("Search for your card...", query)
+        let input = {
+            let reverse = tooltip(
+                button(text("R").size(14).width(Fill).height(Fill).center())
+                    .width(20)
+                    .height(20)
+                    .padding(0)
+                    .on_press(Message::ToggleReverseHolofoil)
+                    .style(move |_theme, _status| {
+                        use iced::gradient;
+                        use iced::{Degrees, color};
+
+                        let alpha = match variant {
+                            collection::Variant::Normal => 0.3,
+                            collection::Variant::Reverse => 1.0,
+                        };
+
+                        button::Style {
+                            border: border::rounded(2),
+                            ..button::Style::default().with_background(
+                                gradient::Linear::new(Degrees(135.0))
+                                    .add_stop(0.0, color!(0xaaffaa).scale_alpha(alpha))
+                                    .add_stop(0.5, color!(0xffffaa).scale_alpha(alpha))
+                                    .add_stop(1.0, color!(0xffaaff).scale_alpha(alpha)),
+                            )
+                        }
+                    }),
+                container(text("Reverse Holofoil").size(12))
+                    .padding(5)
+                    .style(container::dark),
+                tooltip::Position::Bottom,
+            );
+
+            let input = text_input("Search for your card...", query)
                 .on_input(Message::SearchChanged)
-                .padding(10)
-                .id("search"),
-        )
-        .max_width(600);
+                .padding(padding::all(10).right(40))
+                .id("search");
+
+            container(stack![input, right_center(reverse).padding(10)]).max_width(600)
+        };
 
         let content: Element<_> = {
             // TODO: Infinite scrolling (?)
@@ -680,15 +744,17 @@ impl Binders {
             } else {
                 scrollable(
                     grid(matches.iter().take(100).map(|card| {
-                        let owned_tag = |amount| {
+                        let owned_tag = |amount: &collection::Amount| {
                             right(
-                                container(text!("Owned x{amount}").size(10))
-                                    .padding(5)
-                                    .style(|_theme| {
-                                        container::Style::default()
-                                            .background(Color::BLACK.scale_alpha(0.8))
-                                            .border(border::rounded(8))
-                                    }),
+                                container(
+                                    text!("Owned x{amount}", amount = amount.total()).size(10),
+                                )
+                                .padding(5)
+                                .style(|_theme| {
+                                    container::Style::default()
+                                        .background(Color::BLACK.scale_alpha(0.8))
+                                        .border(border::rounded(8))
+                                }),
                             )
                             .padding(5)
                         };
@@ -736,7 +802,12 @@ impl Binders {
                     shift: modifiers.shift(),
                 },
                 Key::Named(Named::Enter) => Message::EnterPressed,
-                Key::Character("a") if modifiers.is_empty() => Message::Add,
+                Key::Character("a") if modifiers.is_empty() => {
+                    Message::Add(collection::Variant::Normal)
+                }
+                Key::Character("r") if modifiers.is_empty() => {
+                    Message::Add(collection::Variant::Reverse)
+                }
                 _ => None?,
             })
         });
@@ -870,7 +941,10 @@ fn item<'a>(
                         shadow_border_radius: border::radius(14.0 * scale),
                     }),
                 )
-                .on_press_with(move || Message::CardChosen(card.id.clone(), source))
+                .on_press_with(move || match source {
+                    Source::Binder => Message::ShowCard(card.id.clone()),
+                    Source::Search => Message::AddCard(card.id.clone()),
+                })
                 .padding(0)
                 .style(button::text),
             )

@@ -2,6 +2,7 @@ use crate::pokebase::card;
 use crate::pokebase::pokemon;
 use crate::pokebase::{Card, Database, Pokemon};
 
+use num_traits::Zero;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
@@ -11,30 +12,12 @@ use tokio::fs;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Collection {
     pub name: Name,
-    pub cards: BTreeMap<card::Id, usize>,
+    pub cards: BTreeMap<card::Id, Amount>,
 
     #[serde(skip)]
     total_pokemon: RefCell<Option<usize>>,
     #[serde(skip)]
     rarest_card_by_pokemon: RefCell<BTreeMap<pokemon::Id, Option<card::Id>>>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct Name(String);
-
-impl Name {
-    pub fn parse(name: &str) -> Option<Self> {
-        if name.is_empty() {
-            return None;
-        }
-
-        Some(Name(name.to_owned()))
-    }
-
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
 }
 
 impl Collection {
@@ -61,9 +44,13 @@ impl Collection {
         )?)
     }
 
-    pub fn add(&mut self, card: card::Id) {
+    pub fn add(&mut self, card: card::Id, variant: Variant) {
         let amount = self.cards.entry(card).or_default();
-        *amount += 1;
+
+        match variant {
+            Variant::Normal => amount.normal += 1,
+            Variant::Reverse => amount.reverse += 1,
+        }
 
         *self.total_pokemon.borrow_mut() = None;
         self.rarest_card_by_pokemon.borrow_mut().clear();
@@ -101,7 +88,7 @@ impl Collection {
     }
 
     pub fn total_cards(&self) -> usize {
-        self.cards.values().sum()
+        self.cards.values().copied().map(Amount::total).sum()
     }
 
     pub fn total_pokemon(&self, database: &Database) -> usize {
@@ -166,6 +153,44 @@ impl Collection {
 
         card
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(transparent)]
+pub struct Name(String);
+
+impl Name {
+    pub fn parse(name: &str) -> Option<Self> {
+        if name.is_empty() {
+            return None;
+        }
+
+        Some(Name(name.to_owned()))
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
+pub struct Amount {
+    #[serde(default, skip_serializing_if = "usize::is_zero")]
+    pub normal: usize,
+    #[serde(default, skip_serializing_if = "usize::is_zero")]
+    pub reverse: usize,
+}
+
+impl Amount {
+    pub fn total(self) -> usize {
+        self.normal + self.reverse
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Variant {
+    Normal,
+    Reverse,
 }
 
 fn collections_path() -> PathBuf {

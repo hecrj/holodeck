@@ -44,15 +44,15 @@ impl Map {
         let prices = collection
             .cards
             .iter()
-            .filter_map(|(card, amount)| Some((self.get(card)?, *amount as u64)));
+            .filter_map(|(card, amount)| Some((self.get(card)?, amount)));
 
         let america = prices
             .clone()
-            .filter_map(|(pricing, amount)| Some(pricing.america.spread()?.average * amount))
+            .map(|(pricing, amount)| pricing.america.value(amount.normal, amount.reverse))
             .fold(Dollars::ZERO, ops::Add::add);
 
         let europe = prices
-            .filter_map(|(pricing, amount)| Some(pricing.europe.spread()?.average * amount))
+            .map(|(pricing, amount)| pricing.europe.value(amount.normal, amount.reverse))
             .fold(Euros::ZERO, ops::Add::add);
 
         Value { america, europe }
@@ -302,8 +302,8 @@ impl Pricing {
 
             Variants {
                 normal: tcgplayer.prices.normal.map(spread),
+                reverse: tcgplayer.prices.reverse_holofoil.map(spread),
                 holofoil: tcgplayer.prices.holofoil.map(spread),
-                reverse_holofoil: tcgplayer.prices.reverse_holofoil.map(spread),
             }
         };
 
@@ -344,16 +344,16 @@ impl Pricing {
                     .normal
                     .is_some()
                     .then_some(normal_or_holofoil),
+                reverse: tcgplayer
+                    .prices
+                    .reverse_holofoil
+                    .is_some()
+                    .then_some(reverse_holofoil),
                 holofoil: tcgplayer
                     .prices
                     .holofoil
                     .is_some()
                     .then_some(normal_or_holofoil),
-                reverse_holofoil: tcgplayer
-                    .prices
-                    .reverse_holofoil
-                    .is_some()
-                    .then_some(reverse_holofoil),
             }
         };
 
@@ -368,13 +368,24 @@ impl Pricing {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Variants<T> {
     normal: Option<Spread<T>>,
+    reverse: Option<Spread<T>>,
     holofoil: Option<Spread<T>>,
-    reverse_holofoil: Option<Spread<T>>,
 }
 
-impl<T> Variants<T> {
+impl<T> Variants<T>
+where
+    T: Copy,
+{
     pub fn spread(self) -> Option<Spread<T>> {
-        self.normal.or(self.holofoil).or(self.reverse_holofoil)
+        self.normal.or(self.holofoil).or(self.reverse)
+    }
+
+    pub fn value(self, normal: usize, reverse: usize) -> T
+    where
+        T: Default + std::ops::Add<T, Output = T> + std::ops::Mul<u64, Output = T>,
+    {
+        self.spread().unwrap_or_default().average * normal as u64
+            + self.reverse.or(self.spread()).unwrap_or_default().average * reverse as u64
     }
 }
 

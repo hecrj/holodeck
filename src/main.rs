@@ -50,12 +50,13 @@ enum State {
         session: Session,
         screen: Screen,
         prices: pricing::Map,
+        rate: pricing::ExchangeRate,
     },
 }
 
 #[derive(Debug, Clone)]
 enum Message {
-    Loaded(Result<(Database, pricing::Map), anywho::Error>),
+    Loaded(Result<(Database, pricing::Map, pricing::ExchangeRate), anywho::Error>),
     Welcome(welcome::Message),
     Binders(binders::Message),
     OpenBinders,
@@ -74,8 +75,9 @@ impl Holodeck {
                 async {
                     let database = Database::load().await?;
                     let prices = Pricing::list().await?;
+                    let rate = pricing::ExchangeRate::fetch().await.unwrap_or_default();
 
-                    Ok((database, prices))
+                    Ok((database, prices, rate))
                 },
                 Message::Loaded,
             ),
@@ -86,7 +88,7 @@ impl Holodeck {
         self.now = now;
 
         match message {
-            Message::Loaded(Ok((database, prices))) => {
+            Message::Loaded(Ok((database, prices, rate))) => {
                 let (welcome, task) = screen::Welcome::new();
 
                 let session = Session::new(env::var("POKEMONTCG_API_KEY").ok()); // TODO: Configuration
@@ -101,6 +103,7 @@ impl Holodeck {
                     session,
                     screen: Screen::Welcome(welcome),
                     prices,
+                    rate,
                 };
 
                 Task::batch([task.map(Message::Welcome), price_updates])
@@ -198,10 +201,11 @@ impl Holodeck {
                 database,
                 screen,
                 prices,
+                rate,
                 ..
             } => match screen {
                 Screen::Welcome(welcome) => welcome
-                    .view(database, prices, self.now)
+                    .view(database, prices, *rate, self.now)
                     .map(Message::Welcome),
                 Screen::Collecting { collection, screen } => {
                     let tabs = [

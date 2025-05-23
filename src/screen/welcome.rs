@@ -201,6 +201,7 @@ impl Welcome {
         &self,
         database: &Database,
         prices: &pricing::Map,
+        rate: pricing::ExchangeRate,
         now: Instant,
     ) -> Element<Message> {
         let content: Element<_> = match &self.state {
@@ -208,7 +209,7 @@ impl Welcome {
             State::Selection { collections } => column![
                 row(collections
                     .iter()
-                    .map(|entry| card(entry, database, prices, now,)))
+                    .map(|entry| card(entry, database, prices, rate, now)))
                 .spacing(30),
                 button(
                     row![icon::add().size(14), text("New Profile").size(14)]
@@ -280,6 +281,7 @@ fn card<'a>(
     entry: &'a Entry,
     database: &Database,
     prices: &pricing::Map,
+    rate: pricing::ExchangeRate,
     now: Instant,
 ) -> Element<'a, Message> {
     // let is_zooming =
@@ -301,7 +303,7 @@ fn card<'a>(
     let total_cards = collection.total_cards();
     let unique_cards = collection.unique_cards();
     let total_pokemon = collection.total_pokemon(database);
-    let total_value = prices.total_value(collection);
+    let total_value = prices.total_value(collection, rate);
 
     let stat = |stat| dynamic_text(stat).size(14).vectorial(is_zooming);
 

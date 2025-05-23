@@ -40,7 +40,7 @@ impl Map {
         self.0.len()
     }
 
-    pub fn total_value(&self, collection: &Collection) -> Value {
+    pub fn total_value(&self, collection: &Collection, rate: ExchangeRate) -> Value {
         let prices = collection
             .cards
             .iter()
@@ -48,11 +48,11 @@ impl Map {
 
         let america = prices
             .clone()
-            .map(|(pricing, amount)| pricing.america.value(amount.normal, amount.reverse))
+            .map(|(pricing, amount)| pricing.value_in_dollars(amount.normal, amount.reverse, rate))
             .fold(Dollars::ZERO, ops::Add::add);
 
         let europe = prices
-            .map(|(pricing, amount)| pricing.europe.value(amount.normal, amount.reverse))
+            .map(|(pricing, amount)| pricing.value_in_euros(amount.normal, amount.reverse, rate))
             .fold(Euros::ZERO, ops::Add::add);
 
         Value { america, europe }
@@ -363,6 +363,34 @@ impl Pricing {
             updated_at,
         }
     }
+
+    pub fn value_in_dollars(self, normal: usize, reverse: usize, rate: ExchangeRate) -> Dollars {
+        let normal_price = self
+            .america
+            .normal()
+            .or_else(|| self.europe.normal().to_dollars(rate));
+
+        let reverse_price = self
+            .america
+            .reverse()
+            .or_else(|| self.europe.reverse().to_dollars(rate));
+
+        normal_price * normal as u64 + reverse_price * reverse as u64
+    }
+
+    pub fn value_in_euros(self, normal: usize, reverse: usize, rate: ExchangeRate) -> Euros {
+        let normal_price = self
+            .europe
+            .normal()
+            .or_else(|| self.america.normal().to_euros(rate));
+
+        let reverse_price = self
+            .europe
+            .reverse()
+            .or_else(|| self.america.reverse().to_euros(rate));
+
+        normal_price * normal as u64 + reverse_price * reverse as u64
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -380,12 +408,18 @@ where
         self.normal.or(self.holofoil).or(self.reverse)
     }
 
-    pub fn value(self, normal: usize, reverse: usize) -> T
+    pub fn normal(self) -> T
     where
-        T: Default + std::ops::Add<T, Output = T> + std::ops::Mul<u64, Output = T>,
+        T: Default,
     {
-        self.spread().unwrap_or_default().average * normal as u64
-            + self.reverse.or(self.spread()).unwrap_or_default().average * reverse as u64
+        self.spread().unwrap_or_default().average
+    }
+
+    pub fn reverse(self) -> T
+    where
+        T: Default,
+    {
+        self.reverse.or(self.spread()).unwrap_or_default().average
     }
 }
 
@@ -408,6 +442,16 @@ impl Dollars {
     pub fn new(dollars: f64) -> Self {
         Self {
             cents: (dollars * 100.0).round() as u64,
+        }
+    }
+
+    pub fn or_else(self, f: impl FnOnce() -> Dollars) -> Dollars {
+        if self == Self::ZERO { f() } else { self }
+    }
+
+    pub fn to_euros(self, rate: ExchangeRate) -> Euros {
+        Euros {
+            cents: (self.cents as f64 * rate.usd_to_eur).round() as u64,
         }
     }
 }
@@ -451,6 +495,16 @@ impl Euros {
             cents: (euros * 100.0).round() as u64,
         }
     }
+
+    pub fn or_else(self, f: impl FnOnce() -> Euros) -> Euros {
+        if self == Self::ZERO { f() } else { self }
+    }
+
+    pub fn to_dollars(self, rate: ExchangeRate) -> Dollars {
+        Dollars {
+            cents: (self.cents as f64 / rate.usd_to_eur).round() as u64,
+        }
+    }
 }
 
 impl ops::Add for Euros {
@@ -476,6 +530,46 @@ impl ops::Mul<u64> for Euros {
 impl fmt::Display for Euros {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:.2}€", self.cents as f64 / 100.0)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct ExchangeRate {
+    usd_to_eur: f64,
+}
+
+impl ExchangeRate {
+    pub async fn fetch() -> Result<Self, anywho::Error> {
+        #[derive(Deserialize)]
+        struct Response {
+            rates: Rates,
+        }
+
+        #[derive(Deserialize)]
+        struct Rates {
+            #[serde(rename = "EUR")]
+            eur: f64,
+        }
+
+        log::info!("Fetching USD/EUR exchange rate...");
+
+        let response: Response = reqwest::get("https://api.frankfurter.app/latest?from=USD&to=EUR")
+            .await?
+            .error_for_status()?
+            .json()
+            .await?;
+
+        log::info!("USD/EUR exchange rate is {:.2}", response.rates.eur);
+
+        Ok(Self {
+            usd_to_eur: response.rates.eur,
+        })
+    }
+}
+
+impl Default for ExchangeRate {
+    fn default() -> Self {
+        Self { usd_to_eur: 1.0 }
     }
 }
 

@@ -304,7 +304,13 @@
     (
         id: ("tcgp"),
         name: {
+            "de": "Pokémon‑Sammelkartenspiel‑Pocket",
             "en": "Pokémon TCG Pocket",
+            "es": "Juego de Cartas Coleccionables Pokémon Pocket",
+            "fr": "Jeu de Cartes à Collectionner Pokémon Pocket",
+            "it": "Gioco di Carte Collezionabili Pokémon Pocket",
+            "pt": "Pokémon Estampas Ilustradas Pocket",
+            "pt-br": "Pokémon Estampas Ilustradas Pocket",
         },
         release_date: "2024-10-30",
     ),

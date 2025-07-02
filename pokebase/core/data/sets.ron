@@ -694,9 +694,9 @@
         total_cards: 93,
     ),
     (
-        id: ("tk-ex-n"),
+        id: ("tk-ex-m"),
         name: {
-            "en": "EX trainer Kit 2 (Ninun)",
+            "en": "EX trainer Kit 2 (Minun)",
             "es": "Kit de Entrenador EX (Ninun)",
             "fr": "EX Kit dresseur (Négapi)",
             "it": "EX trainer Kit (Ninun)",
@@ -885,7 +885,7 @@
         },
         series: ("tk"),
         release_date: "2007-09-01",
-        total_cards: 12,
+        total_cards: 11,
     ),
     (
         id: ("tk-dp-m"),
@@ -1258,9 +1258,9 @@
     (
         id: ("tk-bw-e"),
         name: {
-            "en": "HS trainer Kit (Excadrill)",
-            "es": "Kit de Entrenador HeatGold & SoulSilver (Excadrill)",
-            "fr": "HS Kit du dresseur (Minitaupe)",
+            "en": "BW trainer Kit (Excadrill)",
+            "es": "Kit de Entrenador BW (Excadrill)",
+            "fr": "BW Kit du dresseur (Minitaupe)",
         },
         series: ("tk"),
         release_date: "2011-09-01",
@@ -1269,9 +1269,9 @@
     (
         id: ("tk-bw-z"),
         name: {
-            "en": "HS trainer Kit (Zoroark)",
+            "en": "BW trainer Kit (Zoroark)",
             "es": "Kit de Entrenador XY (Pikachu Enmascarada)",
-            "fr": "HS Kit du dresseur (Zoroark)",
+            "fr": "BW Kit du dresseur (Zoroark)",
         },
         series: ("tk"),
         release_date: "2011-09-01",
@@ -2676,7 +2676,7 @@
         },
         series: ("swsh"),
         release_date: "2019-11-15",
-        total_cards: 107,
+        total_cards: 285,
     ),
     (
         id: ("S1H"),
@@ -3668,7 +3668,7 @@
         },
         series: ("sv"),
         release_date: "2023-03-31",
-        total_cards: 165,
+        total_cards: 192,
     ),
     (
         id: ("SV2D"),
@@ -4283,7 +4283,13 @@
     (
         id: ("A1"),
         name: {
+            "de": "Unschlagbare Gene",
             "en": "Genetic Apex",
+            "es": "Genes Formidables",
+            "fr": "Puissance Génétique",
+            "it": "Geni Supremi",
+            "pt": "Dominação Genética",
+            "pt-br": "Dominação Genética",
         },
         series: ("tcgp"),
         release_date: "2024-10-30",
@@ -4292,11 +4298,17 @@
     (
         id: ("P-A"),
         name: {
+            "de": "PROMO-A",
             "en": "Promos-A",
+            "es": "Promo-A",
+            "fr": "Promo-A",
+            "it": "Promo-A",
+            "pt": "Promo-A",
+            "pt-br": "Promo-A",
         },
         series: ("tcgp"),
         release_date: "2024-10-30",
-        total_cards: 41,
+        total_cards: 73,
     ),
     (
         id: ("sv08"),
@@ -4325,7 +4337,13 @@
     (
         id: ("A1a"),
         name: {
+            "de": "Mysteriöse Insel",
             "en": "Mythical Island",
+            "es": "La Isla Singular",
+            "fr": "L’Île Fabuleuse",
+            "it": "L\'Isola Misteriosa",
+            "pt": "Ilha Mítica",
+            "pt-br": "Ilha Mítica",
         },
         series: ("tcgp"),
         release_date: "2024-12-17",
@@ -4349,7 +4367,7 @@
         name: {
             "de": "Prismatische Entwicklungen",
             "en": "Prismatic Evolutions",
-            "es": "Evolucionnes Prismáticas",
+            "es": "Evoluciones Prismáticas",
             "fr": "Évolutions Prismatiques",
             "it": "Evoluzioni Prismatiche",
             "pt": "Evoluções Prismáticas",
@@ -4361,7 +4379,13 @@
     (
         id: ("A2"),
         name: {
+            "de": "Kollision von Raum und Zeit",
             "en": "Space-Time Smackdown",
+            "es": "Pugna Espaciotemporal",
+            "fr": "Choc Spatio-Temporel",
+            "it": "Scontro Spaziotemporale",
+            "pt": "Embate do Tempo e Espaço",
+            "pt-br": "Embate do Tempo e Espaço",
         },
         series: ("tcgp"),
         release_date: "2025-01-30",
@@ -4381,7 +4405,13 @@
     (
         id: ("A2a"),
         name: {
+            "de": "Licht des Triumphs",
             "en": "Triumphant Light",
+            "es": "Luz Triunfal",
+            "fr": "Lumière Triomphale",
+            "it": "Luce Trionfale",
+            "pt": "Luz Triunfante",
+            "pt-br": "Luz Triunfante",
         },
         series: ("tcgp"),
         release_date: "2025-02-28",
@@ -4390,11 +4420,28 @@
     (
         id: ("A2b"),
         name: {
+            "de": "Glänzendes Festival",
             "en": "Shining Revelry",
+            "es": "Festival Brillante",
+            "fr": "Réjouissances Rayonnantes",
+            "it": "Tripudio Splendente",
+            "pt": "Festival Brilhante",
+            "pt-br": "Festival Brilhante",
         },
         series: ("tcgp"),
         release_date: "2025-03-27",
         total_cards: 111,
+    ),
+    (
+        id: ("SV9a"),
+        name: {
+            "ja": "熱風のアリーナ",
+            "zh-cn": "熱風競技場",
+            "zh-tw": "熱風競技場",
+        },
+        series: ("SV"),
+        release_date: "2025-03-28",
+        total_cards: 92,
     ),
     (
         id: ("sv09"),
@@ -4410,5 +4457,74 @@
         series: ("sv"),
         release_date: "2025-03-28",
         total_cards: 190,
+    ),
+    (
+        id: ("SV9s"),
+        name: {
+            "id": "Ikatan Takdir",
+            "th": "สายใยแห\u{e48}งโชคชะตา",
+        },
+        series: ("SV"),
+        release_date: "2025-04-18",
+        total_cards: 185,
+    ),
+    (
+        id: ("A3"),
+        name: {
+            "de": "Hüter des Firmaments",
+            "en": "Celestial Guardians",
+            "es": "Guardianes Celestiales",
+            "fr": "Gardiens Astraux",
+            "it": "Guardiani Astrali",
+            "pt": "Guardiões Celestiais",
+            "pt-br": "Guardiões Celestiais",
+        },
+        series: ("tcgp"),
+        release_date: "2025-04-30",
+        total_cards: 239,
+    ),
+    (
+        id: ("SV10"),
+        name: {
+            "ja": "ロケット団の栄光",
+            "zh-cn": "火箭隊的榮耀",
+            "zh-tw": "火箭隊的榮耀",
+        },
+        series: ("SV"),
+        release_date: "2025-05-02",
+        total_cards: 98,
+    ),
+    (
+        id: ("A3a"),
+        name: {
+            "en": "Extradimensional Crisis",
+        },
+        series: ("tcgp"),
+        release_date: "2025-05-29",
+        total_cards: 103,
+    ),
+    (
+        id: ("sv10"),
+        name: {
+            "de": "Ewige Rivalen",
+            "en": "Destined Rivals",
+            "es": "Rivales Predestinados",
+            "es-mx": "Rivales Predestinados",
+            "fr": "Rivalités Destinées",
+            "it": "Rivali Predestinati",
+            "pt": "Rivais Predestinados",
+        },
+        series: ("sv"),
+        release_date: "2025-05-30",
+        total_cards: 244,
+    ),
+    (
+        id: ("A3b"),
+        name: {
+            "en": "Eevee Grove",
+        },
+        series: ("tcgp"),
+        release_date: "2025-06-26",
+        total_cards: 107,
     ),
 ]

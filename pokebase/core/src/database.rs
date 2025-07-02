@@ -166,6 +166,14 @@ impl Database {
             };
 
             for localized_card in localized_cards {
+                let Some(set) = sets.get(&localized_card.set.id) else {
+                    continue;
+                };
+
+                if set.series.as_str() == "tcgp" {
+                    continue;
+                }
+
                 let card = cards
                     .entry(localized_card.id.clone())
                     .or_insert_with(|| Card {

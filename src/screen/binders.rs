@@ -652,27 +652,31 @@ impl Binders {
         let total = self.mode.total_cards(database);
 
         center_y(
-            grid(content.range.map(|i| {
-                self.mode
-                    .card(i, collection, database)
-                    .map(|card| {
-                        item(
-                            card,
-                            self.images.get(&card.id),
-                            self.animations.get(&card.id),
-                            prices.get(&card.id),
-                            database,
-                            now,
-                            Source::Binder,
-                        )
-                    })
-                    .unwrap_or_else(|| {
-                        if i < total {
-                            placeholder(i)
-                        } else {
-                            unused_slot()
-                        }
-                    })
+            grid(content.slots.map(|slot| {
+                match slot {
+                    binder::Slot::Empty => unused_slot(),
+                    binder::Slot::Pokemon(i) => self
+                        .mode
+                        .card(i, collection, database)
+                        .map(|card| {
+                            item(
+                                card,
+                                self.images.get(&card.id),
+                                self.animations.get(&card.id),
+                                prices.get(&card.id),
+                                database,
+                                now,
+                                Source::Binder,
+                            )
+                        })
+                        .unwrap_or_else(|| {
+                            if i < total {
+                                placeholder(i)
+                            } else {
+                                unused_slot()
+                            }
+                        }),
+                }
             }))
             .columns(binder.columns)
             .height(grid::aspect_ratio(card::Image::WIDTH, card::Image::HEIGHT))
@@ -875,17 +879,13 @@ fn item<'a>(
                         .border(border::rounded(14.0))
                 };
 
-                let metadata = {
-                    let name = typewriter(card.name.as_str()).size(12);
+                let name = typewriter(card.name.as_str()).size(12);
 
-                    let set = database.sets.get(&card.set).map(|set| {
-                        typewriter(format!("{} (#{})", set.name.as_str(), card.id.as_str()))
-                            .size(7)
-                            .very_quick()
-                    });
-
-                    column![name].push_maybe(set).spacing(5)
-                };
+                let set = database.sets.get(&card.set).map(|set| {
+                    typewriter(format!("{} (#{})", set.name.as_str(), card.id.as_str()))
+                        .size(7)
+                        .very_quick()
+                });
 
                 let pricing = price.map(|price| {
                     let dollars = price
@@ -903,10 +903,16 @@ fn item<'a>(
 
                 let stats: Element<_> = if shadow == 1.0 {
                     container(
-                        row![metadata, horizontal_space()]
-                            .push_maybe(pricing)
-                            .spacing(5)
-                            .align_y(Bottom),
+                        column![
+                            name,
+                            row![]
+                                .push_maybe(set)
+                                .push(horizontal_space())
+                                .push_maybe(pricing)
+                                .spacing(5)
+                                .align_y(Bottom),
+                        ]
+                        .spacing(5),
                     )
                     .padding(8)
                     .into()
@@ -974,7 +980,7 @@ fn item<'a>(
     };
 
     pop(item)
-        .key(card.id.as_str())
+        .key_ref(card.id.as_str())
         .on_show(move |_size| Message::CardShown(card.id.clone(), source))
         .into()
 }

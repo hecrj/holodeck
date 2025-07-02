@@ -3,7 +3,6 @@ use crate::pokebase::card;
 use crate::pokebase::{Card, Database};
 
 use std::fmt;
-use std::ops::Range;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Binder {
@@ -18,7 +17,7 @@ impl Binder {
     }
 
     pub fn capacity(self) -> usize {
-        self.cards_per_page() * self.pages
+        self.cards_per_page() * (self.pages - 2)
     }
 }
 
@@ -50,8 +49,8 @@ impl Set {
         for binder in &self.binders {
             let needed_pages = total_cards / binder.cards_per_page();
 
-            if needed_pages < binder.pages {
-                pages += needed_pages.max(1);
+            if needed_pages < binder.pages - 2 {
+                pages += needed_pages.max(1) + 1;
                 break;
             } else {
                 pages += binder.pages;
@@ -67,7 +66,7 @@ impl Set {
 
         for binder in &self.binders {
             if position < binder.capacity() {
-                return Page(page + position / binder.cards_per_page());
+                return Page(1 + page + position / binder.cards_per_page());
             } else {
                 position -= binder.capacity();
                 page += binder.pages;
@@ -106,17 +105,30 @@ impl Set {
             page = page.saturating_sub(1);
 
             if page < binder.pages {
-                let offset = offset + page * binder.cards_per_page();
+                let columns = binder.columns;
+                let offset = offset + page.saturating_sub(1) * binder.cards_per_page();
 
                 return Some(Pair {
                     binder: *binder,
                     binder_number: i,
                     left: if page == 0 {
                         Surface::Cover
+                    } else if page + 1 == binder.pages {
+                        Surface::Content(Content {
+                            page: Page(page),
+                            slots: Box::new(std::iter::repeat_n(
+                                Slot::Empty,
+                                binder.cards_per_page(),
+                            )),
+                        })
                     } else {
                         Surface::Content(Content {
                             page: Page(page),
-                            range: (offset..offset + binder.cards_per_page()),
+                            slots: Box::new(
+                                (0..binder.cards_per_page()).map(move |i| {
+                                    Slot::Pokemon(offset + i + i / columns * columns)
+                                }),
+                            ),
                         })
                     },
                     right: if page + 1 == binder.pages {
@@ -124,13 +136,17 @@ impl Set {
                     } else if page == 0 {
                         Surface::Content(Content {
                             page: Page(page),
-                            range: (offset..offset + binder.cards_per_page()),
+                            slots: Box::new(std::iter::repeat_n(
+                                Slot::Empty,
+                                binder.cards_per_page(),
+                            )),
                         })
                     } else {
                         Surface::Content(Content {
                             page: Page(page + 1),
-                            range: (offset + binder.cards_per_page()
-                                ..offset + 2 * binder.cards_per_page()),
+                            slots: Box::new((0..binder.cards_per_page()).map(move |i| {
+                                Slot::Pokemon(offset + columns + i + i / columns * columns)
+                            })),
                         })
                     },
                 });
@@ -155,16 +171,20 @@ pub struct Pair {
     pub right: Surface,
 }
 
-#[derive(Debug, Clone)]
 pub enum Surface {
     Cover,
     Content(Content),
 }
 
-#[derive(Debug, Clone)]
 pub struct Content {
     pub page: Page,
-    pub range: Range<usize>,
+    pub slots: Box<dyn Iterator<Item = Slot>>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Slot {
+    Empty,
+    Pokemon(usize),
 }
 
 impl Default for Set {

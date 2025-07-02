@@ -582,5 +582,5 @@ fn cache_dir() -> PathBuf {
 
 fn is_outdated(updated_at: SystemTime) -> bool {
     const WEEK: Duration = Duration::from_secs(60 * 60 * 24 * 7);
-    updated_at.elapsed().unwrap_or_default() > WEEK
+    updated_at.elapsed().unwrap_or_default() > 2 * WEEK
 }

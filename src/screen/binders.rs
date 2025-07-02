@@ -736,9 +736,9 @@ impl Binders {
             container(stack![input, right_center(reverse).padding(10)]).max_width(600)
         };
 
-        let content: Element<_> = {
+        let content: Element<'_, _> = {
             // TODO: Infinite scrolling (?)
-            let matches: Element<_> = if !query.is_empty() && matches.is_empty() {
+            let matches: Element<'_, _> = if !query.is_empty() && matches.is_empty() {
                 center(
                     container(text!("No cards were found matching: \"{query}\" :/"))
                         .padding(10)
@@ -849,7 +849,7 @@ fn item<'a>(
     now: Instant,
     source: Source,
 ) -> Element<'a, Message> {
-    let item: Element<_> = match thumbnail {
+    let item: Element<'_, _> = match thumbnail {
         Some(Image::Loaded(handle)) => {
             let (opacity, scale, shadow) = if let Some(animations) = animations {
                 (
@@ -901,7 +901,7 @@ fn item<'a>(
                     row![].push_maybe(dollars).push_maybe(euros).spacing(8)
                 });
 
-                let stats: Element<_> = if shadow == 1.0 {
+                let stats: Element<'_, _> = if shadow == 1.0 {
                     container(
                         column![
                             name,

@@ -194,7 +194,7 @@ impl Holodeck {
         }
     }
 
-    fn view(&self) -> Element<Message> {
+    fn view(&self) -> Element<'_, Message> {
         match &self.state {
             State::Loading => center(text("Loading...")).into(),
             State::Ready {

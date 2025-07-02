@@ -203,8 +203,8 @@ impl Welcome {
         prices: &pricing::Map,
         rate: pricing::ExchangeRate,
         now: Instant,
-    ) -> Element<Message> {
-        let content: Element<_> = match &self.state {
+    ) -> Element<'_, Message> {
+        let content: Element<'_, _> = match &self.state {
             State::Loading => text("Loading...").height(512).center().into(),
             State::Selection { collections } => column![
                 row(collections
@@ -348,7 +348,7 @@ fn card<'a>(
     .spacing(10)
     .align_x(Center);
 
-    let content: Element<_> = if images.is_empty() {
+    let content: Element<'_, _> = if images.is_empty() {
         container(content).padding(20).style(container::dark).into()
     } else {
         let current = current.interpolate_with(|value| value, now) + 1.0;

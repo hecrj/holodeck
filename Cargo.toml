@@ -32,8 +32,19 @@ tracing-subscriber.workspace = true
 [build-dependencies]
 iced_fontello.workspace = true
 
+[lints]
+workspace = true
+
 [workspace]
 members = ["pokebase", "pokebase/core"]
+
+[workspace.lints.rust]
+rust_2018_idioms = "deny"
+
+[workspace.lints.clippy]
+single-component-path-imports = "allow"
+too-many-arguments = "allow"
+large-enum-variant = "allow"
 
 [workspace.dependencies]
 pokebase.path = "./pokebase"
@@ -76,8 +87,3 @@ iced_palace.rev = "1c4014f80cbe78f1bb248cc81cc85620c6a11e93"
 # iced.path = "../iced"
 # iced_core.path = "../iced/core"
 # iced_widget.path = "../iced/widget"
-
-[lints.clippy]
-single-component-path-imports = "allow"
-too-many-arguments = "allow"
-large-enum-variant = "allow"

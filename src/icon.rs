@@ -1,6 +1,6 @@
 // Generated automatically by iced_fontello at build time.
 // Do not edit manually. Source: ../fonts/holodeck-icons.toml
-// df010bd4723d936cdfd888fb0750d31c4bc22724f64e5e977e9da6b1180f0e3d
+// 541400ead5ce4e69cc5b905704f5203ea60ad9a65aaf233d754fd69d90fd5661
 use iced::Font;
 use iced::widget::{Text, text};
 
@@ -20,6 +20,10 @@ pub fn book<'a>() -> Text<'a> {
 
 pub fn browse<'a>() -> Text<'a> {
     icon("\u{1F50D}")
+}
+
+pub fn camera<'a>() -> Text<'a> {
+    icon("\u{1F4F7}")
 }
 
 pub fn cancel<'a>() -> Text<'a> {

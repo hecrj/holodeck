@@ -54,6 +54,10 @@ enum State {
         search_task: Option<task::Handle>,
         price_task: Option<task::Handle>,
     },
+    Scanning {
+        capture: Option<image::Handle>,
+        found: Option<card::Id>,
+    },
 }
 
 #[derive(Debug, Clone)]
@@ -62,6 +66,9 @@ pub enum Message {
     PreviousPage,
     NextPage,
     Add(collection::Variant),
+    Scan,
+    #[cfg(feature = "scanner")]
+    Scanning(pokedetect::Event),
     ToggleReverseHolofoil,
     SearchChanged(String),
     SearchFinished(card::Search),
@@ -73,7 +80,9 @@ pub enum Message {
     ImageFetched(card::Id, Result<card::Image, anywho::Error>),
     PriceFetched(card::Id, Result<card::Pricing, anywho::Error>),
     CollectionSaved(Result<(), anywho::Error>),
-    TabPressed { shift: bool },
+    TabPressed {
+        shift: bool,
+    },
     EscapePressed,
     EnterPressed,
     Tick,
@@ -170,6 +179,37 @@ impl Binders {
                 };
 
                 Task::batch([text_input::focus("search"), search_cards])
+            }
+            Message::Scan => {
+                self.state = State::Scanning {
+                    capture: None,
+                    found: None,
+                };
+
+                Task::none()
+            }
+            #[cfg(feature = "scanner")]
+            Message::Scanning(event) => {
+                let State::Scanning { capture, found } = &mut self.state else {
+                    return Task::none();
+                };
+
+                match event {
+                    pokedetect::Event::Captured(image) => {
+                        *capture = Some(image::Handle::from_rgba(
+                            image.width,
+                            image.height,
+                            image.rgba,
+                        ));
+                    }
+                    pokedetect::Event::Detected { set, number } => {
+                        if found.is_none() {
+                            *found = database.find(&set, &number).map(|card| card.id.clone());
+                        }
+                    }
+                }
+
+                Task::none()
             }
             Message::ToggleReverseHolofoil => {
                 let State::Adding { variant, .. } = &mut self.state else {
@@ -430,24 +470,31 @@ impl Binders {
                 )
             }
             Message::EscapePressed => {
-                let State::Adding {
-                    search, animations, ..
-                } = &mut self.state
-                else {
-                    return Task::none();
-                };
+                match &mut self.state {
+                    State::Adding {
+                        animations, search, ..
+                    } => {
+                        for card in search.matches().iter().take(100) {
+                            if let Some(animation) = animations.get_mut(&card.id) {
+                                if animation.zoom.value() {
+                                    animation.zoom.go_mut(false, now);
 
-                for card in search.matches().iter().take(100) {
-                    if let Some(animation) = animations.get_mut(&card.id) {
-                        if animation.zoom.value() {
-                            animation.zoom.go_mut(false, now);
+                                    return Task::none();
+                                }
+                            }
+                        }
 
-                            return Task::none();
+                        self.state = State::Idle;
+                    }
+                    State::Scanning { found, .. } => {
+                        if found.is_some() {
+                            *found = None;
+                        } else {
+                            self.state = State::Idle;
                         }
                     }
+                    _ => {}
                 }
-
-                self.state = State::Idle;
 
                 Task::none()
             }
@@ -560,7 +607,22 @@ impl Binders {
             .on_press(Message::Add(collection::Variant::Normal))
             .padding([0, 10]);
 
-            let controls = row![mode, add].spacing(10).height(Shrink).align_y(Center);
+            let scan = button(
+                row![
+                    icon::camera().size(12).height(Fill).center(),
+                    text("Scan").size(12),
+                ]
+                .align_y(Center)
+                .spacing(5),
+            )
+            .on_press(Message::Scan)
+            .padding([0, 10])
+            .style(button::success);
+
+            let controls = row![mode, add, scan]
+                .spacing(10)
+                .height(Shrink)
+                .align_y(Center);
 
             row![
                 controls,
@@ -618,6 +680,9 @@ impl Binders {
                 prices,
                 now,
             )),
+            State::Scanning { capture, found } => {
+                Some(self.scanning(capture.as_ref(), found.as_ref(), database))
+            }
         };
 
         let has_overlay = overlay.is_some();
@@ -794,6 +859,41 @@ impl Binders {
         center(content).padding(10).into()
     }
 
+    pub fn scanning<'a>(
+        &'a self,
+        capture: Option<&image::Handle>,
+        found: Option<&card::Id>,
+        database: &'a Database,
+    ) -> Element<'a, Message> {
+        if let Some(card) = found.and_then(|card| database.cards.get(card)) {
+            if let Some(Image::Loaded(handle)) = self.images.get(&card.id) {
+                center(image(handle)).into()
+            } else {
+                pop(center(
+                    card.name
+                        .get("en")
+                        .map(text)
+                        .or_else(|| {
+                            card.name
+                                .get("ja")
+                                .map(|name| text(name).shaping(text::Shaping::Advanced))
+                        })
+                        .unwrap_or_else(|| text("Unknown"))
+                        .center(),
+                )
+                .padding(10)
+                .style(container::dark))
+                .on_show(|_| Message::CardShown(card.id.clone(), Source::Search))
+                .key_ref(card.id.as_str())
+                .into()
+            }
+        } else if let Some(capture) = capture {
+            center(image(capture.clone())).into()
+        } else {
+            horizontal_space().into()
+        }
+    }
+
     pub fn subscription(&self, now: Instant) -> Subscription<Message> {
         let hotkeys = keyboard::on_key_press(|key, modifiers| {
             use keyboard::key::{Key, Named};
@@ -836,7 +936,16 @@ impl Binders {
             }
         };
 
-        Subscription::batch([hotkeys, animation])
+        #[cfg(feature = "scanner")]
+        let scanner = match &self.state {
+            State::Scanning { .. } => Subscription::run(pokedetect::run).map(Message::Scanning),
+            _ => Subscription::none(),
+        };
+
+        #[cfg(not(feature = "scanner"))]
+        let scanner = Subscription::none();
+
+        Subscription::batch([hotkeys, animation, scanner])
     }
 }
 

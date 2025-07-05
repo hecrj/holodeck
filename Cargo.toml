@@ -3,12 +3,19 @@ name = "holodeck"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+default = ["scanner"]
+scanner = ["pokedetect"]
+
 [dependencies]
 iced.workspace = true
 iced.features = ["tokio", "canvas", "image", "debug"]
 
 iced_palace.workspace = true
 iced_palace.features = ["geometry"]
+
+pokedetect.workspace = true
+pokedetect.optional = true
 
 serde.workspace = true
 serde.features = ["derive"]
@@ -36,7 +43,7 @@ iced_fontello.workspace = true
 workspace = true
 
 [workspace]
-members = ["pokebase", "pokebase/core"]
+members = ["pokebase", "pokebase/core", "pokedetect"]
 
 [workspace.lints.rust]
 rust_2018_idioms = "deny"
@@ -49,6 +56,7 @@ large-enum-variant = "allow"
 [workspace.dependencies]
 pokebase.path = "./pokebase"
 pokebase-core.path = "./pokebase/core"
+pokedetect.path = "./pokedetect"
 
 anywho = "0.1.2"
 bytes = "1"
@@ -60,14 +68,17 @@ iced = "0.14.0-dev"
 iced_fontello = "0.14.0-dev"
 iced_palace = "0.14.0-dev"
 image = "0.25"
+leptess = "0.14"
 log = "0.4"
 num-traits = "0.2"
+opencv = "0.95"
 reqwest = "0.12"
 ron = "0.10"
 serde = "1"
 serde_json = "1"
 thiserror = "1"
 tokio = "1"
+tokio-stream = "0.1"
 tracing-subscriber = "0.3"
 
 [patch.crates-io]

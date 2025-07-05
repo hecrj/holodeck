@@ -1,0 +1,25 @@
+[package]
+name = "pokedetect"
+version = "0.1.0-dev"
+edition = "2024"
+
+[dependencies]
+anywho.workspace = true
+bytes.workspace = true
+image.workspace = true
+leptess.workspace = true
+log.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+
+opencv.workspace = true
+opencv.features = ["clang-runtime"]
+
+[dev-dependencies]
+iced.workspace = true
+iced.features = ["tokio", "image", "debug"]
+
+tracing-subscriber.workspace = true
+
+[lints]
+workspace = true

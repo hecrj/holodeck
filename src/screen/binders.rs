@@ -55,8 +55,10 @@ enum State {
         price_task: Option<task::Handle>,
     },
     Scanning {
+        variant: collection::Variant,
         capture: Option<image::Handle>,
         found: Option<card::Id>,
+        added: Vec<card::Id>,
     },
 }
 
@@ -182,15 +184,17 @@ impl Binders {
             }
             Message::Scan => {
                 self.state = State::Scanning {
+                    variant: collection::Variant::Normal,
                     capture: None,
                     found: None,
+                    added: Vec::new(),
                 };
 
                 Task::none()
             }
             #[cfg(feature = "scanner")]
             Message::Scanning(event) => {
-                let State::Scanning { capture, found } = &mut self.state else {
+                let State::Scanning { capture, found, .. } = &mut self.state else {
                     return Task::none();
                 };
 
@@ -201,25 +205,50 @@ impl Binders {
                             image.height,
                             image.rgba,
                         ));
-                    }
-                    pokedetect::Event::Detected { set, number } => {
-                        if found.is_none() {
-                            *found = database.find(&set, &number).map(|card| card.id.clone());
-                        }
-                    }
-                }
 
-                Task::none()
+                        Task::none()
+                    }
+                    pokedetect::Event::Detected { set, number } if found.is_none() => {
+                        let Some(card) = database.find(&set, &number) else {
+                            return Task::none();
+                        };
+
+                        *found = Some(card.id.clone());
+
+                        let fetch_image = if self.images.contains_key(&card.id) {
+                            Task::none()
+                        } else {
+                            let _ = self.images.insert(card.id.clone(), Image::Loading);
+
+                            Task::perform(
+                                card::Image::fetch(card, database, session),
+                                Message::ImageFetched.with(card.id.clone()),
+                            )
+                        };
+
+                        let fetch_price = if prices.contains(&card.id) {
+                            Task::none()
+                        } else {
+                            Task::perform(
+                                card::Pricing::fetch(card, session),
+                                Message::PriceFetched.with(card.id.clone()),
+                            )
+                        };
+
+                        Task::batch([fetch_image, fetch_price])
+                    }
+                    _ => Task::none(),
+                }
             }
             Message::ToggleReverseHolofoil => {
-                let State::Adding { variant, .. } = &mut self.state else {
-                    return Task::none();
-                };
-
-                *variant = match variant {
-                    collection::Variant::Normal => collection::Variant::Reverse,
-                    collection::Variant::Reverse => collection::Variant::Normal,
-                };
+                if let State::Adding { variant, .. } | State::Scanning { variant, .. } =
+                    &mut self.state
+                {
+                    *variant = match variant {
+                        collection::Variant::Normal => collection::Variant::Reverse,
+                        collection::Variant::Reverse => collection::Variant::Normal,
+                    };
+                }
 
                 Task::none()
             }
@@ -302,6 +331,7 @@ impl Binders {
                     if let Some(animations) = self.animations.get_mut(&card) {
                         animations.zoom.go_mut(hovered, now);
                     }
+
                     Task::none()
                 }
                 Source::Search => {
@@ -359,7 +389,9 @@ impl Binders {
                     return Task::none();
                 };
 
-                self.add(card, *variant, collection, database)
+                let variant = *variant;
+
+                self.add(card, variant, collection, database)
             }
             Message::ImageFetched(card, Ok(image)) => {
                 let _ = self.images.insert(
@@ -446,29 +478,45 @@ impl Binders {
                 // TODO: Unfocus operation
                 text_input::focus("")
             }
-            Message::EnterPressed => {
-                let State::Adding {
-                    search, animations, ..
-                } = &self.state
-                else {
-                    return Task::none();
-                };
+            Message::EnterPressed => match &mut self.state {
+                State::Idle => Task::none(),
+                State::Adding {
+                    search,
+                    animations,
+                    variant,
+                    ..
+                } => {
+                    let Some(card) = search.matches().iter().find(|card| {
+                        animations
+                            .get(&card.id)
+                            .is_some_and(|animation| animation.zoom.value())
+                    }) else {
+                        return Task::none();
+                    };
 
-                let Some(card) = search.matches().iter().find(|card| {
-                    animations
-                        .get(&card.id)
-                        .is_some_and(|animation| animation.zoom.value())
-                }) else {
-                    return Task::none();
-                };
+                    let card = card.id.clone();
+                    let variant = *variant;
 
-                self.add(
-                    card.id.clone(),
-                    collection::Variant::Normal,
-                    collection,
-                    database,
-                )
-            }
+                    self.add(card, variant, collection, database)
+                }
+                State::Scanning {
+                    variant,
+                    found,
+                    added,
+                    ..
+                } => {
+                    let Some(card) = found.clone() else {
+                        return Task::none();
+                    };
+
+                    added.push(card.clone());
+
+                    *found = None;
+
+                    let variant = *variant;
+                    self.add(card, variant, collection, database)
+                }
+            },
             Message::EscapePressed => {
                 match &mut self.state {
                     State::Adding {
@@ -521,11 +569,13 @@ impl Binders {
         collection: &mut Collection,
         database: &Database,
     ) -> Task<Message> {
-        self.state = State::Idle;
+        if let State::Adding { .. } = &self.state {
+            self.state = State::Idle;
 
-        if let Some(position) = self.mode.position(&card, database) {
-            self.spread = self.binders.spread(self.binders.place(position));
-            let _ = self.animations.remove(&card);
+            if let Some(position) = self.mode.position(&card, database) {
+                self.spread = self.binders.spread(self.binders.place(position));
+                let _ = self.animations.remove(&card);
+            }
         }
 
         collection.add(card, variant);
@@ -607,19 +657,22 @@ impl Binders {
             .on_press(Message::Add(collection::Variant::Normal))
             .padding([0, 10]);
 
-            let scan = button(
-                row![
-                    icon::camera().size(12).height(Fill).center(),
-                    text("Scan").size(12),
-                ]
-                .align_y(Center)
-                .spacing(5),
-            )
-            .on_press(Message::Scan)
-            .padding([0, 10])
-            .style(button::success);
+            let scan = cfg!(feature = "scanner").then(|| {
+                button(
+                    row![
+                        icon::camera().size(12).height(Fill).center(),
+                        text("Scan").size(12),
+                    ]
+                    .align_y(Center)
+                    .spacing(5),
+                )
+                .on_press(Message::Scan)
+                .padding([0, 10])
+                .style(button::success)
+            });
 
-            let controls = row![mode, add, scan]
+            let controls = row![mode, add]
+                .push_maybe(scan)
                 .spacing(10)
                 .height(Shrink)
                 .align_y(Center);
@@ -680,9 +733,20 @@ impl Binders {
                 prices,
                 now,
             )),
-            State::Scanning { capture, found } => {
-                Some(self.scanning(capture.as_ref(), found.as_ref(), database))
-            }
+            State::Scanning {
+                variant,
+                capture,
+                found,
+                added,
+            } => Some(self.scanning(
+                *variant,
+                capture.as_ref(),
+                found.as_ref(),
+                added.as_slice(),
+                collection,
+                database,
+                prices,
+            )),
         };
 
         let has_overlay = overlay.is_some();
@@ -762,36 +826,7 @@ impl Binders {
         now: Instant,
     ) -> Element<'a, Message> {
         let input = {
-            let reverse = tooltip(
-                button(text("R").size(14).width(Fill).height(Fill).center())
-                    .width(20)
-                    .height(20)
-                    .padding(0)
-                    .on_press(Message::ToggleReverseHolofoil)
-                    .style(move |_theme, _status| {
-                        use iced::gradient;
-                        use iced::{Degrees, color};
-
-                        let alpha = match variant {
-                            collection::Variant::Normal => 0.3,
-                            collection::Variant::Reverse => 1.0,
-                        };
-
-                        button::Style {
-                            border: border::rounded(2),
-                            ..button::Style::default().with_background(
-                                gradient::Linear::new(Degrees(135.0))
-                                    .add_stop(0.0, color!(0xaaffaa).scale_alpha(alpha))
-                                    .add_stop(0.5, color!(0xffffaa).scale_alpha(alpha))
-                                    .add_stop(1.0, color!(0xffaaff).scale_alpha(alpha)),
-                            )
-                        }
-                    }),
-                container(text("Reverse Holofoil").size(12))
-                    .padding(5)
-                    .style(container::dark),
-                tooltip::Position::Bottom,
-            );
+            let reverse = reverse_toggle(variant);
 
             let input = text_input("Search for your card...", query)
                 .on_input(Message::SearchChanged)
@@ -813,21 +848,6 @@ impl Binders {
             } else {
                 scrollable(
                     grid(matches.iter().take(100).map(|card| {
-                        let owned_tag = |amount: &collection::Amount| {
-                            right(
-                                container(
-                                    text!("Owned x{amount}", amount = amount.total()).size(10),
-                                )
-                                .padding(5)
-                                .style(|_theme| {
-                                    container::Style::default()
-                                        .background(Color::BLACK.scale_alpha(0.8))
-                                        .border(border::rounded(8))
-                                }),
-                            )
-                            .padding(5)
-                        };
-
                         stack![
                             container(item(
                                 card,
@@ -840,7 +860,7 @@ impl Binders {
                             ))
                             .padding(1)
                         ]
-                        .push_maybe(collection.cards.get(&card.id).map(owned_tag))
+                        .push_maybe(collection.cards.get(&card.id).map(owned_tag.with(10.0)))
                         .into()
                     }))
                     .fluid(300)
@@ -861,37 +881,64 @@ impl Binders {
 
     pub fn scanning<'a>(
         &'a self,
+        variant: collection::Variant,
         capture: Option<&image::Handle>,
         found: Option<&card::Id>,
+        added: &'a [card::Id],
+        collection: &'a Collection,
         database: &'a Database,
+        prices: &pricing::Map,
     ) -> Element<'a, Message> {
-        if let Some(card) = found.and_then(|card| database.cards.get(card)) {
-            if let Some(Image::Loaded(handle)) = self.images.get(&card.id) {
-                center(image(handle)).into()
+        let log = bottom_right(
+            container(
+                scrollable(column(added.iter().rev().take(30).filter_map(|card| {
+                    let card = database.cards.get(card)?;
+                    let name = card.name.get("en").map(String::as_str).unwrap_or("Unknown");
+
+                    Some(text!("{name} ({})", card.id.as_str()).into())
+                })))
+                .spacing(10),
+            )
+            .padding(10)
+            .style(container::dark),
+        )
+        .padding(10);
+
+        let scanner: Element<'_, Message> =
+            if let Some(card) = found.and_then(|card| database.cards.get(card)) {
+                if let Some(Image::Loaded(handle)) = self.images.get(&card.id) {
+                    center(
+                        stack![
+                            container(image(handle)).padding(1),
+                            bottom(
+                                column![
+                                    reverse_toggle(variant),
+                                    stats(card, prices.get(&card.id), database, 30.0)
+                                ]
+                                .spacing(10)
+                            )
+                            .padding(30)
+                            .style(|_theme| translucent(1.0)),
+                        ]
+                        .push_maybe(collection.cards.get(&card.id).map(owned_tag.with(20.0))),
+                    )
+                    .padding(10)
+                    .into()
+                } else {
+                    center(text(card.id.as_str()).center())
+                        .padding(10)
+                        .style(container::dark)
+                        .into()
+                }
+            } else if let Some(capture) = capture {
+                center(image(capture)).into()
             } else {
-                pop(center(
-                    card.name
-                        .get("en")
-                        .map(text)
-                        .or_else(|| {
-                            card.name
-                                .get("ja")
-                                .map(|name| text(name).shaping(text::Shaping::Advanced))
-                        })
-                        .unwrap_or_else(|| text("Unknown"))
-                        .center(),
-                )
-                .padding(10)
-                .style(container::dark))
-                .on_show(|_| Message::CardShown(card.id.clone(), Source::Search))
-                .key_ref(card.id.as_str())
-                .into()
-            }
-        } else if let Some(capture) = capture {
-            center(image(capture.clone())).into()
-        } else {
-            horizontal_space().into()
-        }
+                horizontal_space().into()
+            };
+
+        stack![scanner]
+            .push_maybe((!added.is_empty()).then_some(log))
+            .into()
     }
 
     pub fn subscription(&self, now: Instant) -> Subscription<Message> {
@@ -938,7 +985,9 @@ impl Binders {
 
         #[cfg(feature = "scanner")]
         let scanner = match &self.state {
-            State::Scanning { .. } => Subscription::run(pokedetect::run).map(Message::Scanning),
+            State::Scanning { found: None, .. } => {
+                Subscription::run(pokedetect::run).map(Message::Scanning)
+            }
             _ => Subscription::none(),
         };
 
@@ -976,60 +1025,16 @@ fn item<'a>(
                 .opacity(opacity);
 
             let stats = (shadow > 0.0).then(move || {
-                let translucent = move |_theme: &_| {
-                    use iced::gradient;
-
-                    container::Style::default()
-                        .background(
-                            gradient::Linear::new(0)
-                                .add_stop(0.0, Color::BLACK.scale_alpha(shadow))
-                                .add_stop(shadow * 0.4, Color::TRANSPARENT),
-                        )
-                        .border(border::rounded(14.0))
-                };
-
-                let name = typewriter(card.name.as_str()).size(12);
-
-                let set = database.sets.get(&card.set).map(|set| {
-                    typewriter(format!("{} (#{})", set.name.as_str(), card.id.as_str()))
-                        .size(7)
-                        .very_quick()
-                });
-
-                let pricing = price.map(|price| {
-                    let dollars = price
-                        .america
-                        .spread()
-                        .map(|spread| typewriter(spread.average.to_string()).size(7));
-
-                    let euros = price
-                        .europe
-                        .spread()
-                        .map(|spread| typewriter(spread.average.to_string()).size(7));
-
-                    row![].push_maybe(dollars).push_maybe(euros).spacing(8)
-                });
-
                 let stats: Element<'_, _> = if shadow == 1.0 {
-                    container(
-                        column![
-                            name,
-                            row![]
-                                .push_maybe(set)
-                                .push(horizontal_space())
-                                .push_maybe(pricing)
-                                .spacing(5)
-                                .align_y(Bottom),
-                        ]
-                        .spacing(5),
-                    )
-                    .padding(8)
-                    .into()
+                    stats(card, price, database, 14.0)
                 } else {
                     horizontal_space().into()
                 };
 
-                bottom(stats).width(Fill).style(translucent)
+                bottom(stats)
+                    .padding(7)
+                    .width(Fill)
+                    .style(move |_theme| translucent(shadow))
             });
 
             let card = mouse_area(
@@ -1158,4 +1163,108 @@ fn to_roman(number: usize) -> String {
         10 => "X".to_owned(),
         _ => format!("#{number}"),
     }
+}
+
+fn stats<'a>(
+    card: &'a Card,
+    price: Option<card::Pricing>,
+    database: &'a Database,
+    font_size: f32,
+) -> Element<'a, Message> {
+    let name = typewriter(card.name.as_str()).size(font_size);
+
+    let set = database.sets.get(&card.set).map(|set| {
+        typewriter(format!("{} (#{})", set.name.as_str(), card.id.as_str()))
+            .size(font_size / 2.0)
+            .very_quick()
+    });
+
+    let pricing = price.map(|price| {
+        let dollars = price
+            .america
+            .spread()
+            .map(|spread| typewriter(spread.average.to_string()).size(font_size / 2.0));
+
+        let euros = price
+            .europe
+            .spread()
+            .map(|spread| typewriter(spread.average.to_string()).size(font_size / 2.0));
+
+        row![]
+            .push_maybe(dollars)
+            .push_maybe(euros)
+            .spacing(font_size / 2.0)
+    });
+
+    column![
+        name,
+        row![]
+            .push_maybe(set)
+            .push(horizontal_space())
+            .push_maybe(pricing)
+            .spacing(font_size / 2.0)
+            .align_y(Bottom),
+    ]
+    .spacing(font_size / 2.0)
+    .into()
+}
+
+fn owned_tag(size: f32, amount: &collection::Amount) -> Element<'_, Message> {
+    right(
+        container(text!("Owned x{amount}", amount = amount.total()).size(size))
+            .padding(size / 2.0)
+            .style(move |_theme| {
+                container::Style::default()
+                    .background(Color::BLACK.scale_alpha(0.8))
+                    .border(border::rounded(size))
+            }),
+    )
+    .padding(size / 2.0)
+    .into()
+}
+
+fn reverse_toggle<'a>(variant: collection::Variant) -> Element<'a, Message> {
+    tooltip(
+        button(text("R").size(14).width(Fill).height(Fill).center())
+            .width(20)
+            .height(20)
+            .padding(0)
+            .on_press(Message::ToggleReverseHolofoil)
+            .style(move |_theme, _status| {
+                use iced::gradient;
+                use iced::{Degrees, color};
+
+                let alpha = match variant {
+                    collection::Variant::Normal => 0.3,
+                    collection::Variant::Reverse => 1.0,
+                };
+
+                button::Style {
+                    border: border::rounded(2),
+                    ..button::Style::default().with_background(
+                        gradient::Linear::new(Degrees(135.0))
+                            .add_stop(0.0, color!(0xaaffaa).scale_alpha(alpha))
+                            .add_stop(0.5, color!(0xffffaa).scale_alpha(alpha))
+                            .add_stop(1.0, color!(0xffaaff).scale_alpha(alpha)),
+                    )
+                }
+            }),
+        container(text("Reverse Holofoil").size(12))
+            .padding(5)
+            .style(container::dark),
+        tooltip::Position::Bottom,
+    )
+    .into()
+}
+
+fn translucent(shadow: f32) -> container::Style {
+    use iced::gradient;
+
+    container::Style::default()
+        .background(
+            gradient::Linear::new(0)
+                .add_stop(0.0, Color::BLACK.scale_alpha(shadow))
+                .add_stop(shadow * 0.4, Color::TRANSPARENT),
+        )
+        .border(border::rounded(14.0))
 }

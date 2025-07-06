@@ -66,13 +66,13 @@ impl Detect {
                 image: handle,
                 detection,
             } => {
-                let capture = container(image(handle.clone()).width(Fill).height(Fill)).padding(10);
+                let capture = container(image(handle).width(Fill).height(Fill)).padding(10);
 
                 if let Some(Detection { set, number }) = detection {
                     stack![
                         capture,
                         bottom_right(
-                            container(text!("{set} {number}").font(Font::MONOSPACE))
+                            container(text!("{set} {number}",).font(Font::MONOSPACE))
                                 .padding(10)
                                 .style(container::dark)
                         )

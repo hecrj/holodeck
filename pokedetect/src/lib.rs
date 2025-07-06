@@ -114,17 +114,6 @@ pub fn worker(sender: mpsc::Sender<Event>) -> Result<(), anywho::Error> {
             imgproc::CHAIN_APPROX_SIMPLE,
             opencv::core::Point::new(0, 0),
         )?;
-        imgproc::draw_contours(
-            &mut rgba,
-            &contours,
-            -1,
-            Scalar::new(0.0, 0.0, 255.0, 127.0),
-            2,
-            imgproc::LINE_8,
-            &[],
-            0,
-            opencv::core::Point::new(0, 0),
-        )?;
 
         for contour in contours {
             let perimeter = imgproc::arc_length(&contour, true)?;
@@ -231,9 +220,8 @@ pub fn worker(sender: mpsc::Sender<Event>) -> Result<(), anywho::Error> {
                 }
 
                 let mut thresh = Mat::default();
-                imgproc::threshold(&number, &mut thresh, 120.0, 255.0, imgproc::THRESH_BINARY)?;
+                imgproc::threshold(&number, &mut thresh, 160.0, 255.0, imgproc::THRESH_BINARY)?;
 
-                // Reverse holofoil
                 if !is_mostly_black(&thresh)? {
                     imgproc::flood_fill(
                         &mut thresh,
@@ -305,11 +293,16 @@ pub fn worker(sender: mpsc::Sender<Event>) -> Result<(), anywho::Error> {
 
         let size = rgba.size()?;
 
-        sender.blocking_send(Event::Captured(Image {
-            width: size.width as u32,
-            height: size.height as u32,
-            rgba: Bytes::copy_from_slice(rgba.data_bytes()?),
-        }))?;
+        if sender
+            .blocking_send(Event::Captured(Image {
+                width: size.width as u32,
+                height: size.height as u32,
+                rgba: Bytes::copy_from_slice(rgba.data_bytes()?),
+            }))
+            .is_err()
+        {
+            return Ok(());
+        }
     }
 }
 

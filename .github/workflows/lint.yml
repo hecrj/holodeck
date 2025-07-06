@@ -4,6 +4,8 @@ jobs:
   all:
     runs-on: macOS-latest
     steps:
+    - name: Install OpenCV and Tesseract
+      run: brew install opencv tesseract
     - uses: hecrj/setup-rust-action@v2
       with:
         components: clippy

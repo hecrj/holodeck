@@ -11,6 +11,7 @@ pub struct Set {
     pub series: series::Id,
     pub release_date: String,
     pub total_cards: usize,
+    pub abbreviation: Option<String>,
 }
 
 pub type Map = crate::Map<Id, Set>;

@@ -7,6 +7,7 @@
         series: ("PMCG"),
         release_date: "1996-10-20",
         total_cards: 102,
+        abbreviation: None,
     ),
     (
         id: ("PMCG2"),
@@ -16,6 +17,7 @@
         series: ("PMCG"),
         release_date: "1997-03-05",
         total_cards: 48,
+        abbreviation: None,
     ),
     (
         id: ("PMCG3"),
@@ -25,6 +27,7 @@
         series: ("PMCG"),
         release_date: "1997-06-21",
         total_cards: 48,
+        abbreviation: None,
     ),
     (
         id: ("PMCG4"),
@@ -34,6 +37,7 @@
         series: ("PMCG"),
         release_date: "1997-11-21",
         total_cards: 65,
+        abbreviation: None,
     ),
     (
         id: ("PMCG5"),
@@ -43,6 +47,7 @@
         series: ("PMCG"),
         release_date: "1998-10-24",
         total_cards: 96,
+        abbreviation: None,
     ),
     (
         id: ("base1"),
@@ -58,6 +63,7 @@
         series: ("base"),
         release_date: "1999-01-09",
         total_cards: 102,
+        abbreviation: Some("BS"),
     ),
     (
         id: ("base2"),
@@ -73,6 +79,7 @@
         series: ("base"),
         release_date: "1999-06-16",
         total_cards: 64,
+        abbreviation: Some("JU"),
     ),
     (
         id: ("PMCG6"),
@@ -82,6 +89,7 @@
         series: ("PMCG"),
         release_date: "1999-06-25",
         total_cards: 98,
+        abbreviation: None,
     ),
     (
         id: ("basep"),
@@ -95,6 +103,7 @@
         series: ("base"),
         release_date: "1999-07-01",
         total_cards: 53,
+        abbreviation: None,
     ),
     (
         id: ("wp"),
@@ -106,6 +115,7 @@
         series: ("base"),
         release_date: "1999-09-01",
         total_cards: 7,
+        abbreviation: None,
     ),
     (
         id: ("base3"),
@@ -121,6 +131,7 @@
         series: ("base"),
         release_date: "1999-10-10",
         total_cards: 62,
+        abbreviation: Some("FO"),
     ),
     (
         id: ("jumbo"),
@@ -131,6 +142,7 @@
         series: ("misc"),
         release_date: "2000-02-01",
         total_cards: 160,
+        abbreviation: None,
     ),
     (
         id: ("base4"),
@@ -140,6 +152,7 @@
         series: ("base"),
         release_date: "2000-02-24",
         total_cards: 130,
+        abbreviation: Some("B2"),
     ),
     (
         id: ("base5"),
@@ -152,6 +165,7 @@
         series: ("base"),
         release_date: "2000-04-24",
         total_cards: 83,
+        abbreviation: Some("RO"),
     ),
     (
         id: ("gym1"),
@@ -161,6 +175,7 @@
         series: ("gym"),
         release_date: "2000-08-14",
         total_cards: 132,
+        abbreviation: Some("G1"),
     ),
     (
         id: ("gym2"),
@@ -170,6 +185,7 @@
         series: ("gym"),
         release_date: "2000-10-16",
         total_cards: 132,
+        abbreviation: Some("G2"),
     ),
     (
         id: ("neo1"),
@@ -184,6 +200,7 @@
         series: ("neo"),
         release_date: "2000-12-16",
         total_cards: 111,
+        abbreviation: Some("N1"),
     ),
     (
         id: ("neo2"),
@@ -197,6 +214,7 @@
         series: ("neo"),
         release_date: "2001-06-01",
         total_cards: 75,
+        abbreviation: Some("N2"),
     ),
     (
         id: ("VS1"),
@@ -206,6 +224,7 @@
         series: ("VS"),
         release_date: "2001-07-19",
         total_cards: 141,
+        abbreviation: None,
     ),
     (
         id: ("si1"),
@@ -215,6 +234,7 @@
         series: ("neo"),
         release_date: "2001-07-31",
         total_cards: 18,
+        abbreviation: Some("SI"),
     ),
     (
         id: ("neo3"),
@@ -228,6 +248,7 @@
         series: ("neo"),
         release_date: "2001-09-21",
         total_cards: 66,
+        abbreviation: Some("N3"),
     ),
     (
         id: ("web1"),
@@ -237,6 +258,7 @@
         series: ("web"),
         release_date: "2001-10-20",
         total_cards: 48,
+        abbreviation: None,
     ),
     (
         id: ("E1"),
@@ -246,6 +268,7 @@
         series: ("e"),
         release_date: "2001-12-01",
         total_cards: 128,
+        abbreviation: None,
     ),
     (
         id: ("neo4"),
@@ -259,6 +282,7 @@
         series: ("neo"),
         release_date: "2002-02-28",
         total_cards: 113,
+        abbreviation: Some("N4"),
     ),
     (
         id: ("E2"),
@@ -268,6 +292,7 @@
         series: ("e"),
         release_date: "2002-03-08",
         total_cards: 92,
+        abbreviation: None,
     ),
     (
         id: ("E3"),
@@ -277,6 +302,7 @@
         series: ("e"),
         release_date: "2002-05-24",
         total_cards: 87,
+        abbreviation: None,
     ),
     (
         id: ("lc"),
@@ -286,6 +312,7 @@
         series: ("lc"),
         release_date: "2002-05-24",
         total_cards: 110,
+        abbreviation: Some("LC"),
     ),
     (
         id: ("sp"),
@@ -295,6 +322,7 @@
         series: ("ecard"),
         release_date: "2002-08-01",
         total_cards: 10,
+        abbreviation: None,
     ),
     (
         id: ("E4"),
@@ -304,6 +332,7 @@
         series: ("e"),
         release_date: "2002-08-23",
         total_cards: 88,
+        abbreviation: None,
     ),
     (
         id: ("ecard1"),
@@ -316,6 +345,7 @@
         series: ("ecard"),
         release_date: "2002-09-15",
         total_cards: 165,
+        abbreviation: Some("EX"),
     ),
     (
         id: ("E5"),
@@ -325,6 +355,7 @@
         series: ("e"),
         release_date: "2002-10-04",
         total_cards: 88,
+        abbreviation: None,
     ),
     (
         id: ("bog"),
@@ -334,6 +365,7 @@
         series: ("ecard"),
         release_date: "2002-12-01",
         total_cards: 9,
+        abbreviation: None,
     ),
     (
         id: ("ecard2"),
@@ -346,6 +378,7 @@
         series: ("ecard"),
         release_date: "2003-01-15",
         total_cards: 186,
+        abbreviation: Some("AQ"),
     ),
     (
         id: ("ADV1"),
@@ -355,6 +388,7 @@
         series: ("ADV"),
         release_date: "2003-01-31",
         total_cards: 55,
+        abbreviation: None,
     ),
     (
         id: ("ADV2"),
@@ -364,6 +398,7 @@
         series: ("ADV"),
         release_date: "2003-04-18",
         total_cards: 53,
+        abbreviation: None,
     ),
     (
         id: ("ecard3"),
@@ -375,6 +410,7 @@
         series: ("ecard"),
         release_date: "2003-05-12",
         total_cards: 182,
+        abbreviation: Some("SK"),
     ),
     (
         id: ("ADV3"),
@@ -384,6 +420,7 @@
         series: ("ADV"),
         release_date: "2003-06-25",
         total_cards: 54,
+        abbreviation: None,
     ),
     (
         id: ("ex1"),
@@ -398,6 +435,7 @@
         series: ("ex"),
         release_date: "2003-07-01",
         total_cards: 109,
+        abbreviation: Some("RS"),
     ),
     (
         id: ("ex2"),
@@ -410,6 +448,7 @@
         series: ("ex"),
         release_date: "2003-09-18",
         total_cards: 100,
+        abbreviation: Some("SS"),
     ),
     (
         id: ("np"),
@@ -422,6 +461,7 @@
         series: ("pop"),
         release_date: "2003-10-01",
         total_cards: 40,
+        abbreviation: None,
     ),
     (
         id: ("ADV4"),
@@ -431,6 +471,7 @@
         series: ("ADV"),
         release_date: "2003-10-24",
         total_cards: 80,
+        abbreviation: None,
     ),
     (
         id: ("ex3"),
@@ -443,6 +484,7 @@
         series: ("ex"),
         release_date: "2003-11-24",
         total_cards: 100,
+        abbreviation: Some("DR"),
     ),
     (
         id: ("ADV5"),
@@ -452,6 +494,7 @@
         series: ("ADV"),
         release_date: "2004-01-16",
         total_cards: 83,
+        abbreviation: None,
     ),
     (
         id: ("ex4"),
@@ -464,6 +507,7 @@
         series: ("ex"),
         release_date: "2004-03-01",
         total_cards: 97,
+        abbreviation: Some("MA"),
     ),
     (
         id: ("PCG1"),
@@ -473,6 +517,7 @@
         series: ("PCG"),
         release_date: "2004-04-09",
         total_cards: 82,
+        abbreviation: None,
     ),
     (
         id: ("ex5"),
@@ -484,6 +529,7 @@
         series: ("ex"),
         release_date: "2004-06-01",
         total_cards: 101,
+        abbreviation: Some("HL"),
     ),
     (
         id: ("PCG2"),
@@ -493,6 +539,7 @@
         series: ("PCG"),
         release_date: "2004-07-01",
         total_cards: 82,
+        abbreviation: None,
     ),
     (
         id: ("ex5.5"),
@@ -502,6 +549,7 @@
         series: ("ex"),
         release_date: "2004-07-01",
         total_cards: 5,
+        abbreviation: None,
     ),
     (
         id: ("tk-ex-latia"),
@@ -514,6 +562,7 @@
         series: ("tk"),
         release_date: "2004-07-01",
         total_cards: 10,
+        abbreviation: Some("TK1A"),
     ),
     (
         id: ("tk-ex-latio"),
@@ -526,6 +575,7 @@
         series: ("tk"),
         release_date: "2004-07-01",
         total_cards: 10,
+        abbreviation: Some("TK1O"),
     ),
     (
         id: ("ex6"),
@@ -538,6 +588,7 @@
         series: ("ex"),
         release_date: "2004-09-01",
         total_cards: 116,
+        abbreviation: Some("RG"),
     ),
     (
         id: ("pop1"),
@@ -549,6 +600,7 @@
         series: ("pop"),
         release_date: "2004-09-01",
         total_cards: 17,
+        abbreviation: Some("P1"),
     ),
     (
         id: ("PCG3"),
@@ -558,6 +610,7 @@
         series: ("PCG"),
         release_date: "2004-10-15",
         total_cards: 84,
+        abbreviation: None,
     ),
     (
         id: ("ex7"),
@@ -568,6 +621,7 @@
         series: ("ex"),
         release_date: "2004-11-01",
         total_cards: 109,
+        abbreviation: Some("TR"),
     ),
     (
         id: ("ex8"),
@@ -581,6 +635,7 @@
         series: ("ex"),
         release_date: "2005-02-01",
         total_cards: 108,
+        abbreviation: Some("DX"),
     ),
     (
         id: ("PCG4"),
@@ -590,6 +645,7 @@
         series: ("PCG"),
         release_date: "2005-04-08",
         total_cards: 106,
+        abbreviation: None,
     ),
     (
         id: ("ex9"),
@@ -603,6 +659,7 @@
         series: ("ex"),
         release_date: "2005-05-09",
         total_cards: 107,
+        abbreviation: Some("EM"),
     ),
     (
         id: ("PCG5"),
@@ -612,6 +669,7 @@
         series: ("PCG"),
         release_date: "2005-06-30",
         total_cards: 86,
+        abbreviation: None,
     ),
     (
         id: ("pop2"),
@@ -623,6 +681,7 @@
         series: ("pop"),
         release_date: "2005-08-01",
         total_cards: 17,
+        abbreviation: Some("P2"),
     ),
     (
         id: ("ex10"),
@@ -637,6 +696,7 @@
         series: ("ex"),
         release_date: "2005-08-22",
         total_cards: 115,
+        abbreviation: Some("UF"),
     ),
     (
         id: ("exu"),
@@ -650,6 +710,7 @@
         series: ("ex"),
         release_date: "2005-08-22",
         total_cards: 28,
+        abbreviation: None,
     ),
     (
         id: ("PCG6"),
@@ -659,6 +720,7 @@
         series: ("PCG"),
         release_date: "2005-10-28",
         total_cards: 86,
+        abbreviation: None,
     ),
     (
         id: ("ex11"),
@@ -671,6 +733,7 @@
         series: ("ex"),
         release_date: "2005-10-31",
         total_cards: 114,
+        abbreviation: Some("DS"),
     ),
     (
         id: ("PCG7"),
@@ -680,6 +743,7 @@
         series: ("PCG"),
         release_date: "2006-01-27",
         total_cards: 52,
+        abbreviation: None,
     ),
     (
         id: ("ex12"),
@@ -692,6 +756,7 @@
         series: ("ex"),
         release_date: "2006-02-13",
         total_cards: 93,
+        abbreviation: Some("LM"),
     ),
     (
         id: ("tk-ex-m"),
@@ -704,6 +769,7 @@
         series: ("tk"),
         release_date: "2006-03-01",
         total_cards: 12,
+        abbreviation: Some("TK2M"),
     ),
     (
         id: ("tk-ex-p"),
@@ -716,6 +782,7 @@
         series: ("tk"),
         release_date: "2006-03-01",
         total_cards: 12,
+        abbreviation: Some("TK2P"),
     ),
     (
         id: ("PCG8"),
@@ -725,6 +792,7 @@
         series: ("PCG"),
         release_date: "2006-03-10",
         total_cards: 75,
+        abbreviation: None,
     ),
     (
         id: ("pop3"),
@@ -736,6 +804,7 @@
         series: ("pop"),
         release_date: "2006-04-01",
         total_cards: 17,
+        abbreviation: Some("P3"),
     ),
     (
         id: ("ex13"),
@@ -748,6 +817,7 @@
         series: ("ex"),
         release_date: "2006-05-03",
         total_cards: 111,
+        abbreviation: Some("HP"),
     ),
     (
         id: ("PCG9"),
@@ -757,6 +827,7 @@
         series: ("PCG"),
         release_date: "2006-06-29",
         total_cards: 68,
+        abbreviation: None,
     ),
     (
         id: ("pop4"),
@@ -768,6 +839,7 @@
         series: ("pop"),
         release_date: "2006-08-01",
         total_cards: 17,
+        abbreviation: Some("P4"),
     ),
     (
         id: ("ex14"),
@@ -780,6 +852,7 @@
         series: ("ex"),
         release_date: "2006-08-30",
         total_cards: 100,
+        abbreviation: Some("CG"),
     ),
     (
         id: ("ex15"),
@@ -792,6 +865,7 @@
         series: ("ex"),
         release_date: "2006-11-08",
         total_cards: 101,
+        abbreviation: Some("DF"),
     ),
     (
         id: ("ex16"),
@@ -803,6 +877,7 @@
         series: ("ex"),
         release_date: "2007-02-17",
         total_cards: 108,
+        abbreviation: Some("PK"),
     ),
     (
         id: ("pop5"),
@@ -813,6 +888,7 @@
         series: ("pop"),
         release_date: "2007-03-01",
         total_cards: 17,
+        abbreviation: Some("P5"),
     ),
     (
         id: ("dp1"),
@@ -828,6 +904,7 @@
         series: ("dp"),
         release_date: "2007-05-01",
         total_cards: 130,
+        abbreviation: Some("DP"),
     ),
     (
         id: ("dpp"),
@@ -841,6 +918,7 @@
         series: ("dp"),
         release_date: "2007-05-01",
         total_cards: 56,
+        abbreviation: None,
     ),
     (
         id: ("PCG10"),
@@ -850,6 +928,7 @@
         series: ("PCG"),
         release_date: "2007-07-05",
         total_cards: 108,
+        abbreviation: None,
     ),
     (
         id: ("dp2"),
@@ -865,6 +944,7 @@
         series: ("dp"),
         release_date: "2007-08-01",
         total_cards: 122,
+        abbreviation: Some("MT"),
     ),
     (
         id: ("pop6"),
@@ -874,6 +954,7 @@
         series: ("pop"),
         release_date: "2007-09-01",
         total_cards: 17,
+        abbreviation: Some("P6"),
     ),
     (
         id: ("tk-dp-l"),
@@ -886,6 +967,7 @@
         series: ("tk"),
         release_date: "2007-09-01",
         total_cards: 11,
+        abbreviation: Some("TK3L"),
     ),
     (
         id: ("tk-dp-m"),
@@ -898,6 +980,7 @@
         series: ("tk"),
         release_date: "2007-09-01",
         total_cards: 12,
+        abbreviation: Some("TK3M"),
     ),
     (
         id: ("dp3"),
@@ -912,6 +995,7 @@
         series: ("dp"),
         release_date: "2007-11-01",
         total_cards: 132,
+        abbreviation: Some("SW"),
     ),
     (
         id: ("dp4"),
@@ -925,6 +1009,7 @@
         series: ("dp"),
         release_date: "2008-02-01",
         total_cards: 106,
+        abbreviation: Some("GE"),
     ),
     (
         id: ("pop7"),
@@ -936,6 +1021,7 @@
         series: ("pop"),
         release_date: "2008-03-01",
         total_cards: 17,
+        abbreviation: Some("P7"),
     ),
     (
         id: ("dp5"),
@@ -948,6 +1034,7 @@
         series: ("dp"),
         release_date: "2008-05-01",
         total_cards: 100,
+        abbreviation: Some("MD"),
     ),
     (
         id: ("dp6"),
@@ -961,6 +1048,7 @@
         series: ("dp"),
         release_date: "2008-08-01",
         total_cards: 146,
+        abbreviation: Some("LA"),
     ),
     (
         id: ("pop8"),
@@ -970,6 +1058,7 @@
         series: ("pop"),
         release_date: "2008-09-01",
         total_cards: 17,
+        abbreviation: Some("P8"),
     ),
     (
         id: ("dp7"),
@@ -983,6 +1072,7 @@
         series: ("dp"),
         release_date: "2008-11-01",
         total_cards: 100,
+        abbreviation: Some("FS"),
     ),
     (
         id: ("pl1"),
@@ -996,6 +1086,7 @@
         series: ("pl"),
         release_date: "2009-02-11",
         total_cards: 127,
+        abbreviation: Some("PL"),
     ),
     (
         id: ("pop9"),
@@ -1007,6 +1098,7 @@
         series: ("pop"),
         release_date: "2009-03-01",
         total_cards: 17,
+        abbreviation: Some("P9"),
     ),
     (
         id: ("pl2"),
@@ -1019,6 +1111,7 @@
         series: ("pl"),
         release_date: "2009-05-16",
         total_cards: 120,
+        abbreviation: Some("RR"),
     ),
     (
         id: ("pl3"),
@@ -1030,6 +1123,7 @@
         series: ("pl"),
         release_date: "2009-08-19",
         total_cards: 153,
+        abbreviation: None,
     ),
     (
         id: ("L1a"),
@@ -1039,6 +1133,7 @@
         series: ("L"),
         release_date: "2009-10-09",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("L1b"),
@@ -1048,6 +1143,7 @@
         series: ("L"),
         release_date: "2009-10-09",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("pl4"),
@@ -1060,6 +1156,7 @@
         series: ("pl"),
         release_date: "2009-11-04",
         total_cards: 99,
+        abbreviation: Some("AR"),
     ),
     (
         id: ("ru1"),
@@ -1070,6 +1167,7 @@
         series: ("pl"),
         release_date: "2009-12-02",
         total_cards: 16,
+        abbreviation: Some("RM"),
     ),
     (
         id: ("hgss1"),
@@ -1084,6 +1182,7 @@
         series: ("hgss"),
         release_date: "2010-02-10",
         total_cards: 123,
+        abbreviation: Some("HS"),
     ),
     (
         id: ("L2"),
@@ -1093,6 +1192,7 @@
         series: ("L"),
         release_date: "2010-02-11",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("hgssp"),
@@ -1106,6 +1206,7 @@
         series: ("hgss"),
         release_date: "2010-02-11",
         total_cards: 25,
+        abbreviation: None,
     ),
     (
         id: ("LL"),
@@ -1115,6 +1216,7 @@
         series: ("L"),
         release_date: "2010-04-16",
         total_cards: 40,
+        abbreviation: None,
     ),
     (
         id: ("tk-hs-g"),
@@ -1127,6 +1229,7 @@
         series: ("tk"),
         release_date: "2010-05-01",
         total_cards: 30,
+        abbreviation: Some("TK4G"),
     ),
     (
         id: ("tk-hs-r"),
@@ -1139,6 +1242,7 @@
         series: ("tk"),
         release_date: "2010-05-01",
         total_cards: 30,
+        abbreviation: Some("TK4R"),
     ),
     (
         id: ("hgss2"),
@@ -1153,6 +1257,7 @@
         series: ("hgss"),
         release_date: "2010-05-12",
         total_cards: 95,
+        abbreviation: Some("UL"),
     ),
     (
         id: ("L3"),
@@ -1162,6 +1267,7 @@
         series: ("L"),
         release_date: "2010-07-08",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("hgss3"),
@@ -1175,6 +1281,7 @@
         series: ("hgss"),
         release_date: "2010-08-18",
         total_cards: 91,
+        abbreviation: Some("UND"),
     ),
     (
         id: ("hgss4"),
@@ -1188,6 +1295,7 @@
         series: ("hgss"),
         release_date: "2010-11-03",
         total_cards: 103,
+        abbreviation: Some("TRI"),
     ),
     (
         id: ("col1"),
@@ -1201,6 +1309,7 @@
         series: ("col"),
         release_date: "2011-02-09",
         total_cards: 106,
+        abbreviation: Some("COL"),
     ),
     (
         id: ("bw1"),
@@ -1215,6 +1324,7 @@
         series: ("bw"),
         release_date: "2011-04-25",
         total_cards: 115,
+        abbreviation: Some("BLW"),
     ),
     (
         id: ("bwp"),
@@ -1228,6 +1338,7 @@
         series: ("bw"),
         release_date: "2011-04-26",
         total_cards: 101,
+        abbreviation: Some("BWP"),
     ),
     (
         id: ("2011bw"),
@@ -1240,6 +1351,7 @@
         series: ("mc"),
         release_date: "2011-06-17",
         total_cards: 12,
+        abbreviation: Some("MCD11"),
     ),
     (
         id: ("bw2"),
@@ -1254,6 +1366,7 @@
         series: ("bw"),
         release_date: "2011-08-31",
         total_cards: 98,
+        abbreviation: Some("EP"),
     ),
     (
         id: ("tk-bw-e"),
@@ -1265,6 +1378,7 @@
         series: ("tk"),
         release_date: "2011-09-01",
         total_cards: 30,
+        abbreviation: Some("TK5E"),
     ),
     (
         id: ("tk-bw-z"),
@@ -1276,6 +1390,7 @@
         series: ("tk"),
         release_date: "2011-09-01",
         total_cards: 30,
+        abbreviation: Some("TK5Z"),
     ),
     (
         id: ("bw3"),
@@ -1290,6 +1405,7 @@
         series: ("bw"),
         release_date: "2011-11-16",
         total_cards: 102,
+        abbreviation: Some("NVI"),
     ),
     (
         id: ("bw4"),
@@ -1304,6 +1420,7 @@
         series: ("bw"),
         release_date: "2012-02-08",
         total_cards: 103,
+        abbreviation: Some("NEX"),
     ),
     (
         id: ("bw5"),
@@ -1318,6 +1435,7 @@
         series: ("bw"),
         release_date: "2012-05-09",
         total_cards: 111,
+        abbreviation: Some("DEX"),
     ),
     (
         id: ("2012bw"),
@@ -1329,6 +1447,7 @@
         series: ("mc"),
         release_date: "2012-06-15",
         total_cards: 12,
+        abbreviation: Some("MCD12"),
     ),
     (
         id: ("bw6"),
@@ -1343,6 +1462,7 @@
         series: ("bw"),
         release_date: "2012-08-15",
         total_cards: 128,
+        abbreviation: Some("DRX"),
     ),
     (
         id: ("dv1"),
@@ -1357,6 +1477,7 @@
         series: ("bw"),
         release_date: "2012-10-05",
         total_cards: 20,
+        abbreviation: Some("DRV"),
     ),
     (
         id: ("bw7"),
@@ -1371,6 +1492,7 @@
         series: ("bw"),
         release_date: "2012-11-07",
         total_cards: 153,
+        abbreviation: Some("BCR"),
     ),
     (
         id: ("bw8"),
@@ -1385,6 +1507,7 @@
         series: ("bw"),
         release_date: "2013-02-06",
         total_cards: 138,
+        abbreviation: Some("PLS"),
     ),
     (
         id: ("bw9"),
@@ -1399,6 +1522,7 @@
         series: ("bw"),
         release_date: "2013-05-08",
         total_cards: 122,
+        abbreviation: Some("PLF"),
     ),
     (
         id: ("bw10"),
@@ -1411,6 +1535,7 @@
         series: ("bw"),
         release_date: "2013-08-14",
         total_cards: 105,
+        abbreviation: Some("PLB"),
     ),
     (
         id: ("xyp"),
@@ -1424,6 +1549,7 @@
         series: ("xy"),
         release_date: "2013-10-12",
         total_cards: 211,
+        abbreviation: Some("XYP"),
     ),
     (
         id: ("2013bw"),
@@ -1433,6 +1559,7 @@
         series: ("mc"),
         release_date: "2013-11-01",
         total_cards: 12,
+        abbreviation: None,
     ),
     (
         id: ("bw11"),
@@ -1443,6 +1570,7 @@
         series: ("bw"),
         release_date: "2013-11-06",
         total_cards: 113,
+        abbreviation: Some("LTR"),
     ),
     (
         id: ("rc"),
@@ -1453,6 +1581,7 @@
         series: ("bw"),
         release_date: "2013-11-06",
         total_cards: 25,
+        abbreviation: None,
     ),
     (
         id: ("xy0"),
@@ -1467,6 +1596,7 @@
         series: ("xy"),
         release_date: "2013-11-08",
         total_cards: 45,
+        abbreviation: Some("KSS"),
     ),
     (
         id: ("XY1a"),
@@ -1476,6 +1606,7 @@
         series: ("XY"),
         release_date: "2013-12-13",
         total_cards: 60,
+        abbreviation: None,
     ),
     (
         id: ("XY1b"),
@@ -1485,6 +1616,7 @@
         series: ("XY"),
         release_date: "2013-12-13",
         total_cards: 60,
+        abbreviation: None,
     ),
     (
         id: ("xy1"),
@@ -1500,6 +1632,7 @@
         series: ("xy"),
         release_date: "2014-02-05",
         total_cards: 146,
+        abbreviation: Some("XY"),
     ),
     (
         id: ("xya"),
@@ -1513,6 +1646,7 @@
         series: ("xy"),
         release_date: "2014-02-05",
         total_cards: 6,
+        abbreviation: None,
     ),
     (
         id: ("tk-xy-n"),
@@ -1525,6 +1659,7 @@
         series: ("tk"),
         release_date: "2014-03-12",
         total_cards: 30,
+        abbreviation: Some("TK6N"),
     ),
     (
         id: ("tk-xy-sy"),
@@ -1537,6 +1672,7 @@
         series: ("tk"),
         release_date: "2014-03-12",
         total_cards: 30,
+        abbreviation: Some("TK6S"),
     ),
     (
         id: ("XY2"),
@@ -1546,6 +1682,7 @@
         series: ("XY"),
         release_date: "2014-03-15",
         total_cards: 80,
+        abbreviation: None,
     ),
     (
         id: ("xy2"),
@@ -1561,6 +1698,7 @@
         series: ("xy"),
         release_date: "2014-05-07",
         total_cards: 110,
+        abbreviation: Some("FLF"),
     ),
     (
         id: ("2014xy"),
@@ -1572,6 +1710,7 @@
         series: ("mc"),
         release_date: "2014-05-23",
         total_cards: 12,
+        abbreviation: Some("MCD14"),
     ),
     (
         id: ("xy3"),
@@ -1587,6 +1726,7 @@
         series: ("xy"),
         release_date: "2014-08-13",
         total_cards: 114,
+        abbreviation: Some("FFI"),
     ),
     (
         id: ("XY3"),
@@ -1596,6 +1736,7 @@
         series: ("XY"),
         release_date: "2014-09-13",
         total_cards: 96,
+        abbreviation: None,
     ),
     (
         id: ("XY4"),
@@ -1605,6 +1746,7 @@
         series: ("XY"),
         release_date: "2014-09-13",
         total_cards: 88,
+        abbreviation: None,
     ),
     (
         id: ("tk-xy-b"),
@@ -1617,6 +1759,7 @@
         series: ("tk"),
         release_date: "2014-11-01",
         total_cards: 30,
+        abbreviation: Some("TK7A"),
     ),
     (
         id: ("tk-xy-w"),
@@ -1629,6 +1772,7 @@
         series: ("tk"),
         release_date: "2014-11-01",
         total_cards: 30,
+        abbreviation: Some("TK7B"),
     ),
     (
         id: ("xy4"),
@@ -1644,6 +1788,7 @@
         series: ("xy"),
         release_date: "2014-11-05",
         total_cards: 124,
+        abbreviation: Some("PHF"),
     ),
     (
         id: ("XY5a"),
@@ -1653,6 +1798,7 @@
         series: ("XY"),
         release_date: "2014-12-13",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("CP1"),
@@ -1662,6 +1808,7 @@
         series: ("XY"),
         release_date: "2015-01-30",
         total_cards: 34,
+        abbreviation: None,
     ),
     (
         id: ("xy5"),
@@ -1677,6 +1824,7 @@
         series: ("xy"),
         release_date: "2015-02-04",
         total_cards: 164,
+        abbreviation: Some("PRC"),
     ),
     (
         id: ("XY6"),
@@ -1686,6 +1834,7 @@
         series: ("XY"),
         release_date: "2015-03-14",
         total_cards: 78,
+        abbreviation: None,
     ),
     (
         id: ("dc1"),
@@ -1697,6 +1846,7 @@
         series: ("xy"),
         release_date: "2015-03-25",
         total_cards: 34,
+        abbreviation: Some("DCR"),
     ),
     (
         id: ("tk-xy-latia"),
@@ -1709,6 +1859,7 @@
         series: ("tk"),
         release_date: "2015-04-29",
         total_cards: 30,
+        abbreviation: Some("TK8A"),
     ),
     (
         id: ("tk-xy-latio"),
@@ -1721,6 +1872,7 @@
         series: ("tk"),
         release_date: "2015-04-29",
         total_cards: 30,
+        abbreviation: Some("TK8O"),
     ),
     (
         id: ("xy6"),
@@ -1736,6 +1888,7 @@
         series: ("xy"),
         release_date: "2015-05-06",
         total_cards: 112,
+        abbreviation: Some("ROS"),
     ),
     (
         id: ("XY7"),
@@ -1745,6 +1898,7 @@
         series: ("XY"),
         release_date: "2015-06-20",
         total_cards: 81,
+        abbreviation: None,
     ),
     (
         id: ("CP2"),
@@ -1754,6 +1908,7 @@
         series: ("XY"),
         release_date: "2015-07-18",
         total_cards: 27,
+        abbreviation: None,
     ),
     (
         id: ("xy7"),
@@ -1769,6 +1924,7 @@
         series: ("xy"),
         release_date: "2015-08-12",
         total_cards: 101,
+        abbreviation: Some("AOR"),
     ),
     (
         id: ("XY8a"),
@@ -1778,6 +1934,7 @@
         series: ("XYb"),
         release_date: "2015-09-26",
         total_cards: 59,
+        abbreviation: None,
     ),
     (
         id: ("XY8b"),
@@ -1787,6 +1944,7 @@
         series: ("XYb"),
         release_date: "2015-09-26",
         total_cards: 59,
+        abbreviation: None,
     ),
     (
         id: ("xy8"),
@@ -1802,6 +1960,7 @@
         series: ("xy"),
         release_date: "2015-11-04",
         total_cards: 165,
+        abbreviation: Some("BKT"),
     ),
     (
         id: ("2015xy"),
@@ -1813,6 +1972,7 @@
         series: ("mc"),
         release_date: "2015-11-27",
         total_cards: 12,
+        abbreviation: Some("MCD15"),
     ),
     (
         id: ("XY9"),
@@ -1822,6 +1982,7 @@
         series: ("XYb"),
         release_date: "2015-12-11",
         total_cards: 80,
+        abbreviation: None,
     ),
     (
         id: ("CP3"),
@@ -1831,6 +1992,7 @@
         series: ("XYb"),
         release_date: "2016-01-29",
         total_cards: 32,
+        abbreviation: None,
     ),
     (
         id: ("xy9"),
@@ -1845,6 +2007,7 @@
         series: ("xy"),
         release_date: "2016-02-03",
         total_cards: 126,
+        abbreviation: Some("BKP"),
     ),
     (
         id: ("g1"),
@@ -1859,6 +2022,7 @@
         series: ("xy"),
         release_date: "2016-02-22",
         total_cards: 83,
+        abbreviation: Some("GEN"),
     ),
     (
         id: ("XY10"),
@@ -1868,6 +2032,7 @@
         series: ("XYb"),
         release_date: "2016-03-18",
         total_cards: 78,
+        abbreviation: None,
     ),
     (
         id: ("CP4"),
@@ -1877,6 +2042,7 @@
         series: ("XYb"),
         release_date: "2016-04-16",
         total_cards: 131,
+        abbreviation: None,
     ),
     (
         id: ("tk-xy-p"),
@@ -1889,6 +2055,7 @@
         series: ("tk"),
         release_date: "2016-04-27",
         total_cards: 30,
+        abbreviation: Some("TK9P"),
     ),
     (
         id: ("tk-xy-su"),
@@ -1901,6 +2068,7 @@
         series: ("tk"),
         release_date: "2016-04-27",
         total_cards: 30,
+        abbreviation: Some("TK9S"),
     ),
     (
         id: ("xy10"),
@@ -1915,6 +2083,7 @@
         series: ("xy"),
         release_date: "2016-05-02",
         total_cards: 129,
+        abbreviation: Some("FCO"),
     ),
     (
         id: ("XY11a"),
@@ -1924,6 +2093,7 @@
         series: ("XYb"),
         release_date: "2016-06-17",
         total_cards: 54,
+        abbreviation: None,
     ),
     (
         id: ("CP5"),
@@ -1933,6 +2103,7 @@
         series: ("XYb"),
         release_date: "2016-07-16",
         total_cards: 36,
+        abbreviation: None,
     ),
     (
         id: ("xy11"),
@@ -1947,6 +2118,7 @@
         series: ("xy"),
         release_date: "2016-08-03",
         total_cards: 116,
+        abbreviation: Some("STS"),
     ),
     (
         id: ("2016xy"),
@@ -1958,6 +2130,7 @@
         series: ("mc"),
         release_date: "2016-08-20",
         total_cards: 12,
+        abbreviation: Some("MCD16"),
     ),
     (
         id: ("CP6"),
@@ -1967,6 +2140,7 @@
         series: ("XYb"),
         release_date: "2016-09-16",
         total_cards: 87,
+        abbreviation: None,
     ),
     (
         id: ("xy12"),
@@ -1981,6 +2155,7 @@
         series: ("xy"),
         release_date: "2016-11-02",
         total_cards: 113,
+        abbreviation: Some("EVO"),
     ),
     (
         id: ("SM0"),
@@ -1990,6 +2165,7 @@
         series: ("SM"),
         release_date: "2016-11-18",
         total_cards: 4,
+        abbreviation: None,
     ),
     (
         id: ("SM1M"),
@@ -2000,6 +2176,7 @@
         series: ("SM"),
         release_date: "2016-12-09",
         total_cards: 60,
+        abbreviation: None,
     ),
     (
         id: ("SM1S"),
@@ -2010,6 +2187,7 @@
         series: ("SM"),
         release_date: "2016-12-09",
         total_cards: 60,
+        abbreviation: None,
     ),
     (
         id: ("SM1+"),
@@ -2020,6 +2198,7 @@
         series: ("SM"),
         release_date: "2017-01-27",
         total_cards: 51,
+        abbreviation: None,
     ),
     (
         id: ("sm1"),
@@ -2034,6 +2213,7 @@
         series: ("sm"),
         release_date: "2017-02-03",
         total_cards: 163,
+        abbreviation: Some("SUM"),
     ),
     (
         id: ("smp"),
@@ -2047,6 +2227,7 @@
         series: ("sm"),
         release_date: "2017-02-03",
         total_cards: 236,
+        abbreviation: Some("SMP"),
     ),
     (
         id: ("SM2L"),
@@ -2057,6 +2238,7 @@
         series: ("SM"),
         release_date: "2017-03-17",
         total_cards: 50,
+        abbreviation: None,
     ),
     (
         id: ("s1a"),
@@ -2067,6 +2249,7 @@
         series: ("SM"),
         release_date: "2017-04-21",
         total_cards: 49,
+        abbreviation: None,
     ),
     (
         id: ("tk-sm-l"),
@@ -2079,6 +2262,7 @@
         series: ("tk"),
         release_date: "2017-04-21",
         total_cards: 30,
+        abbreviation: Some("TK10L"),
     ),
     (
         id: ("tk-sm-r"),
@@ -2091,6 +2275,7 @@
         series: ("tk"),
         release_date: "2017-04-21",
         total_cards: 30,
+        abbreviation: Some("TK10A"),
     ),
     (
         id: ("sm2"),
@@ -2105,6 +2290,7 @@
         series: ("sm"),
         release_date: "2017-05-05",
         total_cards: 169,
+        abbreviation: Some("GRI"),
     ),
     (
         id: ("SM3H"),
@@ -2115,6 +2301,7 @@
         series: ("SM"),
         release_date: "2017-06-16",
         total_cards: 51,
+        abbreviation: None,
     ),
     (
         id: ("SM3N"),
@@ -2125,6 +2312,7 @@
         series: ("SM"),
         release_date: "2017-06-16",
         total_cards: 51,
+        abbreviation: None,
     ),
     (
         id: ("SM3+"),
@@ -2135,6 +2323,7 @@
         series: ("SM"),
         release_date: "2017-07-15",
         total_cards: 72,
+        abbreviation: None,
     ),
     (
         id: ("2017sm"),
@@ -2146,6 +2335,7 @@
         series: ("mc"),
         release_date: "2017-08-03",
         total_cards: 12,
+        abbreviation: Some("MCD17"),
     ),
     (
         id: ("sm3"),
@@ -2160,6 +2350,7 @@
         series: ("sm"),
         release_date: "2017-08-04",
         total_cards: 169,
+        abbreviation: Some("BUS"),
     ),
     (
         id: ("SM4A"),
@@ -2170,6 +2361,7 @@
         series: ("SM"),
         release_date: "2017-09-15",
         total_cards: 50,
+        abbreviation: None,
     ),
     (
         id: ("SM4S"),
@@ -2180,6 +2372,7 @@
         series: ("SM"),
         release_date: "2017-09-15",
         total_cards: 50,
+        abbreviation: None,
     ),
     (
         id: ("sm3.5"),
@@ -2194,6 +2387,7 @@
         series: ("sm"),
         release_date: "2017-10-06",
         total_cards: 78,
+        abbreviation: Some("SLG"),
     ),
     (
         id: ("SM4+"),
@@ -2204,6 +2398,7 @@
         series: ("SM"),
         release_date: "2017-10-20",
         total_cards: 114,
+        abbreviation: None,
     ),
     (
         id: ("sm4"),
@@ -2218,6 +2413,7 @@
         series: ("sm"),
         release_date: "2017-11-03",
         total_cards: 124,
+        abbreviation: Some("CIN"),
     ),
     (
         id: ("SM5M"),
@@ -2228,6 +2424,7 @@
         series: ("SM"),
         release_date: "2017-12-08",
         total_cards: 66,
+        abbreviation: None,
     ),
     (
         id: ("SM5S"),
@@ -2238,6 +2435,7 @@
         series: ("SM"),
         release_date: "2017-12-08",
         total_cards: 66,
+        abbreviation: None,
     ),
     (
         id: ("SM5+"),
@@ -2248,6 +2446,7 @@
         series: ("SM"),
         release_date: "2018-01-19",
         total_cards: 50,
+        abbreviation: None,
     ),
     (
         id: ("sm5"),
@@ -2262,6 +2461,7 @@
         series: ("sm"),
         release_date: "2018-02-02",
         total_cards: 173,
+        abbreviation: Some("UPR"),
     ),
     (
         id: ("SM6"),
@@ -2272,6 +2472,7 @@
         series: ("SM"),
         release_date: "2018-03-02",
         total_cards: 94,
+        abbreviation: None,
     ),
     (
         id: ("SM6a"),
@@ -2282,6 +2483,7 @@
         series: ("SM"),
         release_date: "2018-04-06",
         total_cards: 53,
+        abbreviation: None,
     ),
     (
         id: ("sm6"),
@@ -2296,6 +2498,7 @@
         series: ("sm"),
         release_date: "2018-05-04",
         total_cards: 146,
+        abbreviation: Some("FLI"),
     ),
     (
         id: ("SM6b"),
@@ -2306,6 +2509,7 @@
         series: ("SM"),
         release_date: "2018-05-30",
         total_cards: 66,
+        abbreviation: None,
     ),
     (
         id: ("SM7"),
@@ -2316,6 +2520,7 @@
         series: ("SM"),
         release_date: "2018-06-01",
         total_cards: 96,
+        abbreviation: None,
     ),
     (
         id: ("2018sm-fr"),
@@ -2325,6 +2530,7 @@
         series: ("mc"),
         release_date: "2018-06-13",
         total_cards: 40,
+        abbreviation: None,
     ),
     (
         id: ("SM7a"),
@@ -2335,6 +2541,7 @@
         series: ("SM"),
         release_date: "2018-08-03",
         total_cards: 50,
+        abbreviation: None,
     ),
     (
         id: ("SM7b"),
@@ -2345,6 +2552,7 @@
         series: ("SM"),
         release_date: "2018-08-03",
         total_cards: 50,
+        abbreviation: None,
     ),
     (
         id: ("sm7"),
@@ -2359,6 +2567,7 @@
         series: ("sm"),
         release_date: "2018-08-03",
         total_cards: 183,
+        abbreviation: Some("CES"),
     ),
     (
         id: ("SM8"),
@@ -2369,6 +2578,7 @@
         series: ("SM"),
         release_date: "2018-09-07",
         total_cards: 95,
+        abbreviation: None,
     ),
     (
         id: ("sm7.5"),
@@ -2383,6 +2593,7 @@
         series: ("sm"),
         release_date: "2018-09-07",
         total_cards: 78,
+        abbreviation: Some("DRM"),
     ),
     (
         id: ("SM8a"),
@@ -2393,6 +2604,7 @@
         series: ("SM"),
         release_date: "2018-10-05",
         total_cards: 52,
+        abbreviation: None,
     ),
     (
         id: ("SM8b"),
@@ -2403,6 +2615,7 @@
         series: ("SM"),
         release_date: "2018-10-05",
         total_cards: 150,
+        abbreviation: None,
     ),
     (
         id: ("2018sm"),
@@ -2413,6 +2626,7 @@
         series: ("mc"),
         release_date: "2018-10-19",
         total_cards: 12,
+        abbreviation: Some("MCD18"),
     ),
     (
         id: ("sm8"),
@@ -2427,6 +2641,7 @@
         series: ("sm"),
         release_date: "2018-11-02",
         total_cards: 236,
+        abbreviation: Some("LOT"),
     ),
     (
         id: ("SM9"),
@@ -2437,6 +2652,7 @@
         series: ("SM"),
         release_date: "2018-12-07",
         total_cards: 95,
+        abbreviation: None,
     ),
     (
         id: ("SM9a"),
@@ -2447,6 +2663,7 @@
         series: ("SM"),
         release_date: "2019-01-11",
         total_cards: 55,
+        abbreviation: None,
     ),
     (
         id: ("sm9"),
@@ -2461,6 +2678,7 @@
         series: ("sm"),
         release_date: "2019-01-31",
         total_cards: 196,
+        abbreviation: Some("TEU"),
     ),
     (
         id: ("SM9b"),
@@ -2471,6 +2689,7 @@
         series: ("SM"),
         release_date: "2019-02-01",
         total_cards: 54,
+        abbreviation: None,
     ),
     (
         id: ("SM10"),
@@ -2481,6 +2700,7 @@
         series: ("SM"),
         release_date: "2019-03-01",
         total_cards: 95,
+        abbreviation: None,
     ),
     (
         id: ("det1"),
@@ -2495,6 +2715,7 @@
         series: ("sm"),
         release_date: "2019-03-29",
         total_cards: 18,
+        abbreviation: Some("DET"),
     ),
     (
         id: ("sn10a"),
@@ -2505,6 +2726,7 @@
         series: ("SM"),
         release_date: "2019-04-05",
         total_cards: 54,
+        abbreviation: None,
     ),
     (
         id: ("SM10b"),
@@ -2515,6 +2737,7 @@
         series: ("SM"),
         release_date: "2019-04-26",
         total_cards: 56,
+        abbreviation: None,
     ),
     (
         id: ("SMP2"),
@@ -2525,6 +2748,7 @@
         series: ("SM"),
         release_date: "2019-04-26",
         total_cards: 24,
+        abbreviation: None,
     ),
     (
         id: ("sm10"),
@@ -2539,6 +2763,7 @@
         series: ("sm"),
         release_date: "2019-05-03",
         total_cards: 234,
+        abbreviation: Some("UNB"),
     ),
     (
         id: ("sn11"),
@@ -2549,6 +2774,7 @@
         series: ("SM"),
         release_date: "2019-05-31",
         total_cards: 94,
+        abbreviation: None,
     ),
     (
         id: ("SM11a"),
@@ -2559,6 +2785,7 @@
         series: ("SM"),
         release_date: "2019-07-05",
         total_cards: 64,
+        abbreviation: None,
     ),
     (
         id: ("SM11b"),
@@ -2569,6 +2796,7 @@
         series: ("SM"),
         release_date: "2019-08-02",
         total_cards: 49,
+        abbreviation: None,
     ),
     (
         id: ("sm11"),
@@ -2583,6 +2811,7 @@
         series: ("sm"),
         release_date: "2019-08-02",
         total_cards: 258,
+        abbreviation: Some("UNM"),
     ),
     (
         id: ("sm115"),
@@ -2597,6 +2826,7 @@
         series: ("sm"),
         release_date: "2019-08-23",
         total_cards: 68,
+        abbreviation: Some("HIF"),
     ),
     (
         id: ("sma"),
@@ -2610,6 +2840,7 @@
         series: ("sm"),
         release_date: "2019-08-23",
         total_cards: 94,
+        abbreviation: None,
     ),
     (
         id: ("SM12"),
@@ -2620,6 +2851,7 @@
         series: ("SM"),
         release_date: "2019-09-06",
         total_cards: 95,
+        abbreviation: None,
     ),
     (
         id: ("SM12a"),
@@ -2630,6 +2862,7 @@
         series: ("SM"),
         release_date: "2019-10-04",
         total_cards: 173,
+        abbreviation: None,
     ),
     (
         id: ("2019sm"),
@@ -2640,6 +2873,7 @@
         series: ("mc"),
         release_date: "2019-10-15",
         total_cards: 12,
+        abbreviation: Some("MCD19"),
     ),
     (
         id: ("2019sm-fr"),
@@ -2649,6 +2883,7 @@
         series: ("mc"),
         release_date: "2019-10-30",
         total_cards: 40,
+        abbreviation: None,
     ),
     (
         id: ("sm12"),
@@ -2663,6 +2898,7 @@
         series: ("sm"),
         release_date: "2019-11-01",
         total_cards: 271,
+        abbreviation: Some("CEC"),
     ),
     (
         id: ("swshp"),
@@ -2677,6 +2913,7 @@
         series: ("swsh"),
         release_date: "2019-11-15",
         total_cards: 285,
+        abbreviation: None,
     ),
     (
         id: ("S1H"),
@@ -2687,6 +2924,7 @@
         series: ("S"),
         release_date: "2019-12-06",
         total_cards: 60,
+        abbreviation: None,
     ),
     (
         id: ("S1W"),
@@ -2697,6 +2935,7 @@
         series: ("S"),
         release_date: "2019-12-06",
         total_cards: 60,
+        abbreviation: None,
     ),
     (
         id: ("S1a"),
@@ -2707,6 +2946,7 @@
         series: ("S"),
         release_date: "2020-02-07",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("swsh1"),
@@ -2721,6 +2961,7 @@
         series: ("swsh"),
         release_date: "2020-02-07",
         total_cards: 216,
+        abbreviation: Some("SSH"),
     ),
     (
         id: ("S2"),
@@ -2731,6 +2972,7 @@
         series: ("S"),
         release_date: "2020-03-06",
         total_cards: 96,
+        abbreviation: None,
     ),
     (
         id: ("S2a"),
@@ -2741,6 +2983,7 @@
         series: ("S"),
         release_date: "2020-04-24",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("swsh2"),
@@ -2755,6 +2998,7 @@
         series: ("swsh"),
         release_date: "2020-05-01",
         total_cards: 209,
+        abbreviation: Some("RCL"),
     ),
     (
         id: ("S3"),
@@ -2765,6 +3009,7 @@
         series: ("S"),
         release_date: "2020-06-05",
         total_cards: 100,
+        abbreviation: None,
     ),
     (
         id: ("SC1D"),
@@ -2776,6 +3021,7 @@
         series: ("S"),
         release_date: "2020-06-19",
         total_cards: 164,
+        abbreviation: None,
     ),
     (
         id: ("SC1a"),
@@ -2787,6 +3033,7 @@
         series: ("S"),
         release_date: "2020-06-19",
         total_cards: 172,
+        abbreviation: None,
     ),
     (
         id: ("SC1b"),
@@ -2798,6 +3045,7 @@
         series: ("S"),
         release_date: "2020-06-19",
         total_cards: 171,
+        abbreviation: None,
     ),
     (
         id: ("S3a"),
@@ -2808,6 +3056,7 @@
         series: ("S"),
         release_date: "2020-07-10",
         total_cards: 76,
+        abbreviation: None,
     ),
     (
         id: ("swsh3"),
@@ -2822,6 +3071,7 @@
         series: ("swsh"),
         release_date: "2020-08-14",
         total_cards: 201,
+        abbreviation: Some("DAA"),
     ),
     (
         id: ("SC2D"),
@@ -2831,6 +3081,7 @@
         series: ("S"),
         release_date: "2020-08-21",
         total_cards: 157,
+        abbreviation: None,
     ),
     (
         id: ("SC2a"),
@@ -2840,6 +3091,7 @@
         series: ("S"),
         release_date: "2020-08-21",
         total_cards: 145,
+        abbreviation: None,
     ),
     (
         id: ("SC2b"),
@@ -2849,6 +3101,7 @@
         series: ("S"),
         release_date: "2020-08-21",
         total_cards: 144,
+        abbreviation: None,
     ),
     (
         id: ("fut2020"),
@@ -2858,6 +3111,7 @@
         series: ("swsh"),
         release_date: "2020-09-11",
         total_cards: 5,
+        abbreviation: Some("FUT20"),
     ),
     (
         id: ("swsh3.5"),
@@ -2872,6 +3126,7 @@
         series: ("swsh"),
         release_date: "2020-09-25",
         total_cards: 80,
+        abbreviation: Some("CPA"),
     ),
     (
         id: ("S4"),
@@ -2883,6 +3138,7 @@
         series: ("S"),
         release_date: "2020-10-09",
         total_cards: 100,
+        abbreviation: None,
     ),
     (
         id: ("swsh4"),
@@ -2897,6 +3153,7 @@
         series: ("swsh"),
         release_date: "2020-11-13",
         total_cards: 203,
+        abbreviation: Some("VIV"),
     ),
     (
         id: ("S4a"),
@@ -2908,6 +3165,7 @@
         series: ("S"),
         release_date: "2020-11-27",
         total_cards: 190,
+        abbreviation: None,
     ),
     (
         id: ("SCA"),
@@ -2919,6 +3177,7 @@
         series: ("S"),
         release_date: "2020-11-27",
         total_cards: 135,
+        abbreviation: None,
     ),
     (
         id: ("S5I"),
@@ -2932,6 +3191,7 @@
         series: ("S"),
         release_date: "2021-01-29",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("S5R"),
@@ -2945,6 +3205,7 @@
         series: ("S"),
         release_date: "2021-01-29",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("SCB"),
@@ -2956,6 +3217,7 @@
         series: ("S"),
         release_date: "2021-01-29",
         total_cards: 156,
+        abbreviation: None,
     ),
     (
         id: ("2021swsh"),
@@ -2968,6 +3230,7 @@
         series: ("mc"),
         release_date: "2021-02-09",
         total_cards: 25,
+        abbreviation: Some("MCD21"),
     ),
     (
         id: ("swsh4.5"),
@@ -2982,6 +3245,7 @@
         series: ("swsh"),
         release_date: "2021-02-19",
         total_cards: 195,
+        abbreviation: Some("SHF"),
     ),
     (
         id: ("swsh5"),
@@ -2996,6 +3260,7 @@
         series: ("swsh"),
         release_date: "2021-03-19",
         total_cards: 183,
+        abbreviation: Some("BST"),
     ),
     (
         id: ("SC3a"),
@@ -3006,6 +3271,7 @@
         series: ("S"),
         release_date: "2021-03-21",
         total_cards: 159,
+        abbreviation: None,
     ),
     (
         id: ("SC3b"),
@@ -3016,6 +3282,7 @@
         series: ("S"),
         release_date: "2021-03-21",
         total_cards: 158,
+        abbreviation: None,
     ),
     (
         id: ("S5a"),
@@ -3029,6 +3296,7 @@
         series: ("S"),
         release_date: "2021-04-02",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("S6H"),
@@ -3042,6 +3310,7 @@
         series: ("S"),
         release_date: "2021-05-07",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("S6K"),
@@ -3055,6 +3324,7 @@
         series: ("S"),
         release_date: "2021-05-07",
         total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("S6a"),
@@ -3068,6 +3338,7 @@
         series: ("S"),
         release_date: "2021-06-11",
         total_cards: 69,
+        abbreviation: None,
     ),
     (
         id: ("SCC"),
@@ -3079,6 +3350,7 @@
         series: ("S"),
         release_date: "2021-06-11",
         total_cards: 172,
+        abbreviation: None,
     ),
     (
         id: ("swsh6"),
@@ -3093,6 +3365,7 @@
         series: ("swsh"),
         release_date: "2021-06-18",
         total_cards: 233,
+        abbreviation: Some("CRE"),
     ),
     (
         id: ("SH"),
@@ -3103,6 +3376,7 @@
         series: ("S"),
         release_date: "2021-06-28",
         total_cards: 59,
+        abbreviation: None,
     ),
     (
         id: ("S7D"),
@@ -3116,6 +3390,7 @@
         series: ("S"),
         release_date: "2021-07-23",
         total_cards: 67,
+        abbreviation: None,
     ),
     (
         id: ("S7R"),
@@ -3129,6 +3404,7 @@
         series: ("S"),
         release_date: "2021-07-23",
         total_cards: 67,
+        abbreviation: None,
     ),
     (
         id: ("SP5"),
@@ -3138,6 +3414,7 @@
         series: ("S"),
         release_date: "2021-08-27",
         total_cards: 4,
+        abbreviation: None,
     ),
     (
         id: ("swsh7"),
@@ -3152,6 +3429,7 @@
         series: ("swsh"),
         release_date: "2021-08-27",
         total_cards: 237,
+        abbreviation: Some("EVS"),
     ),
     (
         id: ("S8"),
@@ -3165,6 +3443,7 @@
         series: ("S"),
         release_date: "2021-10-01",
         total_cards: 100,
+        abbreviation: None,
     ),
     (
         id: ("SCD"),
@@ -3176,6 +3455,7 @@
         series: ("S"),
         release_date: "2021-10-01",
         total_cards: 159,
+        abbreviation: None,
     ),
     (
         id: ("cel25"),
@@ -3190,6 +3470,7 @@
         series: ("swsh"),
         release_date: "2021-10-08",
         total_cards: 25,
+        abbreviation: Some("CEL"),
     ),
     (
         id: ("S8a"),
@@ -3203,6 +3484,7 @@
         series: ("S"),
         release_date: "2021-10-20",
         total_cards: 33,
+        abbreviation: None,
     ),
     (
         id: ("swsh8"),
@@ -3217,6 +3499,7 @@
         series: ("swsh"),
         release_date: "2021-11-12",
         total_cards: 284,
+        abbreviation: Some("FST"),
     ),
     (
         id: ("S8b"),
@@ -3230,6 +3513,7 @@
         series: ("S"),
         release_date: "2021-12-17",
         total_cards: 184,
+        abbreviation: None,
     ),
     (
         id: ("S9"),
@@ -3243,6 +3527,7 @@
         series: ("S"),
         release_date: "2022-01-28",
         total_cards: 100,
+        abbreviation: None,
     ),
     (
         id: ("SJ"),
@@ -3252,6 +3537,7 @@
         series: ("S"),
         release_date: "2022-01-28",
         total_cards: 30,
+        abbreviation: None,
     ),
     (
         id: ("SK"),
@@ -3261,6 +3547,7 @@
         series: ("S"),
         release_date: "2022-01-28",
         total_cards: 30,
+        abbreviation: None,
     ),
     (
         id: ("SI"),
@@ -3270,6 +3557,7 @@
         series: ("S"),
         release_date: "2022-02-18",
         total_cards: 422,
+        abbreviation: None,
     ),
     (
         id: ("swsh9"),
@@ -3284,6 +3572,7 @@
         series: ("swsh"),
         release_date: "2022-02-25",
         total_cards: 216,
+        abbreviation: Some("BRS"),
     ),
     (
         id: ("S9a"),
@@ -3297,6 +3586,7 @@
         series: ("S"),
         release_date: "2022-03-11",
         total_cards: 67,
+        abbreviation: None,
     ),
     (
         id: ("SLD"),
@@ -3306,6 +3596,7 @@
         series: ("S"),
         release_date: "2022-03-11",
         total_cards: 21,
+        abbreviation: None,
     ),
     (
         id: ("SLL"),
@@ -3315,6 +3606,7 @@
         series: ("S"),
         release_date: "2022-03-11",
         total_cards: 22,
+        abbreviation: None,
     ),
     (
         id: ("S10D"),
@@ -3328,6 +3620,7 @@
         series: ("S"),
         release_date: "2022-04-22",
         total_cards: 67,
+        abbreviation: None,
     ),
     (
         id: ("S10P"),
@@ -3341,6 +3634,7 @@
         series: ("S"),
         release_date: "2022-04-22",
         total_cards: 67,
+        abbreviation: None,
     ),
     (
         id: ("SCE"),
@@ -3351,6 +3645,7 @@
         series: ("S"),
         release_date: "2022-04-22",
         total_cards: 173,
+        abbreviation: None,
     ),
     (
         id: ("S10a"),
@@ -3364,6 +3659,7 @@
         series: ("S"),
         release_date: "2022-05-27",
         total_cards: 71,
+        abbreviation: None,
     ),
     (
         id: ("swsh10"),
@@ -3378,6 +3674,7 @@
         series: ("swsh"),
         release_date: "2022-05-27",
         total_cards: 246,
+        abbreviation: Some("ASR"),
     ),
     (
         id: ("S10b"),
@@ -3391,6 +3688,7 @@
         series: ("S"),
         release_date: "2022-06-17",
         total_cards: 79,
+        abbreviation: None,
     ),
     (
         id: ("swsh10.5"),
@@ -3405,6 +3703,7 @@
         series: ("swsh"),
         release_date: "2022-07-01",
         total_cards: 88,
+        abbreviation: Some("PGO"),
     ),
     (
         id: ("S-P"),
@@ -3415,6 +3714,7 @@
         series: ("S"),
         release_date: "2022-07-14",
         total_cards: 0,
+        abbreviation: None,
     ),
     (
         id: ("S11"),
@@ -3428,6 +3728,7 @@
         series: ("S"),
         release_date: "2022-07-29",
         total_cards: 100,
+        abbreviation: None,
     ),
     (
         id: ("SP6"),
@@ -3437,6 +3738,7 @@
         series: ("S"),
         release_date: "2022-08-26",
         total_cards: 6,
+        abbreviation: None,
     ),
     (
         id: ("SPD"),
@@ -3446,6 +3748,7 @@
         series: ("S"),
         release_date: "2022-08-26",
         total_cards: 20,
+        abbreviation: None,
     ),
     (
         id: ("SPZ"),
@@ -3455,6 +3758,7 @@
         series: ("S"),
         release_date: "2022-08-26",
         total_cards: 20,
+        abbreviation: None,
     ),
     (
         id: ("swsh11"),
@@ -3469,6 +3773,7 @@
         series: ("swsh"),
         release_date: "2022-09-09",
         total_cards: 247,
+        abbreviation: Some("LOR"),
     ),
     (
         id: ("S11a"),
@@ -3482,6 +3787,7 @@
         series: ("S"),
         release_date: "2022-09-16",
         total_cards: 68,
+        abbreviation: None,
     ),
     (
         id: ("SN"),
@@ -3491,6 +3797,7 @@
         series: ("S"),
         release_date: "2022-10-02",
         total_cards: 25,
+        abbreviation: None,
     ),
     (
         id: ("S12"),
@@ -3504,6 +3811,7 @@
         series: ("S"),
         release_date: "2022-11-04",
         total_cards: 114,
+        abbreviation: None,
     ),
     (
         id: ("SDL"),
@@ -3513,6 +3821,7 @@
         series: ("S"),
         release_date: "2022-11-04",
         total_cards: 21,
+        abbreviation: None,
     ),
     (
         id: ("SDM"),
@@ -3522,6 +3831,7 @@
         series: ("S"),
         release_date: "2022-11-04",
         total_cards: 22,
+        abbreviation: None,
     ),
     (
         id: ("SDP"),
@@ -3531,6 +3841,7 @@
         series: ("S"),
         release_date: "2022-11-04",
         total_cards: 22,
+        abbreviation: None,
     ),
     (
         id: ("swsh12"),
@@ -3545,6 +3856,7 @@
         series: ("swsh"),
         release_date: "2022-11-11",
         total_cards: 245,
+        abbreviation: Some("SIT"),
     ),
     (
         id: ("SCF"),
@@ -3555,6 +3867,7 @@
         series: ("S"),
         release_date: "2022-11-25",
         total_cards: 176,
+        abbreviation: None,
     ),
     (
         id: ("S12a"),
@@ -3568,6 +3881,7 @@
         series: ("S"),
         release_date: "2022-12-02",
         total_cards: 250,
+        abbreviation: None,
     ),
     (
         id: ("swsh12.5"),
@@ -3582,6 +3896,7 @@
         series: ("swsh"),
         release_date: "2023-01-20",
         total_cards: 230,
+        abbreviation: Some("CRZ"),
     ),
     (
         id: ("SV-P"),
@@ -3593,6 +3908,7 @@
         series: ("SV"),
         release_date: "2023-01-26",
         total_cards: 94,
+        abbreviation: None,
     ),
     (
         id: ("SV1S"),
@@ -3606,6 +3922,7 @@
         series: ("SV"),
         release_date: "2023-02-03",
         total_cards: 78,
+        abbreviation: None,
     ),
     (
         id: ("SV1V"),
@@ -3619,6 +3936,7 @@
         series: ("SV"),
         release_date: "2023-02-03",
         total_cards: 78,
+        abbreviation: None,
     ),
     (
         id: ("SVB"),
@@ -3628,6 +3946,7 @@
         series: ("SV"),
         release_date: "2023-03-03",
         total_cards: 36,
+        abbreviation: None,
     ),
     (
         id: ("SV1a"),
@@ -3641,6 +3960,7 @@
         series: ("SV"),
         release_date: "2023-03-24",
         total_cards: 73,
+        abbreviation: None,
     ),
     (
         id: ("sv01"),
@@ -3655,6 +3975,7 @@
         series: ("sv"),
         release_date: "2023-03-31",
         total_cards: 258,
+        abbreviation: Some("SV"),
     ),
     (
         id: ("svp"),
@@ -3669,6 +3990,7 @@
         series: ("sv"),
         release_date: "2023-03-31",
         total_cards: 192,
+        abbreviation: Some("SVP"),
     ),
     (
         id: ("SV2D"),
@@ -3682,6 +4004,7 @@
         series: ("SV"),
         release_date: "2023-04-28",
         total_cards: 71,
+        abbreviation: None,
     ),
     (
         id: ("SV2P"),
@@ -3695,6 +4018,7 @@
         series: ("SV"),
         release_date: "2023-04-28",
         total_cards: 71,
+        abbreviation: None,
     ),
     (
         id: ("SVC"),
@@ -3704,6 +4028,7 @@
         series: ("SV"),
         release_date: "2023-04-28",
         total_cards: 22,
+        abbreviation: None,
     ),
     (
         id: ("SVP1"),
@@ -3713,6 +4038,7 @@
         series: ("SV"),
         release_date: "2023-06-02",
         total_cards: 7,
+        abbreviation: None,
     ),
     (
         id: ("sv02"),
@@ -3727,6 +4053,7 @@
         series: ("sv"),
         release_date: "2023-06-09",
         total_cards: 279,
+        abbreviation: Some("PAL"),
     ),
     (
         id: ("SV2a"),
@@ -3740,6 +4067,7 @@
         series: ("SV"),
         release_date: "2023-06-30",
         total_cards: 207,
+        abbreviation: None,
     ),
     (
         id: ("SVD"),
@@ -3749,6 +4077,7 @@
         series: ("SV"),
         release_date: "2023-07-21",
         total_cards: 147,
+        abbreviation: None,
     ),
     (
         id: ("SV3"),
@@ -3761,6 +4090,7 @@
         series: ("SV"),
         release_date: "2023-08-11",
         total_cards: 138,
+        abbreviation: None,
     ),
     (
         id: ("SVAL"),
@@ -3771,6 +4101,7 @@
         series: ("SV"),
         release_date: "2023-08-11",
         total_cards: 23,
+        abbreviation: None,
     ),
     (
         id: ("SVAM"),
@@ -3781,6 +4112,7 @@
         series: ("SV"),
         release_date: "2023-08-11",
         total_cards: 25,
+        abbreviation: None,
     ),
     (
         id: ("SVAW"),
@@ -3791,6 +4123,7 @@
         series: ("SV"),
         release_date: "2023-08-11",
         total_cards: 25,
+        abbreviation: None,
     ),
     (
         id: ("SVF"),
@@ -3800,6 +4133,7 @@
         series: ("SV"),
         release_date: "2023-08-11",
         total_cards: 46,
+        abbreviation: None,
     ),
     (
         id: ("sv03"),
@@ -3814,6 +4148,7 @@
         series: ("sv"),
         release_date: "2023-08-11",
         total_cards: 230,
+        abbreviation: Some("OBF"),
     ),
     (
         id: ("sv03.5"),
@@ -3828,6 +4163,7 @@
         series: ("sv"),
         release_date: "2023-09-22",
         total_cards: 207,
+        abbreviation: Some("MEW"),
     ),
     (
         id: ("SV3a"),
@@ -3840,6 +4176,7 @@
         series: ("SV"),
         release_date: "2023-09-29",
         total_cards: 89,
+        abbreviation: None,
     ),
     (
         id: ("SVEL"),
@@ -3849,6 +4186,7 @@
         series: ("SV"),
         release_date: "2023-09-29",
         total_cards: 21,
+        abbreviation: None,
     ),
     (
         id: ("SVEM"),
@@ -3858,6 +4196,7 @@
         series: ("SV"),
         release_date: "2023-09-29",
         total_cards: 21,
+        abbreviation: None,
     ),
     (
         id: ("SV3s"),
@@ -3867,6 +4206,7 @@
         series: ("SV"),
         release_date: "2023-10-27",
         total_cards: 227,
+        abbreviation: None,
     ),
     (
         id: ("sv04"),
@@ -3881,6 +4221,7 @@
         series: ("sv"),
         release_date: "2023-11-03",
         total_cards: 266,
+        abbreviation: Some("PAR"),
     ),
     (
         id: ("SV4K"),
@@ -3893,6 +4234,7 @@
         series: ("SV"),
         release_date: "2023-11-10",
         total_cards: 66,
+        abbreviation: None,
     ),
     (
         id: ("SV4M"),
@@ -3905,6 +4247,7 @@
         series: ("SV"),
         release_date: "2023-11-10",
         total_cards: 66,
+        abbreviation: None,
     ),
     (
         id: ("SVDs"),
@@ -3915,6 +4258,7 @@
         series: ("SV"),
         release_date: "2023-11-10",
         total_cards: 171,
+        abbreviation: None,
     ),
     (
         id: ("SV4s"),
@@ -3924,6 +4268,7 @@
         series: ("SV"),
         release_date: "2023-12-15",
         total_cards: 184,
+        abbreviation: None,
     ),
     (
         id: ("SV4a"),
@@ -3937,6 +4282,7 @@
         series: ("SV"),
         release_date: "2023-12-22",
         total_cards: 314,
+        abbreviation: None,
     ),
     (
         id: ("sv04.5"),
@@ -3951,6 +4297,7 @@
         series: ("sv"),
         release_date: "2024-01-26",
         total_cards: 245,
+        abbreviation: Some("PAF"),
     ),
     (
         id: ("SV5K"),
@@ -3963,6 +4310,7 @@
         series: ("SV"),
         release_date: "2024-02-02",
         total_cards: 71,
+        abbreviation: None,
     ),
     (
         id: ("SV5M"),
@@ -3975,6 +4323,7 @@
         series: ("SV"),
         release_date: "2024-02-02",
         total_cards: 97,
+        abbreviation: None,
     ),
     (
         id: ("SVHK"),
@@ -3986,6 +4335,7 @@
         series: ("SV"),
         release_date: "2024-02-02",
         total_cards: 24,
+        abbreviation: None,
     ),
     (
         id: ("SVHM"),
@@ -3997,6 +4347,7 @@
         series: ("SV"),
         release_date: "2024-02-02",
         total_cards: 24,
+        abbreviation: None,
     ),
     (
         id: ("sv05"),
@@ -4011,6 +4362,7 @@
         series: ("sv"),
         release_date: "2024-03-22",
         total_cards: 218,
+        abbreviation: Some("TEF"),
     ),
     (
         id: ("SV5s"),
@@ -4020,6 +4372,7 @@
         series: ("SV"),
         release_date: "2024-03-29",
         total_cards: 194,
+        abbreviation: None,
     ),
     (
         id: ("SV5a"),
@@ -4032,6 +4385,7 @@
         series: ("SV"),
         release_date: "2024-04-03",
         total_cards: 66,
+        abbreviation: None,
     ),
     (
         id: ("CS1.5"),
@@ -4045,6 +4399,7 @@
         series: ("S"),
         release_date: "2024-04-26",
         total_cards: 101,
+        abbreviation: None,
     ),
     (
         id: ("CS1a"),
@@ -4058,6 +4413,7 @@
         series: ("S"),
         release_date: "2024-04-26",
         total_cards: 101,
+        abbreviation: None,
     ),
     (
         id: ("CS1b"),
@@ -4071,6 +4427,7 @@
         series: ("S"),
         release_date: "2024-04-26",
         total_cards: 101,
+        abbreviation: None,
     ),
     (
         id: ("CS2.5"),
@@ -4084,6 +4441,7 @@
         series: ("S"),
         release_date: "2024-04-26",
         total_cards: 101,
+        abbreviation: None,
     ),
     (
         id: ("CS2a"),
@@ -4097,6 +4455,7 @@
         series: ("S"),
         release_date: "2024-04-26",
         total_cards: 101,
+        abbreviation: None,
     ),
     (
         id: ("CS2b"),
@@ -4110,6 +4469,7 @@
         series: ("S"),
         release_date: "2024-04-26",
         total_cards: 101,
+        abbreviation: None,
     ),
     (
         id: ("CS3.5"),
@@ -4123,6 +4483,7 @@
         series: ("S"),
         release_date: "2024-04-26",
         total_cards: 101,
+        abbreviation: None,
     ),
     (
         id: ("sv1a"),
@@ -4136,6 +4497,7 @@
         series: ("S"),
         release_date: "2024-04-26",
         total_cards: 101,
+        abbreviation: None,
     ),
     (
         id: ("SV6"),
@@ -4148,6 +4510,7 @@
         series: ("SV"),
         release_date: "2024-05-10",
         total_cards: 130,
+        abbreviation: None,
     ),
     (
         id: ("sv06"),
@@ -4162,6 +4525,7 @@
         series: ("sv"),
         release_date: "2024-05-24",
         total_cards: 226,
+        abbreviation: Some("TWM"),
     ),
     (
         id: ("SV6s"),
@@ -4171,6 +4535,7 @@
         series: ("SV"),
         release_date: "2024-05-31",
         total_cards: 167,
+        abbreviation: None,
     ),
     (
         id: ("SV6a"),
@@ -4181,6 +4546,7 @@
         series: ("SV"),
         release_date: "2024-06-21",
         total_cards: 64,
+        abbreviation: None,
     ),
     (
         id: ("SVK"),
@@ -4190,6 +4556,7 @@
         series: ("SV"),
         release_date: "2024-07-19",
         total_cards: 44,
+        abbreviation: None,
     ),
     (
         id: ("SV7"),
@@ -4201,6 +4568,7 @@
         series: ("SV"),
         release_date: "2024-08-02",
         total_cards: 132,
+        abbreviation: None,
     ),
     (
         id: ("sv06.5"),
@@ -4215,6 +4583,7 @@
         series: ("sv"),
         release_date: "2024-08-02",
         total_cards: 99,
+        abbreviation: Some("SFA"),
     ),
     (
         id: ("SVLN"),
@@ -4224,6 +4593,7 @@
         series: ("SV"),
         release_date: "2024-08-30",
         total_cards: 22,
+        abbreviation: None,
     ),
     (
         id: ("SVLS"),
@@ -4233,6 +4603,7 @@
         series: ("SV"),
         release_date: "2024-08-30",
         total_cards: 22,
+        abbreviation: None,
     ),
     (
         id: ("sv07"),
@@ -4247,6 +4618,7 @@
         series: ("sv"),
         release_date: "2024-09-13",
         total_cards: 175,
+        abbreviation: Some("SCR"),
     ),
     (
         id: ("SV7s"),
@@ -4257,6 +4629,7 @@
         series: ("SV"),
         release_date: "2024-09-20",
         total_cards: 166,
+        abbreviation: None,
     ),
     (
         id: ("SV7a"),
@@ -4268,6 +4641,7 @@
         series: ("SV"),
         release_date: "2024-09-27",
         total_cards: 64,
+        abbreviation: None,
     ),
     (
         id: ("SV8"),
@@ -4279,6 +4653,7 @@
         series: ("SV"),
         release_date: "2024-10-25",
         total_cards: 106,
+        abbreviation: None,
     ),
     (
         id: ("A1"),
@@ -4294,6 +4669,7 @@
         series: ("tcgp"),
         release_date: "2024-10-30",
         total_cards: 286,
+        abbreviation: None,
     ),
     (
         id: ("P-A"),
@@ -4309,6 +4685,7 @@
         series: ("tcgp"),
         release_date: "2024-10-30",
         total_cards: 73,
+        abbreviation: None,
     ),
     (
         id: ("sv08"),
@@ -4323,6 +4700,7 @@
         series: ("sv"),
         release_date: "2024-11-08",
         total_cards: 252,
+        abbreviation: Some("SSP"),
     ),
     (
         id: ("SV8s"),
@@ -4333,6 +4711,7 @@
         series: ("SV"),
         release_date: "2024-11-29",
         total_cards: 244,
+        abbreviation: None,
     ),
     (
         id: ("A1a"),
@@ -4348,6 +4727,7 @@
         series: ("tcgp"),
         release_date: "2024-12-17",
         total_cards: 86,
+        abbreviation: None,
     ),
     (
         id: ("SV8a"),
@@ -4361,6 +4741,7 @@
         series: ("SV"),
         release_date: "2024-12-20",
         total_cards: 237,
+        abbreviation: None,
     ),
     (
         id: ("sv08.5"),
@@ -4375,6 +4756,7 @@
         series: ("sv"),
         release_date: "2025-01-17",
         total_cards: 180,
+        abbreviation: Some("PRE"),
     ),
     (
         id: ("A2"),
@@ -4390,6 +4772,7 @@
         series: ("tcgp"),
         release_date: "2025-01-30",
         total_cards: 207,
+        abbreviation: None,
     ),
     (
         id: ("SV9"),
@@ -4401,6 +4784,7 @@
         series: ("SV"),
         release_date: "2025-02-07",
         total_cards: 100,
+        abbreviation: None,
     ),
     (
         id: ("A2a"),
@@ -4416,6 +4800,7 @@
         series: ("tcgp"),
         release_date: "2025-02-28",
         total_cards: 96,
+        abbreviation: None,
     ),
     (
         id: ("A2b"),
@@ -4431,6 +4816,7 @@
         series: ("tcgp"),
         release_date: "2025-03-27",
         total_cards: 111,
+        abbreviation: None,
     ),
     (
         id: ("SV9a"),
@@ -4442,6 +4828,7 @@
         series: ("SV"),
         release_date: "2025-03-28",
         total_cards: 92,
+        abbreviation: None,
     ),
     (
         id: ("sv09"),
@@ -4457,6 +4844,7 @@
         series: ("sv"),
         release_date: "2025-03-28",
         total_cards: 190,
+        abbreviation: Some("JTG"),
     ),
     (
         id: ("SV9s"),
@@ -4467,6 +4855,7 @@
         series: ("SV"),
         release_date: "2025-04-18",
         total_cards: 185,
+        abbreviation: None,
     ),
     (
         id: ("A3"),
@@ -4482,6 +4871,7 @@
         series: ("tcgp"),
         release_date: "2025-04-30",
         total_cards: 239,
+        abbreviation: None,
     ),
     (
         id: ("SV10"),
@@ -4493,6 +4883,7 @@
         series: ("SV"),
         release_date: "2025-05-02",
         total_cards: 98,
+        abbreviation: None,
     ),
     (
         id: ("A3a"),
@@ -4502,6 +4893,7 @@
         series: ("tcgp"),
         release_date: "2025-05-29",
         total_cards: 103,
+        abbreviation: None,
     ),
     (
         id: ("sv10"),
@@ -4517,6 +4909,7 @@
         series: ("sv"),
         release_date: "2025-05-30",
         total_cards: 244,
+        abbreviation: Some("DRI"),
     ),
     (
         id: ("A3b"),
@@ -4526,5 +4919,6 @@
         series: ("tcgp"),
         release_date: "2025-06-26",
         total_cards: 107,
+        abbreviation: None,
     ),
 ]

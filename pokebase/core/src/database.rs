@@ -98,6 +98,7 @@ impl Database {
                 serie: Serie,
                 release_date: String,
                 card_count: CardCount,
+                abbreviation: Option<Abbreviation>,
             }
 
             #[derive(Serialize, Deserialize)]
@@ -108,6 +109,11 @@ impl Database {
             #[derive(Serialize, Deserialize)]
             struct CardCount {
                 total: usize,
+            }
+
+            #[derive(Serialize, Deserialize)]
+            struct Abbreviation {
+                official: String,
             }
 
             let localized_sets: Vec<LocalizedSet> = {
@@ -122,9 +128,17 @@ impl Database {
                     series: series::Id(localized_set.serie.id),
                     release_date: localized_set.release_date,
                     total_cards: localized_set.card_count.total,
+                    abbreviation: None,
                 });
 
                 set.name.insert(locale.clone(), localized_set.name);
+
+                match localized_set.abbreviation {
+                    Some(abbreviation) if set.abbreviation.is_none() => {
+                        set.abbreviation = Some(abbreviation.official);
+                    }
+                    _ => {}
+                }
             }
 
             // Cards
@@ -256,6 +270,40 @@ impl Database {
             sets: Map::new(sets, |set| set.id.clone()),
             cards: Map::new(cards, |card| card.id.clone()),
         })
+    }
+
+    pub fn find(&self, set: &str, number: &str) -> Option<&Card> {
+        if set.len() < 2 {
+            return None;
+        }
+
+        let mut set_matches: Vec<_> = self
+            .sets
+            .values()
+            .iter()
+            .filter_map(|candidate| {
+                let abbreviation = candidate.abbreviation.as_ref()?;
+
+                if abbreviation == set {
+                    return Some((candidate, 0));
+                }
+
+                let distance = abbreviation
+                    .chars()
+                    .zip(set.chars())
+                    .map(|(a, b)| if a == b { 0 } else { 1 })
+                    .sum::<u64>();
+
+                Some((candidate, distance + 1))
+            })
+            .collect();
+
+        set_matches.sort_by_key(|(_, distance)| *distance);
+
+        let (best_set, _) = set_matches.first()?;
+        let card_id = card::Id(format!("{}-{number}", best_set.id));
+
+        self.cards.get(&card_id)
     }
 }
 

@@ -15,8 +15,8 @@ use iced::task;
 use iced::time::{Instant, milliseconds};
 use iced::widget::{
     bottom, bottom_right, button, center, center_x, center_y, column, container, float, grid,
-    horizontal_space, image, mouse_area, opaque, pick_list, pop, right, right_center, row,
-    scrollable, stack, text, text_input, tooltip,
+    image, mouse_area, opaque, operation, pick_list, right, right_center, row, scrollable, sensor,
+    space, stack, text, text_input, tooltip,
 };
 use iced::window;
 use iced::{
@@ -180,7 +180,7 @@ impl Binders {
                     price_task: None,
                 };
 
-                Task::batch([text_input::focus("search"), search_cards])
+                Task::batch([operation::focus("search"), search_cards])
             }
             Message::Scan => {
                 self.state = State::Scanning {
@@ -448,7 +448,7 @@ impl Binders {
 
                         let new_index = if shift {
                             if index == 0 {
-                                return text_input::focus("search");
+                                return operation::focus("search");
                             }
 
                             index - 1
@@ -456,27 +456,27 @@ impl Binders {
                             index + 1
                         };
 
-                        if let Some(card) = search.matches().get(new_index) {
-                            if let Some(animation) = animations.get_mut(&card.id) {
-                                animation.zoom.go_mut(true, now);
-                            }
+                        if let Some(card) = search.matches().get(new_index)
+                            && let Some(animation) = animations.get_mut(&card.id)
+                        {
+                            animation.zoom.go_mut(true, now);
                         }
                     }
                     None => {
                         if shift {
-                            return text_input::focus("search");
+                            return operation::focus("search");
                         }
 
-                        if let Some(card) = search.matches().first() {
-                            if let Some(animation) = animations.get_mut(&card.id) {
-                                animation.zoom.go_mut(true, now);
-                            }
+                        if let Some(card) = search.matches().first()
+                            && let Some(animation) = animations.get_mut(&card.id)
+                        {
+                            animation.zoom.go_mut(true, now);
                         }
                     }
                 }
 
                 // TODO: Unfocus operation
-                text_input::focus("")
+                operation::focus("")
             }
             Message::EnterPressed => match &mut self.state {
                 State::Idle => Task::none(),
@@ -523,12 +523,12 @@ impl Binders {
                         animations, search, ..
                     } => {
                         for card in search.matches().iter().take(100) {
-                            if let Some(animation) = animations.get_mut(&card.id) {
-                                if animation.zoom.value() {
-                                    animation.zoom.go_mut(false, now);
+                            if let Some(animation) = animations.get_mut(&card.id)
+                                && animation.zoom.value()
+                            {
+                                animation.zoom.go_mut(false, now);
 
-                                    return Task::none();
-                                }
+                                return Task::none();
                             }
                         }
 
@@ -671,15 +671,14 @@ impl Binders {
                 .style(button::success)
             });
 
-            let controls = row![mode, add]
-                .push_maybe(scan)
+            let controls = row![mode, add, scan]
                 .spacing(10)
                 .height(Shrink)
                 .align_y(Center);
 
             row![
                 controls,
-                horizontal_space(),
+                space::horizontal(),
                 row![progress, binders, pages].spacing(30).align_y(Center)
             ]
             .height(30)
@@ -705,7 +704,7 @@ impl Binders {
         };
 
         let right_page = match pair.right {
-            binder::Surface::Cover => horizontal_space().into(),
+            binder::Surface::Cover => space::horizontal().into(),
             binder::Surface::Content(content) => {
                 self.page(pair.binder, content, collection, database, prices, now)
             }
@@ -751,13 +750,14 @@ impl Binders {
 
         let has_overlay = overlay.is_some();
 
-        stack![content]
-            .push_maybe(overlay.map(|overlay| {
+        stack![
+            content,
+            overlay.map(|overlay| {
                 opaque(container(overlay).width(Fill).height(Fill).style(|_theme| {
                     container::Style::default().background(Color::BLACK.scale_alpha(0.8))
                 }))
-            }))
-            .push_maybe(has_overlay.then(|| {
+            }),
+            has_overlay.then(|| {
                 container(
                     button(icon::cancel().size(24))
                         .on_press(Message::Close)
@@ -765,8 +765,9 @@ impl Binders {
                 )
                 .align_right(Fill)
                 .padding(5)
-            }))
-            .into()
+            })
+        ]
+        .into()
     }
 
     fn page<'a>(
@@ -858,9 +859,9 @@ impl Binders {
                                 now,
                                 Source::Search,
                             ))
-                            .padding(1)
+                            .padding(1),
+                            collection.cards.get(&card.id).map(owned_tag.with(10.0))
                         ]
-                        .push_maybe(collection.cards.get(&card.id).map(owned_tag.with(10.0)))
                         .into()
                     }))
                     .fluid(300)
@@ -907,21 +908,19 @@ impl Binders {
         let scanner: Element<'_, Message> =
             if let Some(card) = found.and_then(|card| database.cards.get(card)) {
                 if let Some(Image::Loaded(handle)) = self.images.get(&card.id) {
-                    center(
-                        stack![
-                            container(image(handle)).padding(1),
-                            bottom(
-                                column![
-                                    reverse_toggle(variant),
-                                    stats(card, prices.get(&card.id), database, 30.0)
-                                ]
-                                .spacing(10)
-                            )
-                            .padding(30)
-                            .style(|_theme| translucent(1.0)),
-                        ]
-                        .push_maybe(collection.cards.get(&card.id).map(owned_tag.with(20.0))),
-                    )
+                    center(stack![
+                        container(image(handle)).padding(1),
+                        bottom(
+                            column![
+                                reverse_toggle(variant),
+                                stats(card, prices.get(&card.id), database, 30.0)
+                            ]
+                            .spacing(10)
+                        )
+                        .padding(30)
+                        .style(|_theme| translucent(1.0)),
+                        collection.cards.get(&card.id).map(owned_tag.with(20.0))
+                    ])
                     .padding(10)
                     .into()
                 } else {
@@ -933,19 +932,26 @@ impl Binders {
             } else if let Some(capture) = capture {
                 center(image(capture)).into()
             } else {
-                horizontal_space().into()
+                space::horizontal().into()
             };
 
-        stack![scanner]
-            .push_maybe((!added.is_empty()).then_some(log))
-            .into()
+        stack![scanner, (!added.is_empty()).then_some(log)].into()
     }
 
     pub fn subscription(&self, now: Instant) -> Subscription<Message> {
-        let hotkeys = keyboard::on_key_press(|key, modifiers| {
+        let hotkeys = keyboard::listen().filter_map(|event| {
             use keyboard::key::{Key, Named};
 
-            Some(match key.as_ref() {
+            let keyboard::Event::KeyPressed {
+                modified_key,
+                modifiers,
+                ..
+            } = event
+            else {
+                return None;
+            };
+
+            Some(match modified_key.as_ref() {
                 Key::Named(Named::ArrowLeft) if modifiers.is_empty() => Message::PreviousPage,
                 Key::Named(Named::ArrowRight) if modifiers.is_empty() => Message::NextPage,
                 Key::Named(Named::Escape) => Message::EscapePressed,
@@ -1028,7 +1034,7 @@ fn item<'a>(
                 let stats: Element<'_, _> = if shadow == 1.0 {
                     stats(card, price, database, 14.0)
                 } else {
-                    horizontal_space().into()
+                    space::horizontal().into()
                 };
 
                 bottom(stats)
@@ -1039,9 +1045,10 @@ fn item<'a>(
 
             let card = mouse_area(
                 button(
-                    float(
-                        stack![container(image).padding(padding::all(1).top(0))].push_maybe(stats),
-                    )
+                    float(stack![
+                        container(image).padding(padding::all(1).top(0)),
+                        stats
+                    ])
                     .scale(match source {
                         Source::Binder => scale * (1.1 - (0.1 * opacity)),
                         Source::Search => scale,
@@ -1090,10 +1097,10 @@ fn item<'a>(
                 .center()
                 .size(14),
         )),
-        _ => slot(horizontal_space()),
+        _ => slot(space::horizontal()),
     };
 
-    pop(item)
+    sensor(item)
         .key_ref(card.id.as_str())
         .on_show(move |_size| Message::CardShown(card.id.clone(), source))
         .into()
@@ -1119,7 +1126,7 @@ fn slot<'a>(content: impl Into<Element<'a, Message>>) -> Element<'a, Message> {
 }
 
 fn unused_slot<'a>() -> Element<'a, Message> {
-    container(horizontal_space())
+    container(space::horizontal())
         .style(|_theme| {
             container::Style::default()
                 .background(Color::BLACK.scale_alpha(0.3))
@@ -1190,18 +1197,12 @@ fn stats<'a>(
             .spread()
             .map(|spread| typewriter(spread.average.to_string()).size(font_size / 2.0));
 
-        row![]
-            .push_maybe(dollars)
-            .push_maybe(euros)
-            .spacing(font_size / 2.0)
+        row![dollars, euros].spacing(font_size / 2.0)
     });
 
     column![
         name,
-        row![]
-            .push_maybe(set)
-            .push(horizontal_space())
-            .push_maybe(pricing)
+        row![set, space::horizontal(), pricing]
             .spacing(font_size / 2.0)
             .align_y(Bottom),
     ]

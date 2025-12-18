@@ -13,8 +13,8 @@ use iced::futures::stream::FuturesOrdered;
 use iced::gradient;
 use iced::time::{Instant, milliseconds, seconds};
 use iced::widget::{
-    bottom_center, button, center, column, container, float, image, mouse_area, row, stack, text,
-    text_input, vertical_space,
+    bottom_center, button, center, column, container, float, image, mouse_area, row, space, stack,
+    text, text_input,
 };
 use iced::window;
 use iced::{
@@ -284,8 +284,6 @@ fn card<'a>(
     rate: pricing::ExchangeRate,
     now: Instant,
 ) -> Element<'a, Message> {
-    // let is_zooming =
-    //     animations.is_some_and(|animation| animation.zoom.interpolate(1.0, 1.2, now) > 1.0);
     let Entry {
         collection,
         images,
@@ -336,7 +334,7 @@ fn card<'a>(
     let content = column![
         name,
         badge,
-        vertical_space(),
+        space::vertical(),
         row![
             stat(format!("{}", total_value.america)),
             stat(format!("{}", total_value.europe)),

@@ -1,4 +1,3 @@
-pub mod pokemon_tcg;
 pub mod tcgdex;
 
 use tcgdex::Tcgdex;
@@ -7,7 +6,7 @@ use std::fmt;
 use std::sync::LazyLock;
 use std::time::Duration;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Session {
     pub tcgdex: Tcgdex,
 }

@@ -1,5 +1,5 @@
-pub use crate::session::pokemon_tcg::cardmarket;
-pub use crate::session::pokemon_tcg::tcgplayer;
+pub use crate::session::tcgdex::cardmarket;
+pub use crate::session::tcgdex::tcgplayer;
 
 use crate::{Card, Result, Session};
 
@@ -13,9 +13,14 @@ pub struct Pricing {
 }
 
 impl Pricing {
-    pub async fn fetch(_card: &Card, _session: &Session) -> Result<Self> {
-        // TODO
-        Err(crate::Error::LocaleNotAvailable)
+    pub async fn fetch(card: &Card, session: &Session) -> Result<Self> {
+        let pricing = session.tcgdex.fetch_pricing(card).await?;
+
+        Ok(Self {
+            tcgplayer: pricing.tcgplayer.unwrap_or_default(),
+            cardmarket: pricing.cardmarket.unwrap_or_default(),
+            updated_at: SystemTime::now(),
+        })
     }
 }
 

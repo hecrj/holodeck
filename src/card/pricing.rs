@@ -301,59 +301,43 @@ impl Pricing {
             };
 
             Variants {
-                normal: tcgplayer.prices.normal.map(spread),
-                reverse: tcgplayer.prices.reverse_holofoil.map(spread),
-                holofoil: tcgplayer.prices.holofoil.map(spread),
+                normal: tcgplayer.normal.map(spread),
+                reverse: tcgplayer.reverse_holofoil.map(spread),
+                holofoil: tcgplayer.holofoil.map(spread),
             }
         };
 
         let europe = {
-            let normal_or_holofoil = Spread {
-                low: Euros::new(cardmarket.prices.low_price),
+            let normal = Spread {
+                low: Euros::new(cardmarket.low),
                 high: Euros::new(
                     cardmarket
-                        .prices
-                        .trend_price
-                        .max(cardmarket.prices.avg1)
-                        .max(cardmarket.prices.avg7)
-                        .max(cardmarket.prices.avg30)
-                        .max(cardmarket.prices.average_sell_price),
+                        .trend
+                        .max(cardmarket.avg1)
+                        .max(cardmarket.avg7)
+                        .max(cardmarket.avg30),
                 ),
-                average: Euros::new(cardmarket.prices.average_sell_price),
-                market: Euros::new(cardmarket.prices.trend_price),
+                average: Euros::new(cardmarket.avg30),
+                market: Euros::new(cardmarket.trend),
             };
 
-            let reverse_holofoil = Spread {
-                low: Euros::new(cardmarket.prices.reverse_holo_low),
+            let holofoil = Spread {
+                low: Euros::new(cardmarket.low_holo),
                 high: Euros::new(
                     cardmarket
-                        .prices
-                        .reverse_holo_trend
-                        .max(cardmarket.prices.reverse_holo_avg1)
-                        .max(cardmarket.prices.reverse_holo_avg7)
-                        .max(cardmarket.prices.reverse_holo_avg30)
-                        .max(cardmarket.prices.reverse_holo_sell),
+                        .trend_holo
+                        .max(cardmarket.avg1_holo)
+                        .max(cardmarket.avg7_holo)
+                        .max(cardmarket.avg30_holo),
                 ),
-                average: Euros::new(cardmarket.prices.reverse_holo_sell),
-                market: Euros::new(cardmarket.prices.reverse_holo_trend),
+                average: Euros::new(cardmarket.avg30_holo),
+                market: Euros::new(cardmarket.trend_holo),
             };
 
             Variants {
-                normal: tcgplayer
-                    .prices
-                    .normal
-                    .is_some()
-                    .then_some(normal_or_holofoil),
-                reverse: tcgplayer
-                    .prices
-                    .reverse_holofoil
-                    .is_some()
-                    .then_some(reverse_holofoil),
-                holofoil: tcgplayer
-                    .prices
-                    .holofoil
-                    .is_some()
-                    .then_some(normal_or_holofoil),
+                normal: Some(normal),
+                reverse: None,
+                holofoil: Some(holofoil),
             }
         };
 

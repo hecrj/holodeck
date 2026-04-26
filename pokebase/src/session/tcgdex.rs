@@ -45,9 +45,17 @@ impl Tcgdex {
         );
 
         log::info!("Downloading image: {url}");
-        let response = session::retry(2, || self.client.get(&url).send()).await;
 
-        Ok(response?.error_for_status()?.bytes().await?)
+        Ok(session::retry(2, || async {
+            self.client
+                .get(&url)
+                .send()
+                .await?
+                .error_for_status()?
+                .bytes()
+                .await
+        })
+        .await?)
     }
 }
 

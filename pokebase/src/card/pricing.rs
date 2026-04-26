@@ -13,14 +13,9 @@ pub struct Pricing {
 }
 
 impl Pricing {
-    pub async fn fetch(card: &Card, session: &Session) -> Result<Self> {
-        let pricing = session.pokemon_tcg.fetch_pricing(card).await?;
-
-        Ok(Self {
-            tcgplayer: pricing.tcgplayer,
-            cardmarket: pricing.cardmarket,
-            updated_at: SystemTime::now(),
-        })
+    pub async fn fetch(_card: &Card, _session: &Session) -> Result<Self> {
+        // TODO
+        Err(crate::Error::LocaleNotAvailable)
     }
 }
 

@@ -20,8 +20,6 @@ use iced::time::Instant;
 use iced::widget::{button, center, column, container, row, text};
 use iced::{Center, Element, Fill, Font, Subscription, Task, Theme};
 
-use std::env;
-
 pub fn main() -> iced::Result {
     tracing_subscriber::fmt::init();
 
@@ -91,7 +89,7 @@ impl Holodeck {
             Message::Loaded(Ok((database, prices, rate))) => {
                 let (welcome, task) = screen::Welcome::new();
 
-                let session = Session::new(env::var("POKEMONTCG_API_KEY").ok()); // TODO: Configuration
+                let session = Session::new();
 
                 let price_updates = Task::run(
                     Pricing::subscribe(&database, &session),
@@ -226,7 +224,7 @@ impl Holodeck {
                         )
                         .style(move |theme, status| {
                             if is_active {
-                                let palette = theme.extended_palette();
+                                let palette = theme.palette();
 
                                 button::Style {
                                     background: Some(palette.background.base.color.into()),

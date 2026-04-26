@@ -1,7 +1,6 @@
 pub mod pokemon_tcg;
 pub mod tcgdex;
 
-use pokemon_tcg::PokemonTcg;
 use tcgdex::Tcgdex;
 
 use std::fmt;
@@ -10,14 +9,12 @@ use std::time::Duration;
 
 #[derive(Debug, Clone)]
 pub struct Session {
-    pub pokemon_tcg: PokemonTcg,
     pub tcgdex: Tcgdex,
 }
 
 impl Session {
-    pub fn new(pokemon_tcg_api_key: Option<String>) -> Self {
+    pub fn new() -> Self {
         Self {
-            pokemon_tcg: PokemonTcg::new(pokemon_tcg_api_key),
             tcgdex: Tcgdex::new(),
         }
     }

@@ -1,7 +1,6 @@
 // Generated automatically by iced_fontello at build time.
 // Do not edit manually. Source: ../fonts/holodeck-icons.toml
 // 541400ead5ce4e69cc5b905704f5203ea60ad9a65aaf233d754fd69d90fd5661
-use iced::Font;
 use iced::widget::{Text, text};
 
 pub const FONT: &[u8] = include_bytes!("../fonts/holodeck-icons.ttf");
@@ -31,5 +30,5 @@ pub fn cancel<'a>() -> Text<'a> {
 }
 
 fn icon(codepoint: &str) -> Text<'_> {
-    text(codepoint).font(Font::with_name("holodeck-icons"))
+    text(codepoint).font("holodeck-icons")
 }

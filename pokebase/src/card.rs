@@ -28,21 +28,9 @@ impl Image {
         database: &Database,
         session: &Session,
     ) -> Result<Self, Error> {
-        use futures_util::TryFutureExt;
-
-        let download_from_pokemontcg = session.pokemon_tcg.download_image(card);
         let download_from_tcgdex = session.tcgdex.download_image(card, database);
 
-        // Rationale on the order of image fetching:
-        // 1. PokemonTCG - Highest quality, but English only. 20,000 requests/day with an API key.
-        // 2. TCGdex - Lower quality, but supports multiple locales. Rate limiting unknown (?).
-        let bytes = download_from_pokemontcg
-            .or_else(|error| {
-                log::warn!("{error}");
-
-                download_from_tcgdex
-            })
-            .await?;
+        let bytes = download_from_tcgdex.await?;
 
         Ok(Self { bytes })
     }

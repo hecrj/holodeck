@@ -1,7 +1,9 @@
 [package]
 name = "pokedetect"
-version = "0.1.0-dev"
+version = "0.1.0"
 edition = "2024"
+description = "A library for detecting Pokémon TCG cards from a video stream"
+license = "MIT"
 
 [dependencies]
 anywho.workspace = true
@@ -16,7 +18,7 @@ opencv.workspace = true
 opencv.features = ["clang-runtime"]
 
 [dev-dependencies]
-iced.workspace = true
+iced.version = "0.14"
 iced.features = ["tokio", "image", "debug"]
 
 tracing-subscriber.workspace = true

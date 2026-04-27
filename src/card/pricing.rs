@@ -42,8 +42,7 @@ impl Map {
 
     pub fn total_value(&self, collection: &Collection, rate: ExchangeRate) -> Value {
         let prices = collection
-            .cards
-            .iter()
+            .cards()
             .filter_map(|(card, amount)| Some((self.get(card)?, amount)));
 
         let america = prices
@@ -64,9 +63,8 @@ impl Map {
         database: &'a Database,
     ) -> impl Iterator<Item = &'a Card> {
         let mut cards: Vec<_> = collection
-            .cards
-            .keys()
-            .filter_map(|card| database.cards.get(card))
+            .cards()
+            .filter_map(|(card, _)| database.cards.get(card))
             .collect();
 
         cards.sort_by(|a, b| {
@@ -122,13 +120,11 @@ impl Pricing {
 
         let mut prices = Map::new();
 
-        let cards = collections
-            .into_iter()
-            .flat_map(|collection| collection.cards.into_keys());
+        let cards = collections.iter().flat_map(|collection| collection.cards());
 
-        for card in cards {
-            if let Ok(pricing) = Self::fetch_cache(&card).await {
-                prices.insert(card, pricing);
+        for (card, _amount) in cards {
+            if let Ok(pricing) = Self::fetch_cache(card).await {
+                prices.insert(card.clone(), pricing);
             }
         }
 
@@ -227,18 +223,18 @@ impl Pricing {
                 };
 
                 let cards = collections
-                    .into_iter()
-                    .flat_map(|collection| collection.cards.into_keys().rev());
+                    .iter()
+                    .flat_map(|collection| collection.cards().rev());
 
                 let mut i = 0;
 
                 let mut outdated_prices: Vec<_> = cards
-                    .filter_map(|card| {
+                    .filter_map(|(card, _)| {
                         if prices
-                            .get(&card)
+                            .get(card)
                             .is_none_or(|price| is_outdated(price.updated_at))
                         {
-                            database.cards.get(&card)
+                            database.cards.get(card)
                         } else {
                             None
                         }

@@ -7,6 +7,8 @@ include = [
   "data/*.ron.gz",
   "!data/*.ron",
 ]
+description = "An embedded database of Pokémon TCG"
+license = "MIT"
 
 [dependencies]
 serde.workspace = true

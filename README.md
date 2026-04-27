@@ -2,9 +2,7 @@
 
 # Holodeck
 
-[![Crates.io](https://img.shields.io/crates/v/holodeck.svg)](https://crates.io/crates/holodeck)
 [![License](https://img.shields.io/crates/l/holodeck.svg)](https://github.com/hecrj/holodeck/blob/master/LICENSE)
-[![Downloads](https://img.shields.io/crates/d/holodeck.svg)](https://crates.io/crates/holodeck)
 [![Test Status](https://img.shields.io/github/actions/workflow/status/hecrj/holodeck/test.yml?branch=master&event=push&label=test)](https://github.com/hecrj/holodeck/actions)
 [![Made with iced](https://iced.rs/badge.svg)](https://github.com/iced-rs/iced)
 

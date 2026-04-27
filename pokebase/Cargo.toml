@@ -2,6 +2,8 @@
 name = "pokebase"
 version = "0.1.0"
 edition = "2024"
+description = "An embedded database of Pokémon TCG powered by TCGdex"
+license = "MIT"
 
 [dependencies]
 pokebase-core.workspace = true

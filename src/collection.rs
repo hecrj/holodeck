@@ -2,31 +2,55 @@ use crate::pokebase::card;
 use crate::pokebase::pokemon;
 use crate::pokebase::{Card, Database, Pokemon};
 
+use jiff::Timestamp;
 use num_traits::Zero;
 use serde::{Deserialize, Serialize};
-use std::cell::RefCell;
-use std::collections::{BTreeMap, BTreeSet};
-use std::path::PathBuf;
 use tokio::fs;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+use std::collections::{BTreeMap, BTreeSet};
+use std::path::PathBuf;
+use std::sync::Mutex;
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Collection {
     pub name: Name,
-    pub cards: BTreeMap<card::Id, Amount>,
+    pub captures: Vec<Capture>,
 
     #[serde(skip)]
-    total_pokemon: RefCell<Option<usize>>,
+    amounts: BTreeMap<card::Id, Amount>,
     #[serde(skip)]
-    rarest_card_by_pokemon: RefCell<BTreeMap<pokemon::Id, Option<card::Id>>>,
+    total_pokemon: Mutex<Option<usize>>,
+    #[serde(skip)]
+    rarest_card_by_pokemon: Mutex<BTreeMap<pokemon::Id, Option<card::Id>>>,
+}
+
+impl Clone for Collection {
+    fn clone(&self) -> Self {
+        Self {
+            name: self.name.clone(),
+            captures: self.captures.clone(),
+            amounts: self.amounts.clone(),
+            total_pokemon: Mutex::new(None),
+            rarest_card_by_pokemon: Mutex::new(BTreeMap::new()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Capture {
+    card: card::Id,
+    variant: Variant,
+    at: Timestamp,
 }
 
 impl Collection {
     pub async fn create(name: Name) -> Result<Self, anywho::Error> {
         let collection = Self {
             name,
-            cards: BTreeMap::new(),
-            rarest_card_by_pokemon: RefCell::new(BTreeMap::new()),
-            total_pokemon: RefCell::new(None),
+            captures: Vec::new(),
+            amounts: BTreeMap::new(),
+            rarest_card_by_pokemon: Mutex::new(BTreeMap::new()),
+            total_pokemon: Mutex::new(None),
         };
 
         let _ = collection.save().await;
@@ -39,21 +63,39 @@ impl Collection {
             return Ok(Vec::new());
         }
 
-        Ok(ron::from_str(
-            &fs::read_to_string(collections_path()).await?,
-        )?)
+        let mut collections: Vec<Self> =
+            ron::from_str(&fs::read_to_string(collections_path()).await?)?;
+
+        for collection in &mut collections {
+            for capture in &collection.captures {
+                let amount = collection.amounts.entry(capture.card.clone()).or_default();
+
+                match capture.variant {
+                    Variant::Normal => amount.normal += 1,
+                    Variant::Reverse => amount.reverse += 1,
+                }
+            }
+        }
+
+        Ok(collections)
     }
 
     pub fn add(&mut self, card: card::Id, variant: Variant) {
-        let amount = self.cards.entry(card).or_default();
+        self.captures.push(Capture {
+            card: card.clone(),
+            variant,
+            at: Timestamp::now(),
+        });
+
+        let amount = self.amounts.entry(card).or_default();
 
         match variant {
             Variant::Normal => amount.normal += 1,
             Variant::Reverse => amount.reverse += 1,
         }
 
-        *self.total_pokemon.borrow_mut() = None;
-        self.rarest_card_by_pokemon.borrow_mut().clear();
+        *self.total_pokemon.lock().unwrap() = None;
+        self.rarest_card_by_pokemon.lock().unwrap().clear();
     }
 
     pub fn save<'a>(&self) -> impl Future<Output = Result<(), anywho::Error>> + 'a {
@@ -83,35 +125,44 @@ impl Collection {
         }
     }
 
+    pub fn cards(&self) -> impl DoubleEndedIterator<Item = (&card::Id, Amount)> + Clone {
+        self.amounts.iter().map(|(card, amount)| (card, *amount))
+    }
+
+    pub fn amount(&self, card: &card::Id) -> Option<&Amount> {
+        self.amounts.get(card)
+    }
+
     pub fn unique_cards(&self) -> usize {
-        self.cards.len()
+        self.amounts.len()
     }
 
     pub fn total_cards(&self) -> usize {
-        self.cards.values().copied().map(Amount::total).sum()
+        self.amounts.values().copied().map(Amount::total).sum()
     }
 
     pub fn total_pokemon(&self, database: &Database) -> usize {
-        if let Some(total) = *self.total_pokemon.borrow() {
+        let mut total = self.total_pokemon.lock().unwrap();
+
+        if let Some(total) = *total {
             return total;
         }
 
         let pokemon = BTreeSet::from_iter(
-            self.cards
+            self.amounts
                 .keys()
                 .filter_map(|card| database.cards.get(card))
                 .filter_map(|card| card.pokedex.first()),
         );
 
-        let total = pokemon.len();
-        *self.total_pokemon.borrow_mut() = Some(total);
-        total
+        *total = Some(pokemon.len());
+        pokemon.len()
     }
 
     #[allow(dead_code)]
     pub fn rarest_cards<'a>(&'a self, database: &'a Database) -> impl Iterator<Item = &'a Card> {
         let mut rares: Vec<_> = self
-            .cards
+            .amounts
             .keys()
             .filter_map(|card| database.cards.get(card))
             .filter(|card| card.rarity >= card::Rarity::HoloRare)
@@ -126,12 +177,14 @@ impl Collection {
         pokemon: &Pokemon,
         database: &'a Database,
     ) -> Option<&'a Card> {
-        if let Some(card) = self.rarest_card_by_pokemon.borrow().get(&pokemon.id) {
+        let mut rarest_card_by_pokemon = self.rarest_card_by_pokemon.lock().unwrap();
+
+        if let Some(card) = rarest_card_by_pokemon.get(&pokemon.id) {
             return database.cards.get(card.as_ref()?);
         }
 
         let mut cards: Vec<_> = self
-            .cards
+            .amounts
             .keys()
             .filter_map(|card| {
                 let card = database.cards.get(card)?;
@@ -147,9 +200,7 @@ impl Collection {
 
         let card = cards.first().copied();
 
-        self.rarest_card_by_pokemon
-            .borrow_mut()
-            .insert(pokemon.id, card.map(|card| card.id.clone()));
+        rarest_card_by_pokemon.insert(pokemon.id, card.map(|card| card.id.clone()));
 
         card
     }
@@ -187,7 +238,7 @@ impl Amount {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Variant {
     Normal,
     Reverse,

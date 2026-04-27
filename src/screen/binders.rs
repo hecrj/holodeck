@@ -861,7 +861,7 @@ impl Binders {
                                 Source::Search,
                             ))
                             .padding(1),
-                            collection.cards.get(&card.id).map(owned_tag.with(10.0))
+                            collection.amount(&card.id).map(owned_tag.with(10.0))
                         ]
                         .into()
                     }))
@@ -920,7 +920,7 @@ impl Binders {
                         )
                         .padding(30)
                         .style(|_theme| translucent(1.0)),
-                        collection.cards.get(&card.id).map(owned_tag.with(20.0))
+                        collection.amount(&card.id).map(owned_tag.with(20.0))
                     ])
                     .padding(10)
                     .into()

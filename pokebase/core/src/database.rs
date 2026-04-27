@@ -61,6 +61,10 @@ impl Database {
             }
 
             let locale = Locale(entry.file_name().to_string_lossy().to_string());
+
+            if locale == Locale("ko".to_owned()) {
+                continue;
+            }
             dbg!(&locale);
 
             // Series
@@ -71,6 +75,8 @@ impl Database {
                 name: String,
                 release_date: String,
             }
+
+            dbg!(entry.path().join("series.json"));
 
             let localized_series_list: Vec<LocalizedSeries> = {
                 let file = BufReader::new(File::open(entry.path().join("series.json"))?);
@@ -116,6 +122,8 @@ impl Database {
                 official: String,
             }
 
+            dbg!(entry.path().join("sets.json"));
+
             let localized_sets: Vec<LocalizedSet> = {
                 let file = BufReader::new(File::open(entry.path().join("sets.json"))?);
                 serde_json::from_reader(file)?
@@ -156,7 +164,7 @@ impl Database {
                 #[serde(default)]
                 illustrator: Option<String>,
                 #[serde(default)]
-                dex_id: Vec<pokemon::Id>,
+                dex_id: Vec<f64>,
             }
 
             #[derive(Serialize, Deserialize)]
@@ -173,6 +181,8 @@ impl Database {
                 reverse: bool,
                 w_promo: bool,
             }
+
+            dbg!(entry.path().join("cards.json"));
 
             let localized_cards: Vec<LocalizedCard> = {
                 let file = BufReader::new(File::open(entry.path().join("cards.json"))?);
@@ -204,7 +214,12 @@ impl Database {
                             w_promo: localized_card.variants.w_promo,
                         },
                         illustrator: localized_card.illustrator,
-                        pokedex: localized_card.dex_id,
+                        pokedex: localized_card
+                            .dex_id
+                            .into_iter()
+                            .map(|id| id as usize)
+                            .map(pokemon::Id)
+                            .collect(),
                     });
 
                 // Fill in Pokedex entries
@@ -320,11 +335,7 @@ fn parse_type(type_: String) -> Result<card::Type, String> {
         "Fairy" => card::Type::Fairy,
         "Dragon" => card::Type::Dragon,
         "Colorless" => card::Type::Colorless,
-        _ => {
-            dbg!(&type_);
-
-            Err(format!("invalid type: {type_}"))?
-        }
+        _ => Err(format!("invalid type: {type_}"))?,
     })
 }
 

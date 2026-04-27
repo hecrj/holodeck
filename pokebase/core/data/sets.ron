@@ -145,6 +145,21 @@
         abbreviation: None,
     ),
     (
+        id: ("neo1"),
+        name: {
+            "de": "Neo Genesis",
+            "en": "Neo Genesis",
+            "es": "Neo Genesis",
+            "fr": "Neo Genesis",
+            "it": "Neo Genesis",
+            "ja": "金、銀、新世界へ...",
+        },
+        series: ("neo"),
+        release_date: "2000-02-04",
+        total_cards: 96,
+        abbreviation: Some("N1"),
+    ),
+    (
         id: ("base4"),
         name: {
             "en": "Base Set 2",
@@ -164,8 +179,22 @@
         },
         series: ("base"),
         release_date: "2000-04-24",
-        total_cards: 83,
+        total_cards: 82,
         abbreviation: Some("RO"),
+    ),
+    (
+        id: ("neo2"),
+        name: {
+            "de": "Neo Entdeckung",
+            "en": "Neo Discovery",
+            "fr": "Neo Discovery",
+            "it": "Neo Discovery",
+            "ja": "遺跡をこえて...",
+        },
+        series: ("neo"),
+        release_date: "2000-07-07",
+        total_cards: 57,
+        abbreviation: Some("N2"),
     ),
     (
         id: ("gym1"),
@@ -188,33 +217,32 @@
         abbreviation: Some("G2"),
     ),
     (
-        id: ("neo1"),
+        id: ("neo3"),
         name: {
-            "de": "Neo Genesis",
-            "en": "Neo Genesis",
-            "es": "Neo Genesis",
-            "fr": "Neo Genesis",
-            "it": "Neo Genesis",
-            "ja": "金、銀、新世界へ...",
+            "de": "Neo Revelation",
+            "en": "Neo Revelation",
+            "fr": "Neo Revelation",
+            "it": "Neo Revelation",
+            "ja": "めざめる伝説",
         },
         series: ("neo"),
-        release_date: "2000-12-16",
-        total_cards: 111,
-        abbreviation: Some("N1"),
+        release_date: "2000-11-23",
+        total_cards: 57,
+        abbreviation: Some("N3"),
     ),
     (
-        id: ("neo2"),
+        id: ("neo4"),
         name: {
-            "de": "Neo Entdeckung",
-            "en": "Neo Discovery",
-            "fr": "Neo Discovery",
-            "it": "Neo Discovery",
-            "ja": "遺跡をこえて...",
+            "de": "Neo Destiny",
+            "en": "Neo Destiny",
+            "fr": "Neo Destiny",
+            "it": "Neo Destiny",
+            "ja": "闇、そして光へ...",
         },
         series: ("neo"),
-        release_date: "2001-06-01",
-        total_cards: 75,
-        abbreviation: Some("N2"),
+        release_date: "2001-04-20",
+        total_cards: 113,
+        abbreviation: Some("N4"),
     ),
     (
         id: ("VS1"),
@@ -223,7 +251,7 @@
         },
         series: ("VS"),
         release_date: "2001-07-19",
-        total_cards: 141,
+        total_cards: 143,
         abbreviation: None,
     ),
     (
@@ -235,20 +263,6 @@
         release_date: "2001-07-31",
         total_cards: 18,
         abbreviation: Some("SI"),
-    ),
-    (
-        id: ("neo3"),
-        name: {
-            "de": "Neo Revelation",
-            "en": "Neo Revelation",
-            "fr": "Neo Revelation",
-            "it": "Neo Revelation",
-            "ja": "めざめる伝説",
-        },
-        series: ("neo"),
-        release_date: "2001-09-21",
-        total_cards: 66,
-        abbreviation: Some("N3"),
     ),
     (
         id: ("web1"),
@@ -271,20 +285,6 @@
         abbreviation: None,
     ),
     (
-        id: ("neo4"),
-        name: {
-            "de": "Neo Destiny",
-            "en": "Neo Destiny",
-            "fr": "Neo Destiny",
-            "it": "Neo Destiny",
-            "ja": "闇、そして光へ...",
-        },
-        series: ("neo"),
-        release_date: "2002-02-28",
-        total_cards: 113,
-        abbreviation: Some("N4"),
-    ),
-    (
         id: ("E2"),
         name: {
             "ja": "地図にない町",
@@ -301,7 +301,7 @@
         },
         series: ("e"),
         release_date: "2002-05-24",
-        total_cards: 87,
+        total_cards: 90,
         abbreviation: None,
     ),
     (
@@ -331,7 +331,7 @@
         },
         series: ("e"),
         release_date: "2002-08-23",
-        total_cards: 88,
+        total_cards: 91,
         abbreviation: None,
     ),
     (
@@ -354,7 +354,7 @@
         },
         series: ("e"),
         release_date: "2002-10-04",
-        total_cards: 88,
+        total_cards: 91,
         abbreviation: None,
     ),
     (
@@ -377,7 +377,7 @@
         },
         series: ("ecard"),
         release_date: "2003-01-15",
-        total_cards: 186,
+        total_cards: 147,
         abbreviation: Some("AQ"),
     ),
     (
@@ -409,7 +409,7 @@
         },
         series: ("ecard"),
         release_date: "2003-05-12",
-        total_cards: 182,
+        total_cards: 144,
         abbreviation: Some("SK"),
     ),
     (
@@ -483,7 +483,7 @@
         },
         series: ("ex"),
         release_date: "2003-11-24",
-        total_cards: 100,
+        total_cards: 97,
         abbreviation: Some("DR"),
     ),
     (
@@ -506,7 +506,7 @@
         },
         series: ("ex"),
         release_date: "2004-03-01",
-        total_cards: 97,
+        total_cards: 95,
         abbreviation: Some("MA"),
     ),
     (
@@ -587,7 +587,7 @@
         },
         series: ("ex"),
         release_date: "2004-09-01",
-        total_cards: 116,
+        total_cards: 112,
         abbreviation: Some("RG"),
     ),
     (
@@ -609,7 +609,7 @@
         },
         series: ("PCG"),
         release_date: "2004-10-15",
-        total_cards: 84,
+        total_cards: 85,
         abbreviation: None,
     ),
     (
@@ -634,7 +634,7 @@
         },
         series: ("ex"),
         release_date: "2005-02-01",
-        total_cards: 108,
+        total_cards: 107,
         abbreviation: Some("DX"),
     ),
     (
@@ -658,7 +658,7 @@
         },
         series: ("ex"),
         release_date: "2005-05-09",
-        total_cards: 107,
+        total_cards: 106,
         abbreviation: Some("EM"),
     ),
     (
@@ -732,7 +732,7 @@
         },
         series: ("ex"),
         release_date: "2005-10-31",
-        total_cards: 114,
+        total_cards: 113,
         abbreviation: Some("DS"),
     ),
     (
@@ -755,7 +755,7 @@
         },
         series: ("ex"),
         release_date: "2006-02-13",
-        total_cards: 93,
+        total_cards: 92,
         abbreviation: Some("LM"),
     ),
     (
@@ -816,7 +816,7 @@
         },
         series: ("ex"),
         release_date: "2006-05-03",
-        total_cards: 111,
+        total_cards: 110,
         abbreviation: Some("HP"),
     ),
     (
@@ -943,7 +943,7 @@
         },
         series: ("dp"),
         release_date: "2007-08-01",
-        total_cards: 122,
+        total_cards: 123,
         abbreviation: Some("MT"),
     ),
     (
@@ -1072,7 +1072,7 @@
         series: ("dp"),
         release_date: "2008-11-01",
         total_cards: 100,
-        abbreviation: Some("FS"),
+        abbreviation: Some("SF"),
     ),
     (
         id: ("pl1"),
@@ -1110,7 +1110,7 @@
         },
         series: ("pl"),
         release_date: "2009-05-16",
-        total_cards: 120,
+        total_cards: 111,
         abbreviation: Some("RR"),
     ),
     (
@@ -1123,7 +1123,7 @@
         series: ("pl"),
         release_date: "2009-08-19",
         total_cards: 153,
-        abbreviation: None,
+        abbreviation: Some("SV"),
     ),
     (
         id: ("L1a"),
@@ -1280,7 +1280,7 @@
         },
         series: ("hgss"),
         release_date: "2010-08-18",
-        total_cards: 91,
+        total_cards: 90,
         abbreviation: Some("UND"),
     ),
     (
@@ -1294,7 +1294,7 @@
         },
         series: ("hgss"),
         release_date: "2010-11-03",
-        total_cards: 103,
+        total_cards: 102,
         abbreviation: Some("TRI"),
     ),
     (
@@ -1308,7 +1308,7 @@
         },
         series: ("col"),
         release_date: "2011-02-09",
-        total_cards: 106,
+        total_cards: 95,
         abbreviation: Some("COL"),
     ),
     (
@@ -1343,9 +1343,9 @@
     (
         id: ("2011bw"),
         name: {
-            "en": "Macdonald\'s Collection 2011",
+            "en": "McDonald\'s Collection 2011",
             "es": "Colección de McDonald\'s 2011",
-            "fr": "Promo McDonald\'s 2012",
+            "fr": "Collection McDonald\'s 2011",
             "it": "McDonald\'s Collection",
         },
         series: ("mc"),
@@ -1420,7 +1420,7 @@
         series: ("bw"),
         release_date: "2012-02-08",
         total_cards: 103,
-        abbreviation: Some("NEX"),
+        abbreviation: Some("NXD"),
     ),
     (
         id: ("bw5"),
@@ -1440,8 +1440,9 @@
     (
         id: ("2012bw"),
         name: {
-            "en": "Macdonald\'s Collection 2012",
+            "en": "McDonald\'s Collection 2012",
             "es": "Colección de McDonald\'s 2012",
+            "fr": "Collection McDonald\'s 2012",
             "it": "McDonald\'s Collection 2012",
         },
         series: ("mc"),
@@ -1554,7 +1555,7 @@
     (
         id: ("2013bw"),
         name: {
-            "fr": "Promo McDonald\'s 2013",
+            "fr": "Collection McDonald\'s 2013",
         },
         series: ("mc"),
         release_date: "2013-11-01",
@@ -1595,7 +1596,7 @@
         },
         series: ("xy"),
         release_date: "2013-11-08",
-        total_cards: 45,
+        total_cards: 39,
         abbreviation: Some("KSS"),
     ),
     (
@@ -1638,7 +1639,7 @@
         id: ("xya"),
         name: {
             "de": "Gelbes-A-Alternativkarten",
-            "en": "Yello A Alternate",
+            "en": "Yellow A Alternate",
             "es": "Cartas alternativas",
             "fr": "carte alternative A Jaune",
             "it": "Carta Alternatica A Gialla",
@@ -1703,8 +1704,8 @@
     (
         id: ("2014xy"),
         name: {
-            "en": "Macdonald\'s Collection 2014",
-            "fr": "Promo McDonald\'s 2014",
+            "en": "McDonald\'s Collection 2014",
+            "fr": "Collection McDonald\'s 2014",
             "it": "McDonald\'s Collection 2014",
         },
         series: ("mc"),
@@ -1793,7 +1794,7 @@
     (
         id: ("XY5a"),
         name: {
-            "ja": "ガイアボルケーノ",
+            "ja": "タイダルストーム",
         },
         series: ("XY"),
         release_date: "2014-12-13",
@@ -1965,8 +1966,8 @@
     (
         id: ("2015xy"),
         name: {
-            "en": "Macdonald\'s Collection 2015",
-            "fr": "Promo McDonald\'s 2015",
+            "en": "McDonald\'s Collection 2015",
+            "fr": "Collection McDonald\'s 2015",
             "it": "McDonald\'s Collection 2015",
         },
         series: ("mc"),
@@ -2123,8 +2124,8 @@
     (
         id: ("2016xy"),
         name: {
-            "en": "Macdonald\'s Collection 2016",
-            "fr": "Promo McDonald\'s 2016",
+            "en": "McDonald\'s Collection 2016",
+            "fr": "Collection McDonald\'s 2016",
             "it": "McDonald\'s Collection 2016",
         },
         series: ("mc"),
@@ -2171,7 +2172,6 @@
         id: ("SM1M"),
         name: {
             "ja": "コレクションムーン",
-            "ko": "문 컬렉션",
         },
         series: ("SM"),
         release_date: "2016-12-09",
@@ -2182,7 +2182,6 @@
         id: ("SM1S"),
         name: {
             "ja": "コレクションサン",
-            "ko": "썬 컬렉션",
         },
         series: ("SM"),
         release_date: "2016-12-09",
@@ -2193,7 +2192,6 @@
         id: ("SM1+"),
         name: {
             "ja": "サン＆ムーン",
-            "ko": "썬&문",
         },
         series: ("SM"),
         release_date: "2017-01-27",
@@ -2230,10 +2228,9 @@
         abbreviation: Some("SMP"),
     ),
     (
-        id: ("SM2L"),
+        id: ("SM2K"),
         name: {
-            "ja": "アローラの月光",
-            "ko": "알로라의 달빛",
+            "ja": "キミを待つ島々",
         },
         series: ("SM"),
         release_date: "2017-03-17",
@@ -2241,10 +2238,19 @@
         abbreviation: None,
     ),
     (
-        id: ("s1a"),
+        id: ("SM2L"),
         name: {
-            "ja": "VMAXライジング",
-            "ko": "VMAX라이징",
+            "ja": "アローラの月光",
+        },
+        series: ("SM"),
+        release_date: "2017-03-17",
+        total_cards: 50,
+        abbreviation: None,
+    ),
+    (
+        id: ("sm2+"),
+        name: {
+            "ja": "新たな試練に直面",
         },
         series: ("SM"),
         release_date: "2017-04-21",
@@ -2296,7 +2302,6 @@
         id: ("SM3H"),
         name: {
             "ja": "闘う虹を見たか",
-            "ko": "어둠을 밝힌 무지개",
         },
         series: ("SM"),
         release_date: "2017-06-16",
@@ -2307,7 +2312,6 @@
         id: ("SM3N"),
         name: {
             "ja": "光を喰らう闇",
-            "ko": "빛을 삼킨 어둠",
         },
         series: ("SM"),
         release_date: "2017-06-16",
@@ -2318,7 +2322,6 @@
         id: ("SM3+"),
         name: {
             "ja": "ひかる伝説",
-            "ko": "빛나는 전설",
         },
         series: ("SM"),
         release_date: "2017-07-15",
@@ -2328,8 +2331,8 @@
     (
         id: ("2017sm"),
         name: {
-            "en": "Macdonald\'s Collection 2017",
-            "fr": "Promo McDonald\'s 2017",
+            "en": "McDonald\'s Collection 2017",
+            "fr": "Collection McDonald\'s 2017",
             "it": "McDonald\'s Collection 2017",
         },
         series: ("mc"),
@@ -2356,7 +2359,6 @@
         id: ("SM4A"),
         name: {
             "ja": "超次元の暴獣",
-            "ko": "초차원의 침략자",
         },
         series: ("SM"),
         release_date: "2017-09-15",
@@ -2367,7 +2369,6 @@
         id: ("SM4S"),
         name: {
             "ja": "覚醒の勇者",
-            "ko": "각성의 용사",
         },
         series: ("SM"),
         release_date: "2017-09-15",
@@ -2393,7 +2394,6 @@
         id: ("SM4+"),
         name: {
             "ja": "GXバトルブースト",
-            "ko": "GX 배틀부스트",
         },
         series: ("SM"),
         release_date: "2017-10-20",
@@ -2419,7 +2419,6 @@
         id: ("SM5M"),
         name: {
             "ja": "ウルトラムーン",
-            "ko": "울트라문",
         },
         series: ("SM"),
         release_date: "2017-12-08",
@@ -2430,7 +2429,6 @@
         id: ("SM5S"),
         name: {
             "ja": "ウルトラサン",
-            "ko": "울트라썬",
         },
         series: ("SM"),
         release_date: "2017-12-08",
@@ -2441,7 +2439,6 @@
         id: ("SM5+"),
         name: {
             "ja": "ウルトラフォース",
-            "ko": "울트라포스",
         },
         series: ("SM"),
         release_date: "2018-01-19",
@@ -2467,7 +2464,6 @@
         id: ("SM6"),
         name: {
             "ja": "禁断の光",
-            "ko": "금단의 빛",
         },
         series: ("SM"),
         release_date: "2018-03-02",
@@ -2478,7 +2474,6 @@
         id: ("SM6a"),
         name: {
             "ja": "ドラゴンストーム",
-            "ko": "드래곤스톰",
         },
         series: ("SM"),
         release_date: "2018-04-06",
@@ -2504,7 +2499,6 @@
         id: ("SM6b"),
         name: {
             "ja": "チャンピオンロード",
-            "ko": "챔피언로드",
         },
         series: ("SM"),
         release_date: "2018-05-30",
@@ -2515,7 +2509,6 @@
         id: ("SM7"),
         name: {
             "ja": "裂空のカリスマ",
-            "ko": "창공의 카리스마",
         },
         series: ("SM"),
         release_date: "2018-06-01",
@@ -2525,7 +2518,7 @@
     (
         id: ("2018sm-fr"),
         name: {
-            "fr": "Promo McDonald\'s 2018",
+            "fr": "Collection McDonald\'s 2018",
         },
         series: ("mc"),
         release_date: "2018-06-13",
@@ -2536,7 +2529,6 @@
         id: ("SM7a"),
         name: {
             "ja": "迅雷スパーク",
-            "ko": "플라스마 스파크",
         },
         series: ("SM"),
         release_date: "2018-08-03",
@@ -2547,7 +2539,6 @@
         id: ("SM7b"),
         name: {
             "ja": "フェアリーライズ",
-            "ko": "페어리라이즈",
         },
         series: ("SM"),
         release_date: "2018-08-03",
@@ -2573,7 +2564,6 @@
         id: ("SM8"),
         name: {
             "ja": "超爆インパクト",
-            "ko": "버스트임팩트",
         },
         series: ("SM"),
         release_date: "2018-09-07",
@@ -2599,7 +2589,6 @@
         id: ("SM8a"),
         name: {
             "ja": "ダークオーダー",
-            "ko": "다크오더",
         },
         series: ("SM"),
         release_date: "2018-10-05",
@@ -2610,7 +2599,6 @@
         id: ("SM8b"),
         name: {
             "ja": "GXウルトラシャイニ",
-            "ko": "GX 울트라샤이니 ULTIMATE",
         },
         series: ("SM"),
         release_date: "2018-10-05",
@@ -2620,7 +2608,7 @@
     (
         id: ("2018sm"),
         name: {
-            "en": "Macdonald\'s Collection 2018",
+            "en": "McDonald\'s Collection 2018",
             "it": "McDonald\'s Collection 2018",
         },
         series: ("mc"),
@@ -2647,7 +2635,6 @@
         id: ("SM9"),
         name: {
             "ja": "タッグボルト",
-            "ko": "태그볼트",
         },
         series: ("SM"),
         release_date: "2018-12-07",
@@ -2658,7 +2645,6 @@
         id: ("SM9a"),
         name: {
             "ja": "ナイトユニゾン",
-            "ko": "나이트유니슨",
         },
         series: ("SM"),
         release_date: "2019-01-11",
@@ -2684,7 +2670,6 @@
         id: ("SM9b"),
         name: {
             "ja": "フルメタルウォール",
-            "ko": "풀메탈월",
         },
         series: ("SM"),
         release_date: "2019-02-01",
@@ -2695,7 +2680,6 @@
         id: ("SM10"),
         name: {
             "ja": "ダブルブレイズ",
-            "ko": "더블블레이즈",
         },
         series: ("SM"),
         release_date: "2019-03-01",
@@ -2721,7 +2705,6 @@
         id: ("sn10a"),
         name: {
             "ja": "ジージーエンド",
-            "ko": "GG엔드",
         },
         series: ("SM"),
         release_date: "2019-04-05",
@@ -2732,7 +2715,6 @@
         id: ("SM10b"),
         name: {
             "ja": "スカイレジェンド",
-            "ko": "스카이레전드",
         },
         series: ("SM"),
         release_date: "2019-04-26",
@@ -2743,7 +2725,6 @@
         id: ("SMP2"),
         name: {
             "ja": "名探偵ピカチュウ",
-            "ko": "명탐정 피카츄",
         },
         series: ("SM"),
         release_date: "2019-04-26",
@@ -2769,7 +2750,6 @@
         id: ("sn11"),
         name: {
             "ja": "ミラクルツイン",
-            "ko": "미라클트윈",
         },
         series: ("SM"),
         release_date: "2019-05-31",
@@ -2780,7 +2760,6 @@
         id: ("SM11a"),
         name: {
             "ja": "リミックスバウト",
-            "ko": "리믹스바우트",
         },
         series: ("SM"),
         release_date: "2019-07-05",
@@ -2791,7 +2770,6 @@
         id: ("SM11b"),
         name: {
             "ja": "ドリームリーグ",
-            "ko": "드림리그",
         },
         series: ("SM"),
         release_date: "2019-08-02",
@@ -2831,11 +2809,12 @@
     (
         id: ("sma"),
         name: {
-            "de": "Gelbes A-Alternativkarte",
-            "en": "Yellow A Alternate",
-            "es": "Cartas alternativas",
-            "fr": "Carte Alternative A Jaune",
-            "it": "Carta Alternativa A Gialla",
+            "de": "Verborgenes Schicksal Glitzer-Tresor",
+            "en": "Hidden Fates Shiny Vault",
+            "es": "Destinos Ocultos Tesoro Brillante",
+            "fr": "Destinées Occultes Coffre Étincelant",
+            "it": "Destino Sfuggente Tesoro Lucente",
+            "pt": "Destinos Ocultos Cofre Brilhante",
         },
         series: ("sm"),
         release_date: "2019-08-23",
@@ -2846,7 +2825,6 @@
         id: ("SM12"),
         name: {
             "ja": "オルタージェネシス",
-            "ko": "얼터제네시스",
         },
         series: ("SM"),
         release_date: "2019-09-06",
@@ -2857,7 +2835,6 @@
         id: ("SM12a"),
         name: {
             "ja": "TAG TEAM GX タッグオールスターズ",
-            "ko": "TAG TEAM GX 태그올스타즈",
         },
         series: ("SM"),
         release_date: "2019-10-04",
@@ -2867,7 +2844,7 @@
     (
         id: ("2019sm"),
         name: {
-            "en": "Macdonald\'s Collection 2019",
+            "en": "McDonald\'s Collection 2019",
             "it": "McDonald\'s Collection 2019",
         },
         series: ("mc"),
@@ -2878,11 +2855,11 @@
     (
         id: ("2019sm-fr"),
         name: {
-            "fr": "Promo McDonald\'s 2019",
+            "fr": "Collection McDonald\'s 2019",
         },
         series: ("mc"),
         release_date: "2019-10-30",
-        total_cards: 40,
+        total_cards: 41,
         abbreviation: None,
     ),
     (
@@ -2912,14 +2889,13 @@
         },
         series: ("swsh"),
         release_date: "2019-11-15",
-        total_cards: 285,
+        total_cards: 286,
         abbreviation: None,
     ),
     (
         id: ("S1H"),
         name: {
             "ja": "シールド",
-            "ko": "실드",
         },
         series: ("S"),
         release_date: "2019-12-06",
@@ -2930,7 +2906,6 @@
         id: ("S1W"),
         name: {
             "ja": "ソード",
-            "ko": "소드",
         },
         series: ("S"),
         release_date: "2019-12-06",
@@ -2941,7 +2916,6 @@
         id: ("S1a"),
         name: {
             "ja": "VMAXライジング",
-            "ko": "VMAX라이징",
         },
         series: ("S"),
         release_date: "2020-02-07",
@@ -2967,7 +2941,6 @@
         id: ("S2"),
         name: {
             "ja": "反逆クラッシュ",
-            "ko": "반역크래시",
         },
         series: ("S"),
         release_date: "2020-03-06",
@@ -2978,7 +2951,6 @@
         id: ("S2a"),
         name: {
             "ja": "爆炎ウォーカー",
-            "ko": "폭염워커",
         },
         series: ("S"),
         release_date: "2020-04-24",
@@ -3004,7 +2976,6 @@
         id: ("S3"),
         name: {
             "ja": "ムゲンゾーン",
-            "ko": "무한존",
         },
         series: ("S"),
         release_date: "2020-06-05",
@@ -3051,7 +3022,6 @@
         id: ("S3a"),
         name: {
             "ja": "伝説の鼓動",
-            "ko": "전설의 고동",
         },
         series: ("S"),
         release_date: "2020-07-10",
@@ -3114,6 +3084,17 @@
         abbreviation: Some("FUT20"),
     ),
     (
+        id: ("S4"),
+        name: {
+            "ja": "仰天のボルテッカー",
+            "zh-tw": "驚天伏特攻擊",
+        },
+        series: ("S"),
+        release_date: "2020-09-18",
+        total_cards: 100,
+        abbreviation: None,
+    ),
+    (
         id: ("swsh3.5"),
         name: {
             "de": "Weg des Champs",
@@ -3129,15 +3110,33 @@
         abbreviation: Some("CPA"),
     ),
     (
-        id: ("S4"),
+        id: ("CSM1aC"),
         name: {
-            "ja": "仰天のボルテッカー",
-            "ko": "앙천의 볼트태클",
-            "zh-tw": "驚天伏特攻擊",
+            "zh-cn": "横空出世 赫",
         },
-        series: ("S"),
-        release_date: "2020-10-09",
-        total_cards: 100,
+        series: ("SM"),
+        release_date: "2020-10-28",
+        total_cards: 151,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSM1bC"),
+        name: {
+            "zh-cn": "横空出世 苍",
+        },
+        series: ("SM"),
+        release_date: "2020-10-28",
+        total_cards: 151,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSM1cC"),
+        name: {
+            "zh-cn": "横空出世 泽",
+        },
+        series: ("SM"),
+        release_date: "2020-10-28",
+        total_cards: 151,
         abbreviation: None,
     ),
     (
@@ -3159,11 +3158,10 @@
         id: ("S4a"),
         name: {
             "ja": "シャイニースターV",
-            "ko": "샤이니스타V",
             "zh-tw": "閃色明星V",
         },
         series: ("S"),
-        release_date: "2020-11-27",
+        release_date: "2020-11-20",
         total_cards: 190,
         abbreviation: None,
     ),
@@ -3184,12 +3182,11 @@
         name: {
             "id": "Master Serangan Tunggal",
             "ja": "一撃マスター",
-            "ko": "일격마스터",
             "th": "มาสเตอร\u{e4c}จ\u{e39}\u{e48}โจมคร\u{e31}\u{e49}งเด\u{e35}ยว",
             "zh-tw": "一撃大師",
         },
         series: ("S"),
-        release_date: "2021-01-29",
+        release_date: "2021-01-22",
         total_cards: 70,
         abbreviation: None,
     ),
@@ -3198,12 +3195,11 @@
         name: {
             "id": "Master Serangan Beruntun",
             "ja": "連撃マスター",
-            "ko": "연격마스터",
             "th": "มาสเตอร\u{e4c}จ\u{e39}\u{e48}โจมต\u{e48}อเน\u{e37}\u{e48}อง",
             "zh-tw": "連撃大師",
         },
         series: ("S"),
-        release_date: "2021-01-29",
+        release_date: "2021-01-22",
         total_cards: 70,
         abbreviation: None,
     ),
@@ -3222,9 +3218,9 @@
     (
         id: ("2021swsh"),
         name: {
-            "en": "Macdonald\'s Collection 2021",
+            "en": "McDonald\'s Collection 2021",
             "es": "Colección de McDonald\'s 2021",
-            "fr": "Promo McDonald\'s 2021",
+            "fr": "Collection McDonald\'s 2021",
             "it": "McDonald\'s Collection 2021",
         },
         series: ("mc"),
@@ -3238,7 +3234,7 @@
             "de": "Glänzendes Schicksal",
             "en": "Shining Fates",
             "es": "Destinos Brillantes",
-            "fr": "Déstinées Radieuses",
+            "fr": "Destinées Radieuses",
             "it": "Destino Splendente",
             "pt": "Destinos Brilhantes ",
         },
@@ -3246,6 +3242,19 @@
         release_date: "2021-02-19",
         total_cards: 195,
         abbreviation: Some("SHF"),
+    ),
+    (
+        id: ("S5a"),
+        name: {
+            "id": "Dua Pilar Petarung",
+            "ja": "双璧のファイター",
+            "th": "สองยอดน\u{e31}กส\u{e39}\u{e49}",
+            "zh-tw": "雙璧戰士",
+        },
+        series: ("S"),
+        release_date: "2021-03-19",
+        total_cards: 70,
+        abbreviation: None,
     ),
     (
         id: ("swsh5"),
@@ -3285,30 +3294,15 @@
         abbreviation: None,
     ),
     (
-        id: ("S5a"),
-        name: {
-            "id": "Dua Pilar Petarung",
-            "ja": "双璧のファイター",
-            "ko": "쌍벽의 파이터",
-            "th": "สองยอดน\u{e31}กส\u{e39}\u{e49}",
-            "zh-tw": "雙璧戰士",
-        },
-        series: ("S"),
-        release_date: "2021-04-02",
-        total_cards: 70,
-        abbreviation: None,
-    ),
-    (
         id: ("S6H"),
         name: {
             "id": "Ganjur Salju Perak",
             "ja": "白銀のランス",
-            "ko": "백은의 랜스",
             "th": "หอกห\u{e34}มะขาว",
             "zh-tw": "銀白戰槍",
         },
         series: ("S"),
-        release_date: "2021-05-07",
+        release_date: "2021-04-23",
         total_cards: 70,
         abbreviation: None,
     ),
@@ -3317,12 +3311,11 @@
         name: {
             "id": "Astral Gelap Gulita",
             "ja": "漆黒のガイスト",
-            "ko": "칠흑의 가이스트",
             "th": "ภ\u{e39}ตทม\u{e34}ฬ",
             "zh-tw": "漆黑幽魂",
         },
         series: ("S"),
-        release_date: "2021-05-07",
+        release_date: "2021-04-23",
         total_cards: 70,
         abbreviation: None,
     ),
@@ -3331,12 +3324,11 @@
         name: {
             "id": "Para Eevee Pahlawan",
             "ja": "イーブイヒーローズ",
-            "ko": "이브이 히어로즈",
             "th": "อ\u{e35}ว\u{e38}ยฮ\u{e35}โร",
             "zh-tw": "伊布英雄",
         },
         series: ("S"),
-        release_date: "2021-06-11",
+        release_date: "2021-05-28",
         total_cards: 69,
         abbreviation: None,
     ),
@@ -3383,12 +3375,11 @@
         name: {
             "id": "Pencakar Langit Sempurna",
             "ja": "摩天パーフェクト",
-            "ko": "마천퍼펙트",
             "th": "เพอร\u{e4c}เฟคระฟ\u{e49}า",
             "zh-tw": "摩天巔峰",
         },
         series: ("S"),
-        release_date: "2021-07-23",
+        release_date: "2021-07-09",
         total_cards: 67,
         abbreviation: None,
     ),
@@ -3397,12 +3388,11 @@
         name: {
             "id": "Arus Langit Biru",
             "ja": "蒼空ストリーム",
-            "ko": "창공의스트림",
             "th": "สายน\u{e49}ำแห\u{e48}งนภา",
             "zh-tw": "蒼空烈流",
         },
         series: ("S"),
-        release_date: "2021-07-23",
+        release_date: "2021-07-09",
         total_cards: 67,
         abbreviation: None,
     ),
@@ -3436,12 +3426,11 @@
         name: {
             "id": "Teknik Fusion",
             "ja": "フュージョンアーツ",
-            "ko": "퓨전아츠",
             "th": "ฟ\u{e34}วช\u{e31}นอาร\u{e4c}ต",
             "zh-tw": "匯流藝術",
         },
         series: ("S"),
-        release_date: "2021-10-01",
+        release_date: "2021-09-24",
         total_cards: 100,
         abbreviation: None,
     ),
@@ -3477,13 +3466,12 @@
         name: {
             "id": "Koleksi Perayaan 25 Tahun",
             "ja": "25th アニバーサリーコレクション",
-            "ko": "25th Anniversary",
             "th": "คอลเลกช\u{e31}นฉลองครบรอบ 25 ป\u{e35}",
             "zh-tw": "25週年收藏款",
         },
         series: ("S"),
-        release_date: "2021-10-20",
-        total_cards: 33,
+        release_date: "2021-10-22",
+        total_cards: 28,
         abbreviation: None,
     ),
     (
@@ -3506,12 +3494,11 @@
         name: {
             "id": "VMAX Klimaks",
             "ja": "VMAXクライマックス",
-            "ko": "VMAX 클라이맥스",
             "th": "VMAX ไคลแมกซ\u{e4c}",
             "zh-tw": "VMAX絕群壓軸",
         },
         series: ("S"),
-        release_date: "2021-12-17",
+        release_date: "2021-12-03",
         total_cards: 184,
         abbreviation: None,
     ),
@@ -3520,13 +3507,12 @@
         name: {
             "id": "Star Birth",
             "ja": "スターバース",
-            "ko": "스타버스",
             "th": "สตาร\u{e4c}เบ\u{e34}ร\u{e4c}ท",
             "zh-tw": "星星誕生",
         },
         series: ("S"),
-        release_date: "2022-01-28",
-        total_cards: 100,
+        release_date: "2022-01-14",
+        total_cards: 127,
         abbreviation: None,
     ),
     (
@@ -3560,6 +3546,19 @@
         abbreviation: None,
     ),
     (
+        id: ("S9a"),
+        name: {
+            "id": "Pertarungan Daerah",
+            "ja": "バトルリージョン",
+            "th": "พส\u{e38}ธามหาย\u{e38}ทธ",
+            "zh-tw": "對戰地區",
+        },
+        series: ("S"),
+        release_date: "2022-02-25",
+        total_cards: 93,
+        abbreviation: None,
+    ),
+    (
         id: ("swsh9"),
         name: {
             "de": "Strahlende Sterne",
@@ -3573,20 +3572,6 @@
         release_date: "2022-02-25",
         total_cards: 216,
         abbreviation: Some("BRS"),
-    ),
-    (
-        id: ("S9a"),
-        name: {
-            "id": "Pertarungan Daerah",
-            "ja": "バトルリージョン",
-            "ko": "배틀리전",
-            "th": "พส\u{e38}ธามหาย\u{e38}ทธ",
-            "zh-tw": "對戰地區",
-        },
-        series: ("S"),
-        release_date: "2022-03-11",
-        total_cards: 67,
-        abbreviation: None,
     ),
     (
         id: ("SLD"),
@@ -3613,12 +3598,11 @@
         name: {
             "id": "Pengamat Waktu",
             "ja": "タイムゲイザー",
-            "ko": "타임게이저",
             "th": "เจ\u{e49}าแห\u{e48}งกาลเวลา",
             "zh-tw": "時間觀察者",
         },
         series: ("S"),
-        release_date: "2022-04-22",
+        release_date: "2022-04-08",
         total_cards: 67,
         abbreviation: None,
     ),
@@ -3627,12 +3611,11 @@
         name: {
             "id": "Penyulap Ruang",
             "ja": "スペースジャグラー",
-            "ko": "스페이스저글러",
             "th": "จอมมายาผ\u{e48}าม\u{e34}ต\u{e34}",
             "zh-tw": "空間魔術師",
         },
         series: ("S"),
-        release_date: "2022-04-22",
+        release_date: "2022-04-08",
         total_cards: 67,
         abbreviation: None,
     ),
@@ -3652,12 +3635,11 @@
         name: {
             "id": "Fantom Kegelapan",
             "ja": "ダークファンタズマ",
-            "ko": "다크판타스마",
             "th": "อ\u{e31}นธการลวงตา",
             "zh-tw": "黑暗亡靈",
         },
         series: ("S"),
-        release_date: "2022-05-27",
+        release_date: "2022-05-13",
         total_cards: 71,
         abbreviation: None,
     ),
@@ -3681,13 +3663,12 @@
         name: {
             "id": "Pokémon GO",
             "ja": "Pokémon GO",
-            "ko": "Pokémon GO",
             "th": "Pokémon GO",
             "zh-tw": "Pokémon GO",
         },
         series: ("S"),
         release_date: "2022-06-17",
-        total_cards: 79,
+        total_cards: 71,
         abbreviation: None,
     ),
     (
@@ -3721,14 +3702,26 @@
         name: {
             "id": "Hantaman Triplet",
             "ja": "トリプレットビート",
-            "ko": "트리플렛비트",
             "th": "ทร\u{e34}ปเป\u{e34}ลบ\u{e35}ต",
             "zh-tw": "三連音爆",
         },
         series: ("S"),
-        release_date: "2022-07-29",
+        release_date: "2022-07-15",
         total_cards: 100,
         abbreviation: None,
+    ),
+    (
+        id: ("2022swsh"),
+        name: {
+            "en": "McDonald\'s Collection 2022",
+            "es": "Colección de McDonald\'s 2022",
+            "fr": "Collection McDonald\'s 2022",
+            "it": "McDonald\'s Collection 2022",
+        },
+        series: ("mc"),
+        release_date: "2022-08-03",
+        total_cards: 15,
+        abbreviation: Some("MCD22"),
     ),
     (
         id: ("SP6"),
@@ -3761,6 +3754,19 @@
         abbreviation: None,
     ),
     (
+        id: ("S11a"),
+        name: {
+            "id": "Arkana Memuncak",
+            "ja": "白熱のアルカナ",
+            "th": "อาร\u{e4c}คานาแห\u{e48}งประกายแสง",
+            "zh-tw": "白熱奧祕",
+        },
+        series: ("S"),
+        release_date: "2022-09-02",
+        total_cards: 68,
+        abbreviation: None,
+    ),
+    (
         id: ("swsh11"),
         name: {
             "de": "Verlorener Ursprung",
@@ -3774,20 +3780,6 @@
         release_date: "2022-09-09",
         total_cards: 247,
         abbreviation: Some("LOR"),
-    ),
-    (
-        id: ("S11a"),
-        name: {
-            "id": "Arkana Memuncak",
-            "ja": "白熱のアルカナ",
-            "ko": "백열의 아르카나",
-            "th": "อาร\u{e4c}คานาแห\u{e48}งประกายแสง",
-            "zh-tw": "白熱奧祕",
-        },
-        series: ("S"),
-        release_date: "2022-09-16",
-        total_cards: 68,
-        abbreviation: None,
     ),
     (
         id: ("SN"),
@@ -3804,13 +3796,42 @@
         name: {
             "id": "Pemicu Paradigma",
             "ja": "パラダイムトリガー",
-            "ko": "패러다임트리거",
             "th": "ปฐมบทแห\u{e48}งย\u{e38}คใหม\u{e48}",
             "zh-tw": "思維激盪",
         },
         series: ("S"),
-        release_date: "2022-11-04",
-        total_cards: 114,
+        release_date: "2022-10-21",
+        total_cards: 125,
+        abbreviation: None,
+    ),
+    (
+        id: ("csm1a"),
+        name: {
+            "zh-cn": "风暴涌现",
+        },
+        series: ("SM"),
+        release_date: "2022-10-22",
+        total_cards: 211,
+        abbreviation: None,
+    ),
+    (
+        id: ("csm1b"),
+        name: {
+            "zh-cn": "风暴涌现",
+        },
+        series: ("SM"),
+        release_date: "2022-10-22",
+        total_cards: 204,
+        abbreviation: None,
+    ),
+    (
+        id: ("csm1c"),
+        name: {
+            "zh-cn": "风暴涌现",
+        },
+        series: ("SM"),
+        release_date: "2022-10-22",
+        total_cards: 212,
         abbreviation: None,
     ),
     (
@@ -3874,13 +3895,118 @@
         name: {
             "id": "VSTAR Semesta",
             "ja": "VSTARユニバース",
-            "ko": "VSTAR 유니버스",
             "th": "จ\u{e31}กรวาลแห\u{e48}งVSTAR",
             "zh-tw": "天地萬物VSTAR",
         },
         series: ("S"),
         release_date: "2022-12-02",
-        total_cards: 250,
+        total_cards: 254,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSM1.5C"),
+        name: {
+            "zh-cn": "对战精英",
+        },
+        series: ("SM"),
+        release_date: "2022-12-16",
+        total_cards: 60,
+        abbreviation: None,
+    ),
+    (
+        id: ("csm1.5"),
+        name: {
+            "zh-cn": "战斗精英",
+        },
+        series: ("SM"),
+        release_date: "2022-12-16",
+        total_cards: 151,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSM2aC"),
+        name: {
+            "zh-cn": "交相辉映 沐",
+        },
+        series: ("SM"),
+        release_date: "2023-01-18",
+        total_cards: 150,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSM2bC"),
+        name: {
+            "zh-cn": "交相辉映 魁",
+        },
+        series: ("SM"),
+        release_date: "2023-01-18",
+        total_cards: 150,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSM2cC"),
+        name: {
+            "zh-cn": "交相辉映 唤",
+        },
+        series: ("SM"),
+        release_date: "2023-01-18",
+        total_cards: 150,
+        abbreviation: None,
+    ),
+    (
+        id: ("csm2a"),
+        name: {
+            "zh-cn": "闪耀协同效应",
+        },
+        series: ("SM"),
+        release_date: "2023-01-18",
+        total_cards: 194,
+        abbreviation: None,
+    ),
+    (
+        id: ("csm2b"),
+        name: {
+            "zh-cn": "闪耀协同效应",
+        },
+        series: ("SM"),
+        release_date: "2023-01-18",
+        total_cards: 193,
+        abbreviation: None,
+    ),
+    (
+        id: ("csm2c"),
+        name: {
+            "zh-cn": "闪耀协同效应",
+        },
+        series: ("SM"),
+        release_date: "2023-01-18",
+        total_cards: 192,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV1S"),
+        name: {
+            "id": "Scarlet ex",
+            "ja": "スカーレットex",
+            "th": "สการ\u{e4c}เล\u{e47}ต ex",
+            "zh-tw": "朱ex",
+        },
+        series: ("SV"),
+        release_date: "2023-01-20",
+        total_cards: 108,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV1V"),
+        name: {
+            "id": "Violet ex",
+            "ja": "バイオレットex",
+            "th": "ไวโอเล\u{e47}ต ex",
+            "zh-tw": "紫ex",
+        },
+        series: ("SV"),
+        release_date: "2023-01-20",
+        total_cards: 108,
         abbreviation: None,
     ),
     (
@@ -3911,34 +4037,6 @@
         abbreviation: None,
     ),
     (
-        id: ("SV1S"),
-        name: {
-            "id": "Scarlet ex",
-            "ja": "スカーレットex",
-            "ko": "스칼렛ex",
-            "th": "สการ\u{e4c}เล\u{e47}ต ex",
-            "zh-tw": "朱ex",
-        },
-        series: ("SV"),
-        release_date: "2023-02-03",
-        total_cards: 78,
-        abbreviation: None,
-    ),
-    (
-        id: ("SV1V"),
-        name: {
-            "id": "Violet ex",
-            "ja": "バイオレットex",
-            "ko": "바이올렛ex",
-            "th": "ไวโอเล\u{e47}ต ex",
-            "zh-tw": "紫ex",
-        },
-        series: ("SV"),
-        release_date: "2023-02-03",
-        total_cards: 78,
-        abbreviation: None,
-    ),
-    (
         id: ("SVB"),
         name: {
             "zh-tw": "頂級訓練家收藏箱ex",
@@ -3953,13 +4051,32 @@
         name: {
             "id": "Hantaman Triplet",
             "ja": "トリプレットビート",
-            "ko": "트리플렛비트",
             "th": "ทร\u{e34}ปเป\u{e34}ลบ\u{e35}ต",
             "zh-tw": "三連音爆",
         },
         series: ("SV"),
-        release_date: "2023-03-24",
-        total_cards: 73,
+        release_date: "2023-03-10",
+        total_cards: 103,
+        abbreviation: None,
+    ),
+    (
+        id: ("csm2.5"),
+        name: {
+            "zh-cn": "精彩的比赛",
+        },
+        series: ("SM"),
+        release_date: "2023-03-13",
+        total_cards: 151,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSM2.5C"),
+        name: {
+            "zh-cn": "炫奇争胜",
+        },
+        series: ("SM"),
+        release_date: "2023-03-17",
+        total_cards: 61,
         abbreviation: None,
     ),
     (
@@ -3975,7 +4092,22 @@
         series: ("sv"),
         release_date: "2023-03-31",
         total_cards: 258,
-        abbreviation: Some("SV"),
+        abbreviation: Some("SVI"),
+    ),
+    (
+        id: ("sve"),
+        name: {
+            "de": "Karmesin & Purpur Energie",
+            "en": "Scarlet & Violet Energy",
+            "es": "Escarlata y Púrpura Energía",
+            "fr": "Écarlate et Violet Énergie",
+            "it": "Scarlatto e Violetto Energia",
+            "pt": "Escarlate e Violeta Energia",
+        },
+        series: ("sv"),
+        release_date: "2023-03-31",
+        total_cards: 24,
+        abbreviation: Some("SVE"),
     ),
     (
         id: ("svp"),
@@ -3989,7 +4121,7 @@
         },
         series: ("sv"),
         release_date: "2023-03-31",
-        total_cards: 192,
+        total_cards: 225,
         abbreviation: Some("SVP"),
     ),
     (
@@ -3997,13 +4129,12 @@
         name: {
             "id": "Letusan Tanah",
             "ja": "クレイバースト",
-            "ko": "클레이버스트",
             "th": "เคลย\u{e4c}เบ\u{e34}สต\u{e4c}",
             "zh-tw": "碟旋暴擊",
         },
         series: ("SV"),
-        release_date: "2023-04-28",
-        total_cards: 71,
+        release_date: "2023-04-14",
+        total_cards: 99,
         abbreviation: None,
     ),
     (
@@ -4011,13 +4142,12 @@
         name: {
             "id": "Mara Bahaya Salju",
             "ja": "スノーハザード",
-            "ko": "스노해저드",
             "th": "สโนว\u{e4c}ฮาซาร\u{e4c}ด",
             "zh-tw": "冰雪險境",
         },
         series: ("SV"),
-        release_date: "2023-04-28",
-        total_cards: 71,
+        release_date: "2023-04-14",
+        total_cards: 99,
         abbreviation: None,
     ),
     (
@@ -4028,6 +4158,26 @@
         series: ("SV"),
         release_date: "2023-04-28",
         total_cards: 22,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS1aC"),
+        name: {
+            "zh-cn": "横空出世 赫",
+        },
+        series: ("S"),
+        release_date: "2023-05-19",
+        total_cards: 135,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS1bC"),
+        name: {
+            "zh-cn": "极巨争锋 焰",
+        },
+        series: ("S"),
+        release_date: "2023-05-19",
+        total_cards: 136,
         abbreviation: None,
     ),
     (
@@ -4060,13 +4210,22 @@
         name: {
             "id": "Kartu Pokémon 151",
             "ja": "ポケモンカード151",
-            "ko": "포켓몬 카드 151",
             "th": "โปเกมอนการ\u{e4c}ด 151",
             "zh-tw": "寶可夢卡牌151",
         },
         series: ("SV"),
-        release_date: "2023-06-30",
-        total_cards: 207,
+        release_date: "2023-06-16",
+        total_cards: 210,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS1.5C"),
+        name: {
+            "zh-cn": "极巨攻防",
+        },
+        series: ("S"),
+        release_date: "2023-06-28",
+        total_cards: 55,
         abbreviation: None,
     ),
     (
@@ -4083,14 +4242,26 @@
         id: ("SV3"),
         name: {
             "ja": "黒炎の支配者",
-            "ko": "흑염의 지배자",
             "th": "ราชาแห\u{e48}งเพล\u{e34}งกาฬ",
             "zh-tw": "黯焰支配者",
         },
         series: ("SV"),
-        release_date: "2023-08-11",
-        total_cards: 138,
+        release_date: "2023-07-28",
+        total_cards: 141,
         abbreviation: None,
+    ),
+    (
+        id: ("2023sv"),
+        name: {
+            "en": "McDonald\'s Collection 2023",
+            "es": "Colección de McDonald\'s 2023",
+            "fr": "Collection McDonald\'s 2023",
+            "it": "McDonald\'s Collection 2023",
+        },
+        series: ("mc"),
+        release_date: "2023-08-01",
+        total_cards: 15,
+        abbreviation: Some("MCD23"),
     ),
     (
         id: ("SVAL"),
@@ -4151,6 +4322,38 @@
         abbreviation: Some("OBF"),
     ),
     (
+        id: ("CS2aC"),
+        name: {
+            "zh-cn": "浓墨重彩 黎",
+        },
+        series: ("S"),
+        release_date: "2023-08-18",
+        total_cards: 115,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS2bC"),
+        name: {
+            "zh-cn": "浓墨重彩 靛",
+        },
+        series: ("S"),
+        release_date: "2023-08-18",
+        total_cards: 115,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV3a"),
+        name: {
+            "ja": "レイジングサーフ",
+            "th": "คล\u{e37}\u{e48}นพ\u{e34}โรธ",
+            "zh-tw": "激狂駭浪",
+        },
+        series: ("SV"),
+        release_date: "2023-09-22",
+        total_cards: 92,
+        abbreviation: None,
+    ),
+    (
         id: ("sv03.5"),
         name: {
             "de": "151",
@@ -4166,16 +4369,13 @@
         abbreviation: Some("MEW"),
     ),
     (
-        id: ("SV3a"),
+        id: ("CS2.5C"),
         name: {
-            "ja": "レイジングサーフ",
-            "ko": "레이징서프",
-            "th": "คล\u{e37}\u{e48}นพ\u{e34}โรธ",
-            "zh-tw": "激狂駭浪",
+            "zh-cn": "璀璨反击",
         },
-        series: ("SV"),
+        series: ("S"),
         release_date: "2023-09-29",
-        total_cards: 89,
+        total_cards: 59,
         abbreviation: None,
     ),
     (
@@ -4199,6 +4399,16 @@
         abbreviation: None,
     ),
     (
+        id: ("mfb"),
+        name: {
+            "en": "My First Battle",
+        },
+        series: ("sv"),
+        release_date: "2023-09-29",
+        total_cards: 48,
+        abbreviation: Some("MFB"),
+    ),
+    (
         id: ("SV3s"),
         name: {
             "id": "Kilau Hitam",
@@ -4206,6 +4416,30 @@
         series: ("SV"),
         release_date: "2023-10-27",
         total_cards: 227,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV4K"),
+        name: {
+            "ja": "古代の咆哮",
+            "th": "เส\u{e35}ยงคำรามจากอด\u{e35}ต",
+            "zh-tw": "古代咆哮",
+        },
+        series: ("SV"),
+        release_date: "2023-10-27",
+        total_cards: 95,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV4M"),
+        name: {
+            "ja": "未来の一閃",
+            "th": "ประกายแสงจากอนาคต",
+            "zh-tw": "未來閃光",
+        },
+        series: ("SV"),
+        release_date: "2023-10-27",
+        total_cards: 95,
         abbreviation: None,
     ),
     (
@@ -4224,32 +4458,6 @@
         abbreviation: Some("PAR"),
     ),
     (
-        id: ("SV4K"),
-        name: {
-            "ja": "古代の咆哮",
-            "ko": "고대의 포효",
-            "th": "เส\u{e35}ยงคำรามจากอด\u{e35}ต",
-            "zh-tw": "古代咆哮",
-        },
-        series: ("SV"),
-        release_date: "2023-11-10",
-        total_cards: 66,
-        abbreviation: None,
-    ),
-    (
-        id: ("SV4M"),
-        name: {
-            "ja": "未来の一閃",
-            "ko": "미래의 일섬",
-            "th": "ประกายแสงจากอนาคต",
-            "zh-tw": "未來閃光",
-        },
-        series: ("SV"),
-        release_date: "2023-11-10",
-        total_cards: 66,
-        abbreviation: None,
-    ),
-    (
         id: ("SVDs"),
         name: {
             "id": "Deck Ringkas ex",
@@ -4258,6 +4466,39 @@
         series: ("SV"),
         release_date: "2023-11-10",
         total_cards: 171,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS3aC"),
+        name: {
+            "zh-cn": "洪荒演武 茂",
+        },
+        series: ("S"),
+        release_date: "2023-11-17",
+        total_cards: 125,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS3bC"),
+        name: {
+            "zh-cn": "洪荒演武 激",
+        },
+        series: ("S"),
+        release_date: "2023-11-17",
+        total_cards: 122,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV4a"),
+        name: {
+            "id": "Harta Berkilau ex",
+            "ja": "レイジングサーフ",
+            "th": "ไชน\u{e35}เทรเชอร\u{e4c}ex",
+            "zh-tw": "閃色寶藏ex",
+        },
+        series: ("SV"),
+        release_date: "2023-12-01",
+        total_cards: 320,
         abbreviation: None,
     ),
     (
@@ -4271,17 +4512,37 @@
         abbreviation: None,
     ),
     (
-        id: ("SV4a"),
+        id: ("CS3.5C"),
         name: {
-            "id": "Harta Berkilau ex",
-            "ja": "レイジングサーフ",
-            "ko": "샤이니트레저 ex",
-            "th": "ไชน\u{e35}เทรเชอร\u{e4c}ex",
-            "zh-tw": "閃色寶藏ex",
+            "zh-cn": "怒炎灼天",
+        },
+        series: ("S"),
+        release_date: "2024-01-05",
+        total_cards: 66,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV5K"),
+        name: {
+            "ja": "ワイルドフォース",
+            "th": "อำนาจอนารยะ",
+            "zh-tw": "狂野之力",
         },
         series: ("SV"),
-        release_date: "2023-12-22",
-        total_cards: 314,
+        release_date: "2024-01-26",
+        total_cards: 71,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV5M"),
+        name: {
+            "ja": "サイバージャッジ",
+            "th": "ต\u{e38}ลาการไซเบอร\u{e4c}",
+            "zh-tw": "異度審判",
+        },
+        series: ("SV"),
+        release_date: "2024-01-26",
+        total_cards: 71,
         abbreviation: None,
     ),
     (
@@ -4298,32 +4559,6 @@
         release_date: "2024-01-26",
         total_cards: 245,
         abbreviation: Some("PAF"),
-    ),
-    (
-        id: ("SV5K"),
-        name: {
-            "ja": "ワイルドフォース",
-            "ko": "와일드포스",
-            "th": "อำนาจอนารยะ",
-            "zh-tw": "狂野之力",
-        },
-        series: ("SV"),
-        release_date: "2024-02-02",
-        total_cards: 71,
-        abbreviation: None,
-    ),
-    (
-        id: ("SV5M"),
-        name: {
-            "ja": "サイバージャッジ",
-            "ko": "사이버저지",
-            "th": "ต\u{e38}ลาการไซเบอร\u{e4c}",
-            "zh-tw": "異度審判",
-        },
-        series: ("SV"),
-        release_date: "2024-02-02",
-        total_cards: 97,
-        abbreviation: None,
     ),
     (
         id: ("SVHK"),
@@ -4347,6 +4582,38 @@
         series: ("SV"),
         release_date: "2024-02-02",
         total_cards: 24,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS4aC"),
+        name: {
+            "zh-cn": "九彩汇聚 朋",
+        },
+        series: ("S"),
+        release_date: "2024-03-01",
+        total_cards: 132,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS4bC"),
+        name: {
+            "zh-cn": "九彩汇聚 源",
+        },
+        series: ("S"),
+        release_date: "2024-03-01",
+        total_cards: 132,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV5a"),
+        name: {
+            "ja": "クリムゾンヘイズ",
+            "th": "หมอกส\u{e35}ชาด",
+            "zh-tw": "緋紅薄霧",
+        },
+        series: ("SV"),
+        release_date: "2024-03-22",
+        total_cards: 96,
         abbreviation: None,
     ),
     (
@@ -4375,24 +4642,10 @@
         abbreviation: None,
     ),
     (
-        id: ("SV5a"),
-        name: {
-            "ja": "クリムゾンヘイズ",
-            "ko": "크림슨헤이즈",
-            "th": "หมอกส\u{e35}ชาด",
-            "zh-tw": "緋紅薄霧",
-        },
-        series: ("SV"),
-        release_date: "2024-04-03",
-        total_cards: 66,
-        abbreviation: None,
-    ),
-    (
         id: ("CS1.5"),
         name: {
             "id": "Hantaman Triplet",
             "ja": "トリプレットビート",
-            "ko": "트리플렛비트",
             "th": "ทร\u{e34}ปเป\u{e34}ลบ\u{e35}ต",
             "zh-tw": "三連音爆",
         },
@@ -4406,7 +4659,6 @@
         name: {
             "id": "Hantaman Triplet",
             "ja": "トリプレットビート",
-            "ko": "트리플렛비트",
             "th": "ทร\u{e34}ปเป\u{e34}ลบ\u{e35}ต",
             "zh-tw": "三連音爆",
         },
@@ -4420,7 +4672,6 @@
         name: {
             "id": "Hantaman Triplet",
             "ja": "トリプレットビート",
-            "ko": "트리플렛비트",
             "th": "ทร\u{e34}ปเป\u{e34}ลบ\u{e35}ต",
             "zh-tw": "三連音爆",
         },
@@ -4434,7 +4685,6 @@
         name: {
             "id": "Hantaman Triplet",
             "ja": "トリプレットビート",
-            "ko": "트리플렛비트",
             "th": "ทร\u{e34}ปเป\u{e34}ลบ\u{e35}ต",
             "zh-tw": "三連音爆",
         },
@@ -4448,7 +4698,6 @@
         name: {
             "id": "Hantaman Triplet",
             "ja": "トリプレットビート",
-            "ko": "트리플렛비트",
             "th": "ทร\u{e34}ปเป\u{e34}ลบ\u{e35}ต",
             "zh-tw": "三連音爆",
         },
@@ -4462,7 +4711,6 @@
         name: {
             "id": "Hantaman Triplet",
             "ja": "トリプレットビート",
-            "ko": "트리플렛비트",
             "th": "ทร\u{e34}ปเป\u{e34}ลบ\u{e35}ต",
             "zh-tw": "三連音爆",
         },
@@ -4476,11 +4724,32 @@
         name: {
             "id": "Hantaman Triplet",
             "ja": "トリプレットビート",
-            "ko": "트리플렛비트",
             "th": "ทร\u{e34}ปเป\u{e34}ลบ\u{e35}ต",
             "zh-tw": "三連音爆",
         },
         series: ("S"),
+        release_date: "2024-04-26",
+        total_cards: 101,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS4.5C"),
+        name: {
+            "zh-cn": "终末炎舞",
+        },
+        series: ("S"),
+        release_date: "2024-04-26",
+        total_cards: 63,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV6"),
+        name: {
+            "ja": "変幻の仮面",
+            "th": "หน\u{e49}ากากจอมลวงตา",
+            "zh-tw": "變幻假面",
+        },
+        series: ("SV"),
         release_date: "2024-04-26",
         total_cards: 101,
         abbreviation: None,
@@ -4490,26 +4759,12 @@
         name: {
             "id": "Hantaman Triplet",
             "ja": "トリプレットビート",
-            "ko": "트리플렛비트",
             "th": "ทร\u{e34}ปเป\u{e34}ลบ\u{e35}ต",
             "zh-tw": "三連音爆",
         },
         series: ("S"),
         release_date: "2024-04-26",
         total_cards: 101,
-        abbreviation: None,
-    ),
-    (
-        id: ("SV6"),
-        name: {
-            "ja": "変幻の仮面",
-            "ko": "변환의 가면",
-            "th": "หน\u{e49}ากากจอมลวงตา",
-            "zh-tw": "變幻假面",
-        },
-        series: ("SV"),
-        release_date: "2024-05-10",
-        total_cards: 130,
         abbreviation: None,
     ),
     (
@@ -4544,8 +4799,40 @@
             "zh-tw": "黑夜漫遊者",
         },
         series: ("SV"),
-        release_date: "2024-06-21",
+        release_date: "2024-06-07",
         total_cards: 64,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS5aC"),
+        name: {
+            "zh-cn": "勇魅群星 魅",
+        },
+        series: ("S"),
+        release_date: "2024-06-18",
+        total_cards: 127,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS5bC"),
+        name: {
+            "zh-cn": "勇魅群星 勇",
+        },
+        series: ("S"),
+        release_date: "2024-06-18",
+        total_cards: 128,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV7"),
+        name: {
+            "ja": "ステラミラクル",
+            "zh-cn": "星晶奇跡",
+            "zh-tw": "星晶奇跡",
+        },
+        series: ("SV"),
+        release_date: "2024-07-19",
+        total_cards: 135,
         abbreviation: None,
     ),
     (
@@ -4559,15 +4846,13 @@
         abbreviation: None,
     ),
     (
-        id: ("SV7"),
+        id: ("CS5.5C"),
         name: {
-            "ja": "ステラミラクル",
-            "zh-cn": "星晶奇跡",
-            "zh-tw": "星晶奇跡",
+            "zh-cn": "暗影夺辉",
         },
-        series: ("SV"),
+        series: ("S"),
         release_date: "2024-08-02",
-        total_cards: 132,
+        total_cards: 66,
         abbreviation: None,
     ),
     (
@@ -4606,6 +4891,18 @@
         abbreviation: None,
     ),
     (
+        id: ("SV7a"),
+        name: {
+            "ja": "楽園ドラゴーナ",
+            "zh-cn": "樂園騰龍",
+            "zh-tw": "樂園騰龍",
+        },
+        series: ("SV"),
+        release_date: "2024-09-13",
+        total_cards: 94,
+        abbreviation: None,
+    ),
+    (
         id: ("sv07"),
         name: {
             "de": "Stellarkrone",
@@ -4621,6 +4918,26 @@
         abbreviation: Some("SCR"),
     ),
     (
+        id: ("CS6aC"),
+        name: {
+            "zh-cn": "碧海暗影 啸",
+        },
+        series: ("S"),
+        release_date: "2024-09-20",
+        total_cards: 131,
+        abbreviation: None,
+    ),
+    (
+        id: ("CS6bC"),
+        name: {
+            "zh-cn": "碧海暗影 逐",
+        },
+        series: ("S"),
+        release_date: "2024-09-20",
+        total_cards: 131,
+        abbreviation: None,
+    ),
+    (
         id: ("SV7s"),
         name: {
             "id": "Bimbingan Rasi",
@@ -4632,18 +4949,6 @@
         abbreviation: None,
     ),
     (
-        id: ("SV7a"),
-        name: {
-            "ja": "楽園ドラゴーナ",
-            "zh-cn": "樂園騰龍",
-            "zh-tw": "樂園騰龍",
-        },
-        series: ("SV"),
-        release_date: "2024-09-27",
-        total_cards: 64,
-        abbreviation: None,
-    ),
-    (
         id: ("SV8"),
         name: {
             "ja": "超電ブレイカー",
@@ -4651,7 +4956,7 @@
             "zh-tw": "超電突圍",
         },
         series: ("SV"),
-        release_date: "2024-10-25",
+        release_date: "2024-10-18",
         total_cards: 106,
         abbreviation: None,
     ),
@@ -4695,12 +5000,22 @@
             "es": "Chispas Fulgurantes",
             "fr": "Étincelles Déferlantes",
             "it": "Scintille Folgoranti",
-            "pt": "Fagulhas Impetudsas",
+            "pt": "Fagulhas Impetuosas",
         },
         series: ("sv"),
         release_date: "2024-11-08",
         total_cards: 252,
         abbreviation: Some("SSP"),
+    ),
+    (
+        id: ("CS6.5C"),
+        name: {
+            "zh-cn": "胜象星引",
+        },
+        series: ("S"),
+        release_date: "2024-11-15",
+        total_cards: 72,
+        abbreviation: None,
     ),
     (
         id: ("SV8s"),
@@ -4711,6 +5026,33 @@
         series: ("SV"),
         release_date: "2024-11-29",
         total_cards: 244,
+        abbreviation: None,
+    ),
+    (
+        id: ("2024sv"),
+        name: {
+            "en": "McDonald\'s Collection 2024",
+            "es": "Colección de McDonald\'s 2024",
+            "fr": "Collection McDonald\'s 2024",
+            "it": "McDonald\'s Collection 2024",
+        },
+        series: ("mc"),
+        release_date: "2024-12-04",
+        total_cards: 15,
+        abbreviation: Some("MCD24"),
+    ),
+    (
+        id: ("SV8a"),
+        name: {
+            "id": "Festival Terastal ex",
+            "ja": "テラスタルフェスex",
+            "th": "เทศกาลเทร\u{e31}สต\u{e31}ลex",
+            "zh-cn": "太晶慶典ex",
+            "zh-tw": "太晶慶典ex",
+        },
+        series: ("SV"),
+        release_date: "2024-12-06",
+        total_cards: 237,
         abbreviation: None,
     ),
     (
@@ -4730,17 +5072,13 @@
         abbreviation: None,
     ),
     (
-        id: ("SV8a"),
+        id: ("CSV1C"),
         name: {
-            "id": "Festival Terastal ex",
-            "ja": "テラスタルフェスex",
-            "th": "เทศกาลเทร\u{e31}สต\u{e31}ลex",
-            "zh-cn": "太晶慶典ex",
-            "zh-tw": "太晶慶典ex",
+            "zh-cn": "亘古开来",
         },
         series: ("SV"),
-        release_date: "2024-12-20",
-        total_cards: 237,
+        release_date: "2025-01-17",
+        total_cards: 127,
         abbreviation: None,
     ),
     (
@@ -4759,6 +5097,18 @@
         abbreviation: Some("PRE"),
     ),
     (
+        id: ("SV9"),
+        name: {
+            "ja": "バトルパートナーズ",
+            "zh-cn": "對戰搭檔",
+            "zh-tw": "對戰搭檔",
+        },
+        series: ("SV"),
+        release_date: "2025-01-24",
+        total_cards: 132,
+        abbreviation: None,
+    ),
+    (
         id: ("A2"),
         name: {
             "de": "Kollision von Raum und Zeit",
@@ -4772,18 +5122,6 @@
         series: ("tcgp"),
         release_date: "2025-01-30",
         total_cards: 207,
-        abbreviation: None,
-    ),
-    (
-        id: ("SV9"),
-        name: {
-            "ja": "バトルパートナーズ",
-            "zh-cn": "對戰搭檔",
-            "zh-tw": "對戰搭檔",
-        },
-        series: ("SV"),
-        release_date: "2025-02-07",
-        total_cards: 100,
         abbreviation: None,
     ),
     (
@@ -4803,6 +5141,28 @@
         abbreviation: None,
     ),
     (
+        id: ("SV9a"),
+        name: {
+            "ja": "熱風のアリーナ",
+            "zh-cn": "熱風競技場",
+            "zh-tw": "熱風競技場",
+        },
+        series: ("SV"),
+        release_date: "2025-03-14",
+        total_cards: 92,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSV2C"),
+        name: {
+            "zh-cn": "奇迹启程",
+        },
+        series: ("SV"),
+        release_date: "2025-03-21",
+        total_cards: 128,
+        abbreviation: None,
+    ),
+    (
         id: ("A2b"),
         name: {
             "de": "Glänzendes Festival",
@@ -4816,18 +5176,6 @@
         series: ("tcgp"),
         release_date: "2025-03-27",
         total_cards: 111,
-        abbreviation: None,
-    ),
-    (
-        id: ("SV9a"),
-        name: {
-            "ja": "熱風のアリーナ",
-            "zh-cn": "熱風競技場",
-            "zh-tw": "熱風競技場",
-        },
-        series: ("SV"),
-        release_date: "2025-03-28",
-        total_cards: 92,
         abbreviation: None,
     ),
     (
@@ -4845,6 +5193,18 @@
         release_date: "2025-03-28",
         total_cards: 190,
         abbreviation: Some("JTG"),
+    ),
+    (
+        id: ("SV10"),
+        name: {
+            "ja": "ロケット団の栄光",
+            "zh-cn": "火箭隊的榮耀",
+            "zh-tw": "火箭隊的榮耀",
+        },
+        series: ("SV"),
+        release_date: "2025-04-18",
+        total_cards: 98,
+        abbreviation: None,
     ),
     (
         id: ("SV9s"),
@@ -4874,21 +5234,20 @@
         abbreviation: None,
     ),
     (
-        id: ("SV10"),
+        id: ("CSV3C"),
         name: {
-            "ja": "ロケット団の栄光",
-            "zh-cn": "火箭隊的榮耀",
-            "zh-tw": "火箭隊的榮耀",
+            "zh-cn": "无畏太晶",
         },
         series: ("SV"),
-        release_date: "2025-05-02",
-        total_cards: 98,
+        release_date: "2025-05-16",
+        total_cards: 130,
         abbreviation: None,
     ),
     (
         id: ("A3a"),
         name: {
             "en": "Extradimensional Crisis",
+            "fr": "Crise Interdimensionnelle",
         },
         series: ("tcgp"),
         release_date: "2025-05-29",
@@ -4912,13 +5271,305 @@
         abbreviation: Some("DRI"),
     ),
     (
+        id: ("SV11B"),
+        name: {
+            "ja": "ブラックボルト",
+        },
+        series: ("SV"),
+        release_date: "2025-06-06",
+        total_cards: 174,
+        abbreviation: None,
+    ),
+    (
+        id: ("SV11W"),
+        name: {
+            "ja": "ホワイトフレア",
+        },
+        series: ("SV"),
+        release_date: "2025-06-06",
+        total_cards: 174,
+        abbreviation: None,
+    ),
+    (
         id: ("A3b"),
         name: {
             "en": "Eevee Grove",
+            "fr": "La Clairière d\'Évoli",
         },
         series: ("tcgp"),
         release_date: "2025-06-26",
         total_cards: 107,
         abbreviation: None,
+    ),
+    (
+        id: ("sv10.5b"),
+        name: {
+            "de": "Schwarze Blitze",
+            "en": "Black Bolt",
+            "es": "Fulgor Negro",
+            "fr": "Foudre Noire",
+            "it": "Luce Nera",
+            "pt": "Raio Preto",
+        },
+        series: ("sv"),
+        release_date: "2025-07-17",
+        total_cards: 172,
+        abbreviation: Some("BLK"),
+    ),
+    (
+        id: ("sv10.5w"),
+        name: {
+            "de": "Weiße Flammen",
+            "en": "White Flare",
+            "es": "Llama Blanca",
+            "fr": "Flamme Blanche",
+            "it": "Fuoco Bianco",
+            "pt": "Fogo Branco",
+        },
+        series: ("sv"),
+        release_date: "2025-07-17",
+        total_cards: 173,
+        abbreviation: Some("WHT"),
+    ),
+    (
+        id: ("CSV4C"),
+        name: {
+            "zh-cn": "嘉奖回合",
+        },
+        series: ("SV"),
+        release_date: "2025-07-18",
+        total_cards: 129,
+        abbreviation: None,
+    ),
+    (
+        id: ("A4"),
+        name: {
+            "en": "Wisdom of Sea and Sky",
+            "fr": "Sagesse Entre Ciel et Mer",
+        },
+        series: ("tcgp"),
+        release_date: "2025-07-30",
+        total_cards: 241,
+        abbreviation: None,
+    ),
+    (
+        id: ("M1S"),
+        name: {
+            "ja": "メガシンフォニア",
+        },
+        series: ("M"),
+        release_date: "2025-08-01",
+        total_cards: 92,
+        abbreviation: None,
+    ),
+    (
+        id: ("A4a"),
+        name: {
+            "de": "Verborgene Quelle",
+            "en": "Secluded Springs",
+            "es": "Manantial Oculto",
+            "fr": "Source Secrète",
+            "it": "Sorgenti Recondite",
+            "pt": "Nascentes Reclusas",
+            "pt-br": "Nascentes Reclusas",
+        },
+        series: ("tcgp"),
+        release_date: "2025-08-28",
+        total_cards: 71,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSV5C"),
+        name: {
+            "zh-cn": "黑晶炽诚",
+        },
+        series: ("SV"),
+        release_date: "2025-09-12",
+        total_cards: 129,
+        abbreviation: None,
+    ),
+    (
+        id: ("mee"),
+        name: {
+            "de": "Mega-Entwicklung Energie",
+            "en": "Mega Evolution Energy",
+            "es": "Megaevolución Energía",
+            "fr": "Méga-Évolution Énergie",
+            "it": "Megaevoluzione Energia",
+            "pt": "Megaevolução Energia",
+        },
+        series: ("me"),
+        release_date: "2025-09-25",
+        total_cards: 8,
+        abbreviation: Some("MEE"),
+    ),
+    (
+        id: ("me01"),
+        name: {
+            "de": "Mega-Entwicklung",
+            "en": "Mega Evolution",
+            "es": "Megaevolución",
+            "es-mx": "Megaevolución",
+            "fr": "Méga-Évolution",
+            "it": "Megaevoluzione",
+            "pt": "Megaevolução",
+        },
+        series: ("me"),
+        release_date: "2025-09-26",
+        total_cards: 188,
+        abbreviation: Some("MEG"),
+    ),
+    (
+        id: ("mep"),
+        name: {
+            "de": "MEP Black Star Promos",
+            "en": "MEP Black Star Promos",
+            "es": "MEP Black Star Promos",
+            "es-mx": "MEP Black Star Promos",
+            "fr": "MEP Black Star Promos",
+            "it": "MEP Black Star Promos",
+            "pt": "MEP Black Star Promos",
+        },
+        series: ("me"),
+        release_date: "2025-09-26",
+        total_cards: 52,
+        abbreviation: Some("MEP"),
+    ),
+    (
+        id: ("B1"),
+        name: {
+            "en": "Mega Rising",
+            "fr": "Méga-Ascension",
+        },
+        series: ("tcgp"),
+        release_date: "2025-10-30",
+        total_cards: 226,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSV6C"),
+        name: {
+            "zh-cn": "真实玄虚",
+        },
+        series: ("SV"),
+        release_date: "2025-11-07",
+        total_cards: 128,
+        abbreviation: None,
+    ),
+    (
+        id: ("me02"),
+        name: {
+            "de": "Fatale Flammen",
+            "en": "Phantasmal Flames",
+            "es": "Fuegos Fantasmales",
+            "es-mx": "Llamaradas Fantasmales",
+            "fr": "Flammes Fantasmagoriques",
+            "it": "Flamme Spettrali",
+            "pt": "Fogo Fantasmagórico",
+        },
+        series: ("me"),
+        release_date: "2025-11-14",
+        total_cards: 130,
+        abbreviation: Some("PFL"),
+    ),
+    (
+        id: ("B1a"),
+        name: {
+            "de": "Feuerrote Flammen",
+            "en": "Crimson Blaze",
+            "es": "Fuego Carmesí",
+            "fr": "Embrasement Écarlate",
+            "it": "Fiamme Cremisi",
+            "pt": "Chama Carmesim",
+            "pt-br": "Chama Carmesim",
+        },
+        series: ("tcgp"),
+        release_date: "2025-12-17",
+        total_cards: 69,
+        abbreviation: None,
+    ),
+    (
+        id: ("CSV7C"),
+        name: {
+            "zh-cn": "利刃猛醒",
+        },
+        series: ("SV"),
+        release_date: "2026-01-16",
+        total_cards: 204,
+        abbreviation: None,
+    ),
+    (
+        id: ("M3"),
+        name: {
+            "ja": "ムニキスゼロ",
+        },
+        series: ("M"),
+        release_date: "2026-01-23",
+        total_cards: 174,
+        abbreviation: None,
+    ),
+    (
+        id: ("B2"),
+        name: {
+            "de": "Traumhafte Parade",
+            "en": "Fantastical Parade",
+            "es": "Desfile de Ensueño",
+            "fr": "Parade Onirique",
+            "it": "Parata Fantasmagorica",
+            "pt": "Desfile Onírico",
+            "pt-br": "Desfile Onírico",
+        },
+        series: ("tcgp"),
+        release_date: "2026-01-29",
+        total_cards: 155,
+        abbreviation: None,
+    ),
+    (
+        id: ("me02.5"),
+        name: {
+            "de": "Erhabene Helden",
+            "en": "Ascended Heroes",
+            "es": "Héroes Ascendentes",
+            "es-mx": "Ascenso Heroico",
+            "fr": "Héros Transcendants",
+            "it": "Ascesa Eroica",
+            "pt": "Heróis Excelsos",
+        },
+        series: ("me"),
+        release_date: "2026-01-30",
+        total_cards: 295,
+        abbreviation: Some("ASC"),
+    ),
+    (
+        id: ("B2a"),
+        name: {
+            "de": "Paldean Wonders",
+            "en": "Paldean Wonders",
+            "es": "Paldean Wonders",
+            "fr": "Merveilles de Paldea",
+            "it": "Paldean Wonders",
+            "pt": "Paldean Wonders",
+            "pt-br": "Paldean Wonders",
+        },
+        series: ("tcgp"),
+        release_date: "2026-02-26",
+        total_cards: 129,
+        abbreviation: None,
+    ),
+    (
+        id: ("me03"),
+        name: {
+            "de": "Optimale Ordnung",
+            "en": "Perfect Order",
+            "es": "Equilibrio Perfecto",
+            "es-mx": "Equilibrio Perfecto",
+            "fr": "Équilibre Parfait",
+            "it": "Equilibrio Perfetto",
+            "pt": "Equilíbrio Perfeito",
+        },
+        series: ("me"),
+        release_date: "2026-03-27",
+        total_cards: 124,
+        abbreviation: Some("POR"),
     ),
 ]

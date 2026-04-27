@@ -1,72 +1,8 @@
 [
     (
-        id: ("ADV"),
-        name: {
-            "ja": "ADV",
-        },
-        release_date: "1996-10-20",
-    ),
-    (
-        id: ("L"),
-        name: {
-            "ja": "LEGEND",
-        },
-        release_date: "1996-10-20",
-    ),
-    (
-        id: ("PCG"),
-        name: {
-            "ja": "PCG",
-        },
-        release_date: "1996-10-20",
-    ),
-    (
         id: ("PMCG"),
         name: {
             "ja": "ポケットモンスターカードゲーム",
-        },
-        release_date: "1996-10-20",
-    ),
-    (
-        id: ("SM"),
-        name: {
-            "ja": "サン＆ムーン",
-            "ko": "썬&문",
-        },
-        release_date: "1996-10-20",
-    ),
-    (
-        id: ("VS"),
-        name: {
-            "ja": "VS",
-        },
-        release_date: "1996-10-20",
-    ),
-    (
-        id: ("XY"),
-        name: {
-            "ja": "XY",
-        },
-        release_date: "1996-10-20",
-    ),
-    (
-        id: ("XYb"),
-        name: {
-            "ja": "XY BREAK",
-        },
-        release_date: "1996-10-20",
-    ),
-    (
-        id: ("e"),
-        name: {
-            "ja": "ポケモンカードe",
-        },
-        release_date: "1996-10-20",
-    ),
-    (
-        id: ("web"),
-        name: {
-            "ja": "web",
         },
         release_date: "1996-10-20",
     ),
@@ -92,13 +28,6 @@
         release_date: "2000-02-01",
     ),
     (
-        id: ("gym"),
-        name: {
-            "en": "Gym",
-        },
-        release_date: "2000-08-14",
-    ),
-    (
         id: ("neo"),
         name: {
             "de": "Neo",
@@ -108,7 +37,35 @@
             "it": "Neo",
             "ja": "ポケモンカード★neo",
         },
-        release_date: "2000-12-16",
+        release_date: "2000-02-04",
+    ),
+    (
+        id: ("gym"),
+        name: {
+            "en": "Gym",
+        },
+        release_date: "2000-08-14",
+    ),
+    (
+        id: ("VS"),
+        name: {
+            "ja": "VS",
+        },
+        release_date: "2001-07-19",
+    ),
+    (
+        id: ("web"),
+        name: {
+            "ja": "web",
+        },
+        release_date: "2001-10-20",
+    ),
+    (
+        id: ("e"),
+        name: {
+            "ja": "ポケモンカードe",
+        },
+        release_date: "2001-12-01",
     ),
     (
         id: ("lc"),
@@ -126,6 +83,13 @@
             "it": "e-Series",
         },
         release_date: "2002-09-15",
+    ),
+    (
+        id: ("ADV"),
+        name: {
+            "ja": "ADV",
+        },
+        release_date: "2003-01-31",
     ),
     (
         id: ("ex"),
@@ -148,6 +112,13 @@
             "it": "POP",
         },
         release_date: "2003-10-01",
+    ),
+    (
+        id: ("PCG"),
+        name: {
+            "ja": "PCG",
+        },
+        release_date: "2004-04-09",
     ),
     (
         id: ("tk"),
@@ -182,6 +153,13 @@
             "it": "Platino",
         },
         release_date: "2009-02-11",
+    ),
+    (
+        id: ("L"),
+        name: {
+            "ja": "LEGEND",
+        },
+        release_date: "2009-10-09",
     ),
     (
         id: ("hgss"),
@@ -223,7 +201,7 @@
         name: {
             "en": "McDonald\'s Collection",
             "es": "Colección de McDonald\'s",
-            "fr": "Promo McDonald\'s",
+            "fr": "Collection McDonald\'s",
             "it": "McDonald\'s Collection",
         },
         release_date: "2011-06-17",
@@ -240,6 +218,28 @@
             "ru": "XY",
         },
         release_date: "2013-10-12",
+    ),
+    (
+        id: ("XY"),
+        name: {
+            "ja": "XY",
+        },
+        release_date: "2013-12-13",
+    ),
+    (
+        id: ("XYb"),
+        name: {
+            "ja": "XY BREAK",
+        },
+        release_date: "2015-09-26",
+    ),
+    (
+        id: ("SM"),
+        name: {
+            "ja": "サン＆ムーン",
+            "zh-cn": "太阳&月亮",
+        },
+        release_date: "2016-11-18",
     ),
     (
         id: ("sm"),
@@ -270,23 +270,11 @@
         name: {
             "id": "Pedang & Perisai",
             "ja": "剣と盾",
-            "ko": "검과 방패",
             "th": "ซอร\u{e4c}ด แอนด\u{e4c} ช\u{e35}ลด\u{e4c}",
+            "zh-cn": "剑&盾",
             "zh-tw": "劍＆盾",
         },
-        release_date: "2020-08-21",
-    ),
-    (
-        id: ("SV"),
-        name: {
-            "id": "Scarlet & Violet",
-            "ja": "ポケモンカードゲーム スカーレット&バイオレット",
-            "ko": "스칼렛・바이올렛",
-            "th": "สการ\u{e4c}เล\u{e47}ต&ไวโอเล\u{e47}ต",
-            "zh-cn": "朱&紫系列",
-            "zh-tw": "朱&紫系列",
-        },
-        release_date: "2020-08-21",
+        release_date: "2019-12-06",
     ),
     (
         id: ("sv"),
@@ -302,6 +290,17 @@
         release_date: "2023-03-31",
     ),
     (
+        id: ("SV"),
+        name: {
+            "id": "Scarlet & Violet",
+            "ja": "ポケモンカードゲーム スカーレット&バイオレット",
+            "th": "สการ\u{e4c}เล\u{e47}ต&ไวโอเล\u{e47}ต",
+            "zh-cn": "朱&紫",
+            "zh-tw": "朱&紫系列",
+        },
+        release_date: "2024-10-18",
+    ),
+    (
         id: ("tcgp"),
         name: {
             "de": "Pokémon‑Sammelkartenspiel‑Pocket",
@@ -313,5 +312,25 @@
             "pt-br": "Pokémon Estampas Ilustradas Pocket",
         },
         release_date: "2024-10-30",
+    ),
+    (
+        id: ("me"),
+        name: {
+            "de": "Mega-Entwicklung",
+            "en": "Mega Evolution",
+            "es": "Megaevolución",
+            "es-mx": "Megaevolución",
+            "fr": "Méga-Évolution",
+            "it": "Megaevoluzione",
+            "pt": "Megaevolução",
+        },
+        release_date: "2025-09-25",
+    ),
+    (
+        id: ("M"),
+        name: {
+            "ja": "ポケモンカードゲーム MEGA",
+        },
+        release_date: "2026-01-23",
     ),
 ]

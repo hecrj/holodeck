@@ -24,10 +24,9 @@ An application to track, manage, and visualize your TCG collection — Pokémon 
 - Multiple profiles
 - Minimum remote API usage for maximum speed
 - Cool animations!
-- Powered by [PokemonTCG] and [TCGdex]
+- Powered by [TCGdex]
 - ... more to come!
 
-[PokemonTCG]: https://pokemontcg.io
 [TCGdex]: https://tcgdex.dev
 
 
@@ -38,9 +37,6 @@ No pre-built binaries yet! Use `cargo` to try it out:
 ```bash
 cargo install --git https://github.com/hecrj/holodeck.git holodeck
 ```
-
-If you want the highest quality images, it is also recommended that you get an API key
-from [PokemonTCG] and place it inside an env variable named `POKEMONTCG_API_KEY`.
 
 
 ## Disclaimer

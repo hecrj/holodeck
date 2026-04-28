@@ -1,15 +1,17 @@
 <div align="center">
 
-# Holodeck
+# Keroberos
 
-[![License](https://img.shields.io/crates/l/holodeck.svg)](https://github.com/hecrj/holodeck/blob/master/LICENSE)
-[![Test Status](https://img.shields.io/github/actions/workflow/status/hecrj/holodeck/test.yml?branch=master&event=push&label=test)](https://github.com/hecrj/holodeck/actions)
+[![Crates.io](https://img.shields.io/crates/v/keroberos.svg)](https://crates.io/crates/keroberos)
+[![License](https://img.shields.io/crates/l/keroberos.svg)](https://github.com/hecrj/keroberos/blob/master/LICENSE)
+[![Downloads](https://img.shields.io/crates/d/keroberos.svg)](https://crates.io/crates/keroberos)
+[![Test Status](https://img.shields.io/github/actions/workflow/status/hecrj/keroberos/test.yml?branch=master&event=push&label=test)](https://github.com/hecrj/keroberos/actions)
 [![Made with iced](https://iced.rs/badge.svg)](https://github.com/iced-rs/iced)
 
 An application to track, manage, and visualize your TCG collection — Pokémon only for now!
 
-<img alt="Holodeck - Binder" src="assets/binder.webp" width="49%">
-<img alt="Holodeck - Adding" src="assets/mew.webp" width="49%">
+<img alt="Keroberos - Binder" src="assets/binder.webp" width="49%">
+<img alt="Keroberos - Adding" src="assets/mew.webp" width="49%">
 
 </div>
 
@@ -33,7 +35,7 @@ An application to track, manage, and visualize your TCG collection — Pokémon 
 No pre-built binaries yet! Use `cargo` to try it out:
 
 ```bash
-cargo install --git https://github.com/hecrj/holodeck.git holodeck
+cargo install --git https://github.com/hecrj/keroberos.git keroberos
 ```
 
 

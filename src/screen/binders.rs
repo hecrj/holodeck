@@ -642,8 +642,7 @@ impl Binders {
                 )
             };
 
-            let mode = pick_list(Some(self.mode), binder::Mode::ALL, binder::Mode::to_string)
-                .on_select(Message::ModeSelected)
+            let mode = pick_list(binder::Mode::ALL, Some(self.mode), Message::ModeSelected)
                 .padding([5, 10])
                 .text_size(12);
 
@@ -1110,7 +1109,7 @@ fn item<'a>(
 fn placeholder<'a>(index: usize) -> Element<'a, Message> {
     slot(
         bottom_right(text!("#{}", index + 1).style(|theme: &Theme| {
-            let palette = theme.palette();
+            let palette = theme.extended_palette();
 
             text::Style {
                 color: Some(palette.background.weak.color),

@@ -24,19 +24,19 @@ pub fn main() -> iced::Result {
     tracing_subscriber::fmt::init();
 
     iced::application::timed(
-        Holodeck::new,
-        Holodeck::update,
-        Holodeck::subscription,
-        Holodeck::view,
+        Keroberos::new,
+        Keroberos::update,
+        Keroberos::subscription,
+        Keroberos::view,
     )
-    .theme(Holodeck::theme)
+    .theme(Keroberos::theme)
     .font(icon::FONT)
     .default_font(Font::MONOSPACE)
     .window_size((1700.0, 950.0))
     .run()
 }
 
-struct Holodeck {
+struct Keroberos {
     state: State,
     now: Instant,
 }
@@ -62,7 +62,7 @@ enum Message {
     PricingUpdated((card::Id, Pricing)),
 }
 
-impl Holodeck {
+impl Keroberos {
     fn new() -> (Self, Task<Message>) {
         (
             Self {
@@ -224,7 +224,7 @@ impl Holodeck {
                         )
                         .style(move |theme, status| {
                             if is_active {
-                                let palette = theme.palette();
+                                let palette = theme.extended_palette();
 
                                 button::Style {
                                     background: Some(palette.background.base.color.into()),

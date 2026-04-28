@@ -1,7 +1,10 @@
 [package]
-name = "holodeck"
-version = "0.1.0"
+name = "keroberos"
+version = "2026.4.0"
 edition = "2024"
+description = "An application to track, manage, and visualize your TCG collection"
+repository = "https://github.com/hecrj/keroberos"
+license = "MIT"
 
 [features]
 scanner = ["pokedetect"]
@@ -71,9 +74,9 @@ dirs = "6"
 flate2 = "1"
 function = "0.2"
 futures-util = "0.3"
-iced = "0.15.0-dev"
-iced_fontello = "0.15.0-dev"
-iced_palace = "0.15.0-dev"
+iced = "0.14"
+iced_fontello = "0.14"
+iced_palace = "0.14"
 image = "0.25"
 jiff = "0.2"
 leptess = "0.14"
@@ -89,21 +92,21 @@ tokio = "1"
 tokio-stream = "0.1"
 tracing-subscriber = "0.3"
 
-[patch.crates-io]
-iced.git = "https://github.com/iced-rs/iced.git"
-iced.rev = "4255f613b887c3362214edd128acb8d2722bd0de"
+# [patch.crates-io]
+# iced.git = "https://github.com/iced-rs/iced.git"
+# iced.rev = "4255f613b887c3362214edd128acb8d2722bd0de"
 
-iced_core.git = "https://github.com/iced-rs/iced.git"
-iced_core.rev = "4255f613b887c3362214edd128acb8d2722bd0de"
+# iced_core.git = "https://github.com/iced-rs/iced.git"
+# iced_core.rev = "4255f613b887c3362214edd128acb8d2722bd0de"
 
-iced_widget.git = "https://github.com/iced-rs/iced.git"
-iced_widget.rev = "4255f613b887c3362214edd128acb8d2722bd0de"
+# iced_widget.git = "https://github.com/iced-rs/iced.git"
+# iced_widget.rev = "4255f613b887c3362214edd128acb8d2722bd0de"
 
-iced_palace.git = "https://github.com/hecrj/iced_palace.git"
-iced_palace.rev = "7b908e7e636837baa40879d569363b5d87f27a80"
+# iced_palace.git = "https://github.com/hecrj/iced_palace.git"
+# iced_palace.rev = "7b908e7e636837baa40879d569363b5d87f27a80"
 
-iced_fontello.git = "https://github.com/hecrj/iced_fontello.git"
-iced_fontello.rev = "e3652a7f9048f99d3ca85ff3f11b3c61cfa391d6"
+# iced_fontello.git = "https://github.com/hecrj/iced_fontello.git"
+# iced_fontello.rev = "e3652a7f9048f99d3ca85ff3f11b3c61cfa391d6"
 
 # For testing new bleeding edge iced features
 # iced.path = "../iced"

@@ -1,7 +1,6 @@
 // Generated automatically by iced_fontello at build time.
 // Do not edit manually. Source: ../fonts/keroberos-icons.toml
 // 7f4a7fa5e7e504ed3824adc13da5d30a500912f56d8e870c70b8025ce2caa0ea
-use iced::Font;
 use iced::widget::{Text, text};
 
 pub const FONT: &[u8] = include_bytes!("../fonts/keroberos-icons.ttf");
@@ -31,5 +30,5 @@ pub fn cancel<'a>() -> Text<'a> {
 }
 
 fn icon(codepoint: &str) -> Text<'_> {
-    text(codepoint).font(Font::with_name("keroberos-icons"))
+    text(codepoint).font("keroberos-icons")
 }

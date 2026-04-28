@@ -38,7 +38,7 @@ pub fn pokeball<'a, Message: 'a>(size: impl Into<Pixels>) -> Element<'a, Message
                 const RADIUS: f32 = 100.0;
                 const LINE: f32 = 30.0;
 
-                let palette = theme.palette();
+                let palette = theme.seed();
 
                 let center = Point::new(RADIUS, RADIUS);
                 let outer_circle = canvas::Path::circle(center, RADIUS);

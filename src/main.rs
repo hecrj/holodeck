@@ -224,7 +224,7 @@ impl Keroberos {
                         )
                         .style(move |theme, status| {
                             if is_active {
-                                let palette = theme.extended_palette();
+                                let palette = theme.palette();
 
                                 button::Style {
                                     background: Some(palette.background.base.color.into()),

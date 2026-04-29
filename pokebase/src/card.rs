@@ -2,7 +2,7 @@ pub mod pricing;
 
 pub use crate::core::card::*;
 
-use crate::{Database, Error, Session};
+use crate::{Database, Error, Locale, Session};
 
 use bytes::Bytes;
 use std::fmt;
@@ -36,10 +36,15 @@ impl Image {
     }
 }
 
-pub fn search<'a>(query: &str, database: &Database) -> impl Future<Output = Search> + 'a {
+pub fn search<'a>(
+    query: &str,
+    locale: Option<&Locale>,
+    database: &Database,
+) -> impl Future<Output = Search> + 'a {
     use tokio::task;
 
     let query = query.to_lowercase();
+    let locale = locale.cloned();
     let database = database.clone();
 
     async move {
@@ -50,7 +55,9 @@ pub fn search<'a>(query: &str, database: &Database) -> impl Future<Output = Sear
                 continue;
             }
 
-            if card.name.contains(&query) {
+            if card.name.contains(&query)
+                && locale.as_ref().is_none_or(|locale| card.name.has(locale))
+            {
                 matches.push(card.clone());
             }
 

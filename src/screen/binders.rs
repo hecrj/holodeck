@@ -3,7 +3,7 @@ use crate::card;
 use crate::card::pricing;
 use crate::collection;
 use crate::icon;
-use crate::pokebase::{Card, Database, Session};
+use crate::pokebase::{Card, Database, Locale, Session};
 use crate::widget::pokeball;
 use crate::{Binder, Collection};
 
@@ -49,6 +49,7 @@ enum State {
     Adding {
         variant: collection::Variant,
         query: String,
+        locale: Option<Locale>,
         search: card::Search,
         animations: HashMap<card::Id, AnimationSet>,
         search_task: Option<task::Handle>,
@@ -72,7 +73,7 @@ pub enum Message {
     #[cfg(feature = "scanner")]
     Scanning(pokedetect::Event),
     ToggleReverseHolofoil,
-    SearchChanged(String),
+    SearchChanged(String, Option<Locale>),
     SearchFinished(card::Search),
     Close,
     CardShown(card::Id, Source),
@@ -169,11 +170,13 @@ impl Binders {
                 }
 
                 let (search_cards, handle) =
-                    Task::perform(card::search("", database), Message::SearchFinished).abortable();
+                    Task::perform(card::search("", None, database), Message::SearchFinished)
+                        .abortable();
 
                 self.state = State::Adding {
                     variant,
                     query: String::new(),
+                    locale: None,
                     search: card::Search::new([]),
                     animations: HashMap::new(),
                     search_task: Some(handle.abort_on_drop()),
@@ -252,16 +255,19 @@ impl Binders {
 
                 Task::none()
             }
-            Message::SearchChanged(new_query) => {
+            Message::SearchChanged(new_query, new_locale) => {
                 let State::Adding {
-                    query, search_task, ..
+                    query,
+                    locale,
+                    search_task,
+                    ..
                 } = &mut self.state
                 else {
                     return Task::none();
                 };
 
                 let (search_cards, handle) = {
-                    let search = card::search(&new_query, database);
+                    let search = card::search(&new_query, new_locale.as_ref(), database);
 
                     Task::perform(
                         async move {
@@ -274,6 +280,7 @@ impl Binders {
                 };
 
                 *query = new_query;
+                *locale = new_locale;
                 *search_task = Some(handle.abort_on_drop());
 
                 search_cards
@@ -720,12 +727,14 @@ impl Binders {
             State::Adding {
                 variant,
                 query,
+                locale,
                 search,
                 animations,
                 ..
             } => Some(self.adding(
                 *variant,
                 query,
+                locale.as_ref(),
                 search.matches(),
                 animations,
                 collection,
@@ -820,6 +829,7 @@ impl Binders {
         &'a self,
         variant: collection::Variant,
         query: &'a str,
+        locale: Option<&'a Locale>,
         matches: &'a [Card],
         animations: &'a HashMap<card::Id, AnimationSet>,
         collection: &'a Collection,
@@ -831,11 +841,25 @@ impl Binders {
             let reverse = reverse_toggle(variant);
 
             let input = text_input("Search for your card...", query)
-                .on_input(Message::SearchChanged)
+                .on_input(move |search| Message::SearchChanged(search, locale.cloned()))
                 .padding(padding::all(10).right(40))
                 .id("search");
 
-            container(stack![input, right_center(reverse).padding(10)]).max_width(600)
+            let locale = pick_list(locale, [Locale::JA, Locale::EN], |locale| {
+                match locale.as_str() {
+                    "ja" => "Japanese",
+                    "en" => "English",
+                    "es" => "Spanish",
+                    locale => locale,
+                }
+                .to_owned()
+            })
+            .placeholder("Locale")
+            .on_select(|locale| Message::SearchChanged(query.to_owned(), Some(locale)))
+            .padding(10);
+
+            container(row![stack![input, right_center(reverse).padding(10)], locale].spacing(10))
+                .max_width(600)
         };
 
         let content: Element<'_, _> = {

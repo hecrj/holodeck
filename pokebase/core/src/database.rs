@@ -60,11 +60,12 @@ impl Database {
                 continue;
             }
 
-            let locale = Locale(entry.file_name().to_string_lossy().to_string());
+            let locale = Locale::from(entry.file_name().to_string_lossy().to_string());
 
-            if locale == Locale("ko".to_owned()) {
+            if locale == "ko" {
                 continue;
             }
+
             dbg!(&locale);
 
             // Series
@@ -385,7 +386,7 @@ fn load_pokemon() -> Vec<Pokemon> {
         .enumerate()
         .map(|(i, name)| Pokemon {
             id: pokemon::Id(i + 1),
-            name: locale::Map::from_iter([(Locale("en".to_owned()), name)]),
+            name: locale::Map::from_iter([(Locale::from_str("en"), name)]),
         })
         .collect()
 }

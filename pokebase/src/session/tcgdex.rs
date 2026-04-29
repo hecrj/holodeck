@@ -1,5 +1,5 @@
 use crate::session;
-use crate::{Card, Database, Error, Locale, Result};
+use crate::{Card, Database, Error, Result};
 
 use bytes::Bytes;
 use serde::Deserialize;
@@ -21,17 +21,7 @@ impl Tcgdex {
             return Err(Error::SetNotFound(card.set.clone()));
         };
 
-        let locale = if card.name.has_english() {
-            "en" // TODO
-        } else if card.name.has_japanese() {
-            "ja"
-        } else {
-            card.name
-                .locales()
-                .next()
-                .map(Locale::as_str)
-                .unwrap_or("en")
-        };
+        let locale = card.locale();
 
         let url = format!(
             "https://assets.tcgdex.net/{locale}/{series}/{set}/{number}/high.png",
@@ -60,17 +50,7 @@ impl Tcgdex {
     }
 
     pub async fn fetch_pricing(&self, card: &Card) -> Result<Pricing> {
-        let locale = if card.name.has_english() {
-            "en"
-        } else if card.name.has_japanese() {
-            "ja"
-        } else {
-            card.name
-                .locales()
-                .next()
-                .map(Locale::as_str)
-                .unwrap_or("en")
-        };
+        let locale = card.locale();
 
         let url = format!(
             "https://api.tcgdex.net/v2/{locale}/cards/{set}-{number}",

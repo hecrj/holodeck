@@ -1,16 +1,42 @@
 use serde::{Deserialize, Serialize};
 
-use std::borrow::Borrow;
+use std::borrow::{Borrow, Cow};
 use std::collections::BTreeMap;
 use std::fmt;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(transparent)]
-pub struct Locale(pub(crate) String);
+pub struct Locale(pub(crate) Cow<'static, str>);
 
 impl Locale {
+    pub const JA: Self = Self::from_str("ja");
+    pub const EN: Self = Self::from_str("en");
+    pub const ES: Self = Self::from_str("es");
+
+    pub const fn from_str(locale: &'static str) -> Self {
+        Self(Cow::Borrowed(locale))
+    }
+
     pub fn as_str(&self) -> &str {
         &self.0
+    }
+}
+
+impl From<String> for Locale {
+    fn from(locale: String) -> Self {
+        Self(Cow::Owned(locale))
+    }
+}
+
+impl PartialEq<&str> for Locale {
+    fn eq(&self, other: &&str) -> bool {
+        self.0 == *other
+    }
+}
+
+impl PartialEq<String> for Locale {
+    fn eq(&self, other: &String) -> bool {
+        self.0 == *other
     }
 }
 
@@ -48,15 +74,11 @@ impl<T> Map<T> {
     }
 
     pub fn is_supported(&self) -> bool {
-        self.has_english() || self.has_japanese()
+        self.has(&Locale::EN) || self.has(&Locale::JA)
     }
 
-    pub fn has_english(&self) -> bool {
-        self.0.contains_key("en")
-    }
-
-    pub fn has_japanese(&self) -> bool {
-        self.0.contains_key("ja")
+    pub fn has(&self, locale: &Locale) -> bool {
+        self.0.contains_key(locale)
     }
 
     pub fn locales(&self) -> impl Iterator<Item = &Locale> {

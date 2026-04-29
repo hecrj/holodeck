@@ -2,7 +2,6 @@ pub mod tcgdex;
 
 use tcgdex::Tcgdex;
 
-use std::fmt;
 use std::sync::LazyLock;
 use std::time::Duration;
 
@@ -26,10 +25,9 @@ static CLIENT: LazyLock<reqwest::Client> = LazyLock::new(|| {
         .expect("Build reqwest client")
 });
 
-async fn retry<T, E, F>(mut retries: usize, f: impl Fn() -> F) -> Result<T, E>
+async fn retry<T, F>(mut retries: usize, f: impl Fn() -> F) -> Result<T, reqwest::Error>
 where
-    E: fmt::Display,
-    F: Future<Output = Result<T, E>>,
+    F: Future<Output = Result<T, reqwest::Error>>,
 {
     loop {
         let result = f().await;
@@ -37,6 +35,9 @@ where
         match result {
             Ok(response) => {
                 break Ok(response);
+            }
+            Err(error) if error.status() == Some(reqwest::StatusCode::NOT_FOUND) => {
+                break Err(error);
             }
             Err(error) => {
                 if retries > 0 {

@@ -1,3 +1,4 @@
+use crate::Locale;
 use crate::locale;
 use crate::pokemon;
 use crate::set;
@@ -15,6 +16,18 @@ pub struct Card {
     pub variants: Variants,
     pub illustrator: Option<String>,
     pub pokedex: Vec<pokemon::Id>,
+}
+
+impl Card {
+    pub fn locale(&self) -> Locale {
+        if self.name.has(&Locale::EN) {
+            Locale::EN
+        } else if self.name.has(&Locale::JA) {
+            Locale::JA
+        } else {
+            self.name.locales().next().cloned().unwrap_or(Locale::EN)
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
